@@ -1,2 +1,1 @@
-# loose-touch
-Loose touch application
+# Loose touch ( http://www.loosetouch.com )
