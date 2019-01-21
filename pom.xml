@@ -10,15 +10,14 @@
     <version>0.2-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Loose touch</name>
-    <description>Loose touch helps you remind to keep in touch with key contacts</description>
-    <url>https://github.com/straumat/loose-touch</url>
+    <url>https://www.loose-touch.com</url>
     <!-- =========================================================================================================== -->
 
     <!-- =========================================================================================================== -->
     <!-- Organization -->
     <organization>
         <name>Oak Invest</name>
-        <url>http://www.oak-invest.com</url>
+        <url>https://www.oak-invest.com</url>
     </organization>
     <!-- =========================================================================================================== -->
 
@@ -60,24 +59,6 @@
     <!-- =========================================================================================================== -->
 
     <!-- =========================================================================================================== -->
-    <!-- Project configuration -->
-    <properties>
-        <!-- Java project configuration -->
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <java.version>1.8</java.version>
-        <gitflow-maven-plugin.version>1.11.0</gitflow-maven-plugin.version>
-    </properties>
-    <!-- =========================================================================================================== -->
-
-    <!-- =========================================================================================================== -->
-    <!-- Modules -->
-    <modules>
-
-    </modules>
-    <!-- =========================================================================================================== -->
-
-    <!-- =========================================================================================================== -->
     <!-- Spring boot -->
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -85,6 +66,25 @@
         <version>2.1.2.RELEASE</version>
         <relativePath/>
     </parent>
+    <!-- =========================================================================================================== -->
+
+    <!-- =========================================================================================================== -->
+    <!-- Project configuration -->
+    <properties>
+        <java.version>1.8</java.version>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <gitflow-maven-plugin.version>1.11.0</gitflow-maven-plugin.version>
+    </properties>
+    <!-- =========================================================================================================== -->
+
+    <!-- =========================================================================================================== -->
+    <!-- Modules -->
+    <modules>
+        <module>back-end</module>
+    </modules>
     <!-- =========================================================================================================== -->
 
     <!-- =========================================================================================================== -->
