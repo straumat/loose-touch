@@ -1,4 +1,4 @@
-package com.oakinvest.lt;
+package com.oakinvest.lt.configuration;
 
 
 import com.amazonaws.serverless.exceptions.ContainerInitializationException;
@@ -7,6 +7,7 @@ import com.amazonaws.serverless.proxy.model.AwsProxyResponse;
 import com.amazonaws.serverless.proxy.spring.SpringBootLambdaContainerHandler;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestStreamHandler;
+import com.oakinvest.lt.Application;
 
 import java.io.IOException;
 import java.io.InputStream;

@@ -9,7 +9,7 @@ Resources:
   LooseTouchFunction:
     Type: AWS::Serverless::Function
     Properties:
-      Handler: com.oakinvest.lt.StreamLambdaHandler::handleRequest
+      Handler: com.oakinvest.lt.configuration.StreamLambdaHandler::handleRequest
       Runtime: java8
       CodeUri: target/loose-touch-1.0-SNAPSHOT-lambda-package.zip
       MemorySize: 512
