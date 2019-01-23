@@ -178,7 +178,7 @@
                                     <apiSources>
                                         <apiSource>
                                             <springmvc>true</springmvc>
-                                            <outputFormats>json</outputFormats>
+                                            <outputFormats>yaml</outputFormats>
                                             <info>
                                                 <title>Loose touch</title>
                                                 <description>Loose touch api</description>
@@ -188,7 +188,7 @@
                                                 <location>com.oakinvest.lt.web.rest.StatusAPI</location>
                                             </locations>
                                             <swaggerDirectory>${basedir}/target/swagger</swaggerDirectory>
-                                            <swaggerFileName>swagger-specification</swaggerFileName>
+                                            <swaggerFileName>swagger-specifications</swaggerFileName>
                                             <attachSwaggerArtifact>false</attachSwaggerArtifact>
                                         </apiSource>
                                     </apiSources>

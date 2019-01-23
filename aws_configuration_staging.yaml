@@ -3,34 +3,45 @@ AWSTemplateFormatVersion: '2010-09-09'
 # For serverless applications (also referred to as Lambda-based applications), specifies the version of the AWS Serverless Application Model (AWS SAM) to use.
 Transform: AWS::Serverless-2016-10-31
 # A text string that describes the template. This section must always follow the template format version section.
-Description: Loose touch
+Description: Loose touch staging
 
 # Specifies the stack resources and their properties, such as an Amazon Elastic Compute Cloud instance or an Amazon Simple Storage Service bucket. You can refer to resources in the Resources and Outputs sections of the template.
 Resources:
 
   # The logical ID must be alphanumeric (A-Za-z0-9) and unique within the template. Use the logical name to reference the resource in other parts of the template.
+  LooseTouchAPI:
+    Type: AWS::Serverless::Api                                                    # Creates a collection of Amazon API Gateway resources and methods that can be invoked through HTTPS endpoints.
+    Properties:
+      StageName: staging                                                          # The name of the stage, which API Gateway uses as the first path segment in the invoke Uniform Resource Identifier (URI).
+
+  # The logical ID must be alphanumeric (A-Za-z0-9) and unique within the template. Use the logical name to reference the resource in other parts of the template.
   LooseTouchFunction:
     # The resource type identifies the type of resource that you are declaring. https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-template-resource-type-ref.html
-    Type: AWS::Serverless::Function
+    Type: AWS::Serverless::Function                                               # Creates a Lambda function, IAM execution role, and event source mappings which trigger the function.
     Properties:
-      Handler: com.oakinvest.lt.configuration.StreamLambdaHandler::handleRequest      # Function within your code that is called to begin execution.
-      Runtime: java8                                                                  # The runtime environment.
-      CodeUri: back-end/target/loose-touch-back-end-lambda-package.zip                # S3 Uri or location to the function code. The S3 object this Uri references MUST be a Lambda deployment package.
-      MemorySize: 512                                                                 # Size of the memory allocated per invocation of the function in MB. Defaults to 128.
-      Policies: AWSLambdaBasicExecutionRole                                           # Names of AWS managed IAM policies or IAM policy documents or SAM Policy Templates that this function needs, which should be appended to the default role for this function.
-      Timeout: 30                                                                     # Maximum time that the function can run before it is killed in seconds. Defaults to 3.
-      Events:                                                                         # A map (string to Event source object) that defines the events that trigger this function.
-        API:
-          Type: Api
+      Handler: com.oakinvest.lt.configuration.StreamLambdaHandler::handleRequest  # Function within your code that is called to begin execution.
+      Runtime: java8                                                              # The runtime environment.
+      CodeUri: back-end/target/loose-touch-back-end-lambda-package.zip            # S3 Uri or location to the function code. The S3 object this Uri references MUST be a Lambda deployment package.
+      MemorySize: 512                                                             # Size of the memory allocated per invocation of the function in MB. Defaults to 128.
+      Policies: AWSLambdaBasicExecutionRole                                       # Names of AWS managed IAM policies or IAM policy documents or SAM Policy Templates that this function needs, which should be appended to the default role for this function.
+      Timeout: 30                                                                 # Maximum time that the function can run before it is killed in seconds. Defaults to 3.
+      Events:                                                                     # A map (string to Event source object) that defines the events that trigger this function.
+        API:                                                                      # Event name.
+          Type: Api                                                               # API Type.
           Properties:
-            Path: /{proxy+}
-            Method: any
+            RestApiId: !Ref LooseTouchAPI                                         # Identifier of a RestApi resource which MUST contain an operation with the given path and method.
+            Path: /{proxy+}                                                       # Configuring your resource as a proxy resource or {proxy+} is a greedy path wherein the entire sub-resource chain is passed to your backend as path variables.
+            Method: any                                                           # HTTP method for which this function is invoked (POST, GET, DELETE, PUT...).
 
-# Describes the values that are returned whenever you view your stack's properties. For example, you can declare an output for an S3 bucket name and then call the aws cloudformation describe-stacks AWS CLI command to view the name.
+# Describes the values that are returned whenever you view your stack's properties.
+# For example, you can declare an output for an S3 bucket name and then call the aws cloudformation describe-stacks AWS CLI command to view the name.
 Outputs:
-  baseURL:
-    Description: API URL
-    Value: !Sub 'https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/'
-    Export:
-      Name: baseURL
-
+  ApiUrl:
+    Description: Base URL of your API
+    Value: !Join
+      - ''
+      - - https://
+        - !Ref LooseTouchAPI
+        - '.execute-api.'
+        - !Ref 'AWS::Region'
+        - '.amazonaws.com/staging'
