@@ -105,3 +105,6 @@ fabric.properties
 release.properties
 Supprimerait .idea/
 Supprimerait loose-touch.iml
+
+# aws
+aws-sam-output-staging.yaml

@@ -1,0 +1,35 @@
+# The AWSTemplateFormatVersion section (optional) identifies the capabilities of the template. The latest template format version is 2010-09-09 and is currently the only valid value.
+AWSTemplateFormatVersion: '2010-09-09'
+# For serverless applications (also referred to as Lambda-based applications), specifies the version of the AWS Serverless Application Model (AWS SAM) to use.
+Transform: AWS::Serverless-2016-10-31
+# A text string that describes the template. This section must always follow the template format version section.
+Description: Loose touch
+
+# Specifies the stack resources and their properties, such as an Amazon Elastic Compute Cloud instance or an Amazon Simple Storage Service bucket. You can refer to resources in the Resources and Outputs sections of the template.
+Resources:
+
+  # The logical ID must be alphanumeric (A-Za-z0-9) and unique within the template. Use the logical name to reference the resource in other parts of the template.
+  LooseTouchFunction:
+    # The resource type identifies the type of resource that you are declaring. https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-template-resource-type-ref.html
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: com.oakinvest.lt.configuration.StreamLambdaHandler::handleRequest
+      Runtime: java8
+      CodeUri: back-end/target/loose-touch-back-end-lambda-package.zip
+      MemorySize: 256
+      Policies: AWSLambdaBasicExecutionRole
+      Timeout: 30
+      Events:
+        GetResource:
+          Type: Api
+          Properties:
+            Path: /{proxy+}
+            Method: any
+
+# Describes the values that are returned whenever you view your stack's properties. For example, you can declare an output for an S3 bucket name and then call the aws cloudformation describe-stacks AWS CLI command to view the name.
+Outputs:
+  LooseTouchApi:
+    Description: URL for application
+    Value: !Sub 'https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/ping'
+    Export:
+      Name: LooseTouchApi
