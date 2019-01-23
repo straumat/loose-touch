@@ -13,13 +13,13 @@ Resources:
     # The resource type identifies the type of resource that you are declaring. https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-template-resource-type-ref.html
     Type: AWS::Serverless::Function
     Properties:
-      Handler: com.oakinvest.lt.configuration.StreamLambdaHandler::handleRequest
-      Runtime: java8
-      CodeUri: back-end/target/loose-touch-back-end-lambda-package.zip
-      MemorySize: 256
-      Policies: AWSLambdaBasicExecutionRole
-      Timeout: 30
-      Events:
+      Handler: com.oakinvest.lt.configuration.StreamLambdaHandler::handleRequest      # Function within your code that is called to begin execution.
+      Runtime: java8                                                                  # The runtime environment.
+      CodeUri: back-end/target/loose-touch-back-end-lambda-package.zip                # S3 Uri or location to the function code. The S3 object this Uri references MUST be a Lambda deployment package.
+      MemorySize: 512                                                                 # Size of the memory allocated per invocation of the function in MB. Defaults to 128.
+      Policies: AWSLambdaBasicExecutionRole                                           # Names of AWS managed IAM policies or IAM policy documents or SAM Policy Templates that this function needs, which should be appended to the default role for this function.
+      Timeout: 30                                                                     # Maximum time that the function can run before it is killed in seconds. Defaults to 3.
+      Events:                                                                         # A map (string to Event source object) that defines the events that trigger this function.
         GetResource:
           Type: Api
           Properties:
@@ -28,8 +28,9 @@ Resources:
 
 # Describes the values that are returned whenever you view your stack's properties. For example, you can declare an output for an S3 bucket name and then call the aws cloudformation describe-stacks AWS CLI command to view the name.
 Outputs:
-  LooseTouchApi:
-    Description: URL for application
-    Value: !Sub 'https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/ping'
+  LooseTouch:
+    Description: API URL
+    Value: !Sub 'https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/'
     Export:
-      Name: LooseTouchApi
+      Name: LooseTouch
+

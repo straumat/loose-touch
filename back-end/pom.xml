@@ -23,6 +23,9 @@
     <!-- =========================================================================================================== -->
     <!-- Project configuration -->
     <properties>
+        <!-- Rest -->
+        <swagger.version>2.9.2</swagger.version>
+        <swagger-maven-plugin.version>3.1.8</swagger-maven-plugin.version>
         <!-- Maven -->
         <maven-checkstyle-plugin.version>3.0.0</maven-checkstyle-plugin.version>
         <maven-shade-plugin.version>2.3</maven-shade-plugin.version>
@@ -48,6 +51,12 @@
             <groupId>com.amazonaws.serverless</groupId>
             <artifactId>aws-serverless-java-container-spring</artifactId>
             <version>${aws-serverless-java-container-spring.version}</version>
+        </dependency>
+        <!-- Rest -->
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger2</artifactId>
+            <version>${swagger.version}</version>
         </dependency>
         <!-- Test -->
         <dependency>
@@ -149,6 +158,40 @@
                                         <descriptor>src${file.separator}assembly${file.separator}bin.xml</descriptor>
                                     </descriptors>
                                     <attach>false</attach>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <!-- Documentation plugin -->
+                    <plugin>
+                        <groupId>com.github.kongchen</groupId>
+                        <artifactId>swagger-maven-plugin</artifactId>
+                        <version>${swagger-maven-plugin.version}</version>
+                        <executions>
+                            <execution>
+                                <id>swagger</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>generate</goal>
+                                </goals>
+                                <configuration>
+                                    <apiSources>
+                                        <apiSource>
+                                            <springmvc>true</springmvc>
+                                            <outputFormats>json</outputFormats>
+                                            <info>
+                                                <title>Loose touch</title>
+                                                <description>Loose touch api</description>
+                                                <version>${project.version}</version>
+                                            </info>
+                                            <locations>
+                                                <location>com.oakinvest.lt.web.rest.StatusAPI</location>
+                                            </locations>
+                                            <swaggerDirectory>${basedir}/target/swagger</swaggerDirectory>
+                                            <swaggerFileName>swagger-specification</swaggerFileName>
+                                            <attachSwaggerArtifact>false</attachSwaggerArtifact>
+                                        </apiSource>
+                                    </apiSources>
                                 </configuration>
                             </execution>
                         </executions>
