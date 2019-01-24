@@ -3,7 +3,12 @@ AWSTemplateFormatVersion: '2010-09-09'
 # For serverless applications (also referred to as Lambda-based applications), specifies the version of the AWS Serverless Application Model (AWS SAM) to use.
 Transform: AWS::Serverless-2016-10-31
 # A text string that describes the template. This section must always follow the template format version section.
-Description: Loose touch staging
+Description: Loose touch
+
+# Parameters.
+Parameters:
+  Stage:
+    Type: String
 
 # Specifies the stack resources and their properties, such as an Amazon Elastic Compute Cloud instance or an Amazon Simple Storage Service bucket. You can refer to resources in the Resources and Outputs sections of the template.
 Resources:
@@ -12,7 +17,9 @@ Resources:
   LooseTouchAPI:
     Type: AWS::Serverless::Api                                                    # Creates a collection of Amazon API Gateway resources and methods that can be invoked through HTTPS endpoints.
     Properties:
-      StageName: staging                                                          # The name of the stage, which API Gateway uses as the first path segment in the invoke Uniform Resource Identifier (URI).
+      StageName: !Ref Stage                                                       # The name of the stage, which API Gateway uses as the first path segment in the invoke Uniform Resource Identifier (URI).
+      Variables:
+        Stage: !Ref Stage
 
   # The logical ID must be alphanumeric (A-Za-z0-9) and unique within the template. Use the logical name to reference the resource in other parts of the template.
   LooseTouchFunction:
@@ -44,4 +51,5 @@ Outputs:
         - !Ref LooseTouchAPI
         - '.execute-api.'
         - !Ref 'AWS::Region'
-        - '.amazonaws.com/staging'
+        - '.amazonaws.com/'
+        - !Ref Stage
