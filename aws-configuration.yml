@@ -9,11 +9,15 @@ Description: Loose touch
 Parameters:
   Stage:
     Type: String
+  BucketPrefix:
+    Type: String
 
-# Specifies the stack resources and their properties, such as an Amazon Elastic Compute Cloud instance or an Amazon Simple Storage Service bucket. You can refer to resources in the Resources and Outputs sections of the template.
+# Specifies the stack resources and their properties, such as an Amazon Elastic Compute Cloud instance or an Amazon Simple Storage Service bucket.
+# You can refer to resources in the Resources and Outputs sections of the template.
 Resources:
 
-  # The logical ID must be alphanumeric (A-Za-z0-9) and unique within the template. Use the logical name to reference the resource in other parts of the template.
+  # ====================================================================================================================
+  # Defines API.
   LooseTouchAPI:
     Type: AWS::Serverless::Api                                                    # Creates a collection of Amazon API Gateway resources and methods that can be invoked through HTTPS endpoints.
     Properties:
@@ -21,7 +25,8 @@ Resources:
       Variables:
         Stage: !Ref Stage
 
-  # The logical ID must be alphanumeric (A-Za-z0-9) and unique within the template. Use the logical name to reference the resource in other parts of the template.
+  # ====================================================================================================================
+  # Defines available functions.
   LooseTouchFunction:
     # The resource type identifies the type of resource that you are declaring. https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-template-resource-type-ref.html
     Type: AWS::Serverless::Function                                               # Creates a Lambda function, IAM execution role, and event source mappings which trigger the function.
@@ -40,11 +45,39 @@ Resources:
             Path: /{proxy+}                                                       # Configuring your resource as a proxy resource or {proxy+} is a greedy path wherein the entire sub-resource chain is passed to your backend as path variables.
             Method: any                                                           # HTTP method for which this function is invoked (POST, GET, DELETE, PUT...).
 
+  # ====================================================================================================================
+  # Defines buckets for public website.
+  LooseTouchRootBucket:                                                           # The AWS::S3::Bucket resource creates an Amazon Simple Storage Service (Amazon S3) bucket in the same AWS Region where you create the AWS CloudFormation stack.
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Join                                                           # A name for the bucket. If you don't specify a name, AWS CloudFormation generates a unique physical ID and uses that ID for the bucket name.
+        - ''
+        - - !Ref BucketPrefix
+          - loosetouch.com
+      AccessControl: PublicRead                                                   # A canned access control list (ACL) that grants predefined permissions to the bucket.
+      WebsiteConfiguration:                                                       # Information used to configure the bucket as a static website. For more information
+        IndexDocument: index.html                                                 # The name of the index document for the website.
+        ErrorDocument: 404.html                                                   # The name of the error document for the website.
+
+  LooseTouchWWWBucket:
+    Type: AWS::S3::Bucket                                                         # The AWS::S3::Bucket resource creates an Amazon Simple Storage Service (Amazon S3) bucket in the same AWS Region where you create the AWS CloudFormation stack.
+    Properties:
+      BucketName: !Join                                                           # A name for the bucket. If you don't specify a name, AWS CloudFormation generates a unique physical ID and uses that ID for the bucket name.
+        - ''
+        - - !Ref BucketPrefix
+          - www.loosetouch.com
+      AccessControl: BucketOwnerFullControl                                       # A canned access control list (ACL) that grants predefined permissions to the bucket.
+      WebsiteConfiguration:                                                       # Information used to configure the bucket as a static website. For more information
+        RedirectAllRequestsTo:                                                    # The RedirectAllRequestsTo code is an embedded property of the Amazon S3 Website Configuration Property property that describes the redirect behavior of all requests to a website endpoint of an Amazon S3 bucket.
+          HostName: !Ref LooseTouchRootBucket                                     # Name of the host where requests are redirected.
+
 # Describes the values that are returned whenever you view your stack's properties.
 # For example, you can declare an output for an S3 bucket name and then call the aws cloudformation describe-stacks AWS CLI command to view the name.
 Outputs:
-  ApiUrl:
-    Description: Base URL of your API
+  # ====================================================================================================================
+  # URL of API.
+  ApiURL:
+    Description: URL of API
     Value: !Join
       - ''
       - - https://
@@ -53,3 +86,14 @@ Outputs:
         - !Ref 'AWS::Region'
         - '.amazonaws.com/'
         - !Ref Stage
+
+  # ====================================================================================================================
+  # URL of the S3 bucket.
+  LooseTouchRootBucketURL:
+    Description: URL of S3 bucket to hold website content
+    Value: !Join
+      - ''
+      - - 'https://'
+        - !GetAtt
+          - LooseTouchRootBucket
+          - DomainName
