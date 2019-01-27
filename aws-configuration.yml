@@ -58,7 +58,6 @@ Resources:
       WebsiteConfiguration:                                                       # Information used to configure the bucket as a static website. For more information
         IndexDocument: index.html                                                 # The name of the index document for the website.
         ErrorDocument: 404.html                                                   # The name of the error document for the website.
-
   LooseTouchWWWBucket:
     Type: AWS::S3::Bucket                                                         # The AWS::S3::Bucket resource creates an Amazon Simple Storage Service (Amazon S3) bucket in the same AWS Region where you create the AWS CloudFormation stack.
     Properties:
@@ -90,10 +89,11 @@ Outputs:
   # ====================================================================================================================
   # URL of the S3 bucket.
   LooseTouchRootBucketURL:
-    Description: URL of S3 bucket to hold website content
+    Description: URL of S3 bucket holding website content
     Value: !Join
       - ''
-      - - 'https://'
-        - !GetAtt
-          - LooseTouchRootBucket
-          - DomainName
+      - - 'http://'
+        - !Ref LooseTouchRootBucket
+        - '.s3-website.'
+        - !Ref 'AWS::Region'
+        - '.amazonaws.com'
