@@ -1,6 +1,8 @@
 package com.oakinvest.lt;
 
 import com.oakinvest.lt.controller.PingController;
+import com.oakinvest.lt.util.auth.google.GoogleTokenVerifier;
+import com.oakinvest.lt.util.auth.loosetouch.JwtTokenProvider;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
@@ -15,7 +17,7 @@ import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandl
  * Application.
  */
 @SpringBootApplication
-@Import({PingController.class})
+@Import({PingController.class, GoogleTokenVerifier.class, JwtTokenProvider.class})
 public class Application extends SpringBootServletInitializer {
 
     /**

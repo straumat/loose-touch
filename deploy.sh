@@ -15,6 +15,8 @@ BUCKET_PREFIX=""
 # Environment parameter is required.
 if [ -z "$1" ]
     then
+    echo ""
+    echo "================================================================"
     echo "[ERROR] Argument 'environment' is required."
     exit 1
 fi
@@ -24,6 +26,8 @@ fi
 # Environment parameter is not valid.
 if [[ "$1" != "test" && "$1" != "stage" && "$1" != "production" ]]
     then
+    echo ""
+    echo "================================================================"
     echo "[ERROR] Argument '$1' is not valid. It must be either test, stage or production."
     exit 1
 fi
@@ -39,6 +43,7 @@ fi
 
 # ======================================================================================================================
 # Build the back-end.
+echo ""
 echo "================================================================"
 echo "Building the back end ..."
 mvn -f back-end/pom.xml clean package
@@ -46,6 +51,7 @@ mvn -f back-end/pom.xml clean package
 
 # ======================================================================================================================
 # CloudFormation packaging...
+echo ""
 echo "================================================================"
 echo "CloudFormation packaging for $1 ..."
 aws cloudformation package \
@@ -57,6 +63,7 @@ aws cloudformation package \
 
 # ======================================================================================================================
 # CloudFormation deploying...
+echo ""
 echo "================================================================"
 echo "CloudFormation deploying $1 ..."
 aws cloudformation deploy  \
@@ -68,12 +75,14 @@ aws cloudformation deploy  \
 # ======================================================================================================================
 
 # ======================================================================================================================
+echo ""
 echo "================================================================"
 echo "Deploy website to s3://${BUCKET_PREFIX}loosetouch.com ..."
 aws s3 sync ./clients/website s3://${BUCKET_PREFIX}loosetouch.com --delete --acl public-read
 # ======================================================================================================================
 
 # ======================================================================================================================
+echo ""
 echo "================================================================"
 echo "Details of stack $1 ..."
 aws cloudformation describe-stacks --stack-name loose-touch-$1 --region eu-west-3

@@ -1,0 +1,28 @@
+# Reduce logging level to make sure the application works with SAM local
+# https://github.com/awslabs/aws-serverless-java-container/issues/134
+logging:
+  level:
+    root: WARN
+
+# Loose touch application configuration.
+application:
+  jwt:
+    secretKey: wM+aATpnGraHYHoEKa2Y4fXANZgffyoey2HPdv4SDzk=
+    expirationDelay: 2592000000
+
+# Spring Security configuration
+security:
+  oauth2:
+    client:
+      clientId: 332245545817-5nl0021fkonhclc7rbj5ehm3j2h51u8o.apps.googleusercontent.com
+      clientSecret: kulc8b4YpJ4vhuXYxGOD9CTB
+      accessTokenUri: https://www.googleapis.com/oauth2/v4/token
+      userAuthorizationUri: https://accounts.google.com/o/oauth2/v2/auth
+      clientAuthenticationScheme: form
+      scope:
+        - openid
+        - email
+        - profile
+    resource:
+      userInfoUri: https://www.googleapis.com/oauth2/v3/userinfo
+      preferTokenInfo: true
