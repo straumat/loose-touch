@@ -1,10 +1,12 @@
-package com.oakinvest.lt.util.auth.loosetouch;
+package com.oakinvest.lt.authentication.loosetouch;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -24,6 +26,11 @@ import java.util.Optional;
  */
 @Component
 public class JwtTokenProvider {
+
+    /**
+     * Logger.
+     */
+    private final Logger log = LoggerFactory.getLogger(JwtTokenProvider.class);
 
     /**
      * Secret key.
@@ -53,6 +60,8 @@ public class JwtTokenProvider {
      * @return token
      */
     public final String createToken(final String userId, final long expirationDelay) {
+        log.debug("Creating a token for user " + userId);
+
         // Set userId.
         Claims claims = Jwts.claims().setSubject(userId);
 
@@ -80,18 +89,23 @@ public class JwtTokenProvider {
      * @return userId
      */
     public final Optional<String> getUserId(final String token) {
+        log.debug("Getting user id for token " + token);
         try {
             // Getting data from the claims.
             Jws<Claims> claims = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
 
             // Checking that the token is not expired.
             if (claims.getBody().getExpiration().before(new Date())) {
+                log.debug("Token " + token + " expired");
                 return Optional.empty();
             } else {
                 // Return the userId.
-                return Optional.of(claims.getBody().getSubject());
+                String userId = claims.getBody().getSubject();
+                log.debug("Token " + token + " is from user " + userId);
+                return Optional.of(userId);
             }
         } catch (JwtException | IllegalArgumentException e) {
+            log.debug("Invalid token : " + token);
             return Optional.empty();
         }
     }

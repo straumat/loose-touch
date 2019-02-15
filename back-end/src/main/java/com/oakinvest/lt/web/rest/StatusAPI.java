@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import static com.oakinvest.lt.util.rest.HttpStatus.STATUS_OK;
+import static com.oakinvest.lt.util.rest.HttpStatus.STATUS_OK_MESSAGE;
 
 /**
  * Status API.
@@ -26,7 +27,7 @@ public interface StatusAPI {
     @ApiOperation(value = "Returns application status", response = Status.class)
     @ApiImplicitParams({})
     @ApiResponses(value = {
-            @ApiResponse(code = STATUS_OK, message = "Everything worked as expected.")
+            @ApiResponse(code = STATUS_OK, message = STATUS_OK_MESSAGE)
     })
     Status getStatus();
 

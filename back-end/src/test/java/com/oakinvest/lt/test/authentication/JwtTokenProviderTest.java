@@ -1,7 +1,7 @@
-package com.oakinvest.lt.util.auth;
+package com.oakinvest.lt.test.authentication;
 
 import com.oakinvest.lt.Application;
-import com.oakinvest.lt.util.auth.loosetouch.JwtTokenProvider;
+import com.oakinvest.lt.authentication.loosetouch.JwtTokenProvider;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,6 +77,15 @@ public class JwtTokenProviderTest {
         // userId retrieval.
         userId = jwtTokenProvider.getUserId(token);
         assertFalse("userId is present", userId.isPresent());
+    }
+
+    /**
+     * Testing that an empty token is accepted.
+     */
+    @Test
+    public final void testEmptyToken() {
+        Optional<String> userId = jwtTokenProvider.getUserId(null);
+        assertFalse("userId is not present", userId.isPresent());
     }
 
 }

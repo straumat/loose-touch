@@ -108,3 +108,6 @@ Supprimerait loose-touch.iml
 
 # aws
 output-*
+
+# Google token backup
+back-end/google-id-token-*

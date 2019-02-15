@@ -1,4 +1,4 @@
-package com.oakinvest.lt.util.auth.exceptions;
+package com.oakinvest.lt.authentication.exceptions;
 
 /**
  * Invalid token exception.

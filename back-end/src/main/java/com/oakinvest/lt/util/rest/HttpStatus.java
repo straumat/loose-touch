@@ -12,9 +12,14 @@ public final class HttpStatus {
     }
 
     /**
-     * Everything worked as expected.
+     * 200.
      */
     public static final int STATUS_OK = 200;
+
+    /**
+     * Everything worked as expected.
+     */
+    public static final String STATUS_OK_MESSAGE = "Everything worked as expected.";
 
     /**
      * The request was unacceptable, often due to missing a required parameter.

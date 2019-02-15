@@ -1,8 +1,8 @@
 package com.oakinvest.lt;
 
 import com.oakinvest.lt.controller.PingController;
-import com.oakinvest.lt.util.auth.google.GoogleTokenVerifier;
-import com.oakinvest.lt.util.auth.loosetouch.JwtTokenProvider;
+import com.oakinvest.lt.authentication.google.GoogleTokenVerifier;
+import com.oakinvest.lt.authentication.loosetouch.JwtTokenProvider;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;

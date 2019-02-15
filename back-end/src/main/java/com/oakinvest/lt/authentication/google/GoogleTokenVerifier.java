@@ -1,4 +1,4 @@
-package com.oakinvest.lt.util.auth.google;
+package com.oakinvest.lt.authentication.google;
 
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken.Payload;
@@ -7,7 +7,6 @@ import com.google.api.client.http.HttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
-import com.oakinvest.lt.util.auth.exceptions.InvalidGoogleTokenException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,6 +16,7 @@ import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Optional;
 
 /**
  * Google token verifier.
@@ -48,15 +48,11 @@ public class GoogleTokenVerifier {
 
     /**
      * Verify a google token by connecting to google servers.
-     * @param idTokenString token
+     * @param idToken token
      * @return payload.
-     * @throws GeneralSecurityException general security exception.
-     * @throws IOException input/output exception.
-     * @throws InvalidGoogleTokenException invalid token exception.
      */
-    public final Payload verifyToken(final String idTokenString)
-            throws GeneralSecurityException, IOException, InvalidGoogleTokenException {
-        log.debug("Verifying token " + idTokenString);
+    public final Optional<Payload> verifyToken(final String idToken) {
+        log.debug("Verifying token " + idToken);
 
         // Creates the google token verifier.
         final GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.
@@ -66,24 +62,23 @@ public class GoogleTokenVerifier {
                 .build();
 
         // Token verification.
-        GoogleIdToken idToken = null;
+        GoogleIdToken googleIdToken = null;
         try {
-            idToken = verifier.verify(idTokenString);
-        } catch (IllegalArgumentException e) {
+            googleIdToken = verifier.verify(idToken);
+        } catch (IllegalArgumentException | GeneralSecurityException | IOException e) {
             log.debug("Error during token verification : " + e.getMessage());
-            e.printStackTrace();
+            return Optional.empty();
         }
 
         // If token is null, the token is invalid.
-        if (idToken == null) {
-            log.debug("Token " + idTokenString + " is not valid");
-            throw new InvalidGoogleTokenException("Token " + idTokenString + " is invalid");
+        if (googleIdToken == null) {
+            log.debug("Error during token verification googleIdToken is null");
+            return Optional.empty();
         } else {
-            log.debug("Token " + idTokenString + " is valid");
+            // We return the parsed token information.
+            log.debug("Token " + idToken + " is valid");
+            return Optional.of(googleIdToken.getPayload());
         }
-
-        // We return the parsed token information.
-        return idToken.getPayload();
     }
 
 }
