@@ -10,7 +10,15 @@ application:
     secretKey: wM+aATpnGraHYHoEKa2Y4fXANZgffyoey2HPdv4SDzk=
     expirationDelay: 2592000000
 
-# Spring Security configuration
+# AWS Configuration.
+amazon:
+  aws:
+    accesskey: key
+    secretkey: key2
+  dynamodb:
+    endpoint: http://localhost:8000/
+
+# Spring Security configuration.
 security:
   oauth2:
     client:

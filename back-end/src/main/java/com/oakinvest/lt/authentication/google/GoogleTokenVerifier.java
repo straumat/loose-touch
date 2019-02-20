@@ -62,7 +62,7 @@ public class GoogleTokenVerifier {
                 .build();
 
         // Token verification.
-        GoogleIdToken googleIdToken = null;
+        GoogleIdToken googleIdToken;
         try {
             googleIdToken = verifier.verify(idToken);
         } catch (IllegalArgumentException | GeneralSecurityException | IOException e) {

@@ -1,13 +1,23 @@
-package com.oakinvest.lt.web.rest;
+package com.oakinvest.lt.service.v1;
 
 import com.oakinvest.lt.dto.Status;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * Status controller.
+ * System controller.
  */
 @RestController
-public class StatusController implements StatusAPI {
+public class SystemController implements SystemAPI {
+
+    /**
+     * Ping.
+     *
+     * @return pong
+     */
+    @Override
+    public final String ping() {
+        return "pong";
+    }
 
     /**
      * Returns application status.
@@ -18,7 +28,7 @@ public class StatusController implements StatusAPI {
     public final Status getStatus() {
         Status s = new Status();
         // TODO Implement a real user count.
-        s.setUsersCount(1);
+        s.setNumberOfUsers(0);
         return s;
     }
 

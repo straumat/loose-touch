@@ -14,18 +14,18 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 /**
- * Stream lambda handler.
+ * Stream lambda HANDLER.
  */
 public class StreamLambdaHandler implements RequestStreamHandler {
 
     /**
      * Handler.
      */
-    private static SpringBootLambdaContainerHandler<AwsProxyRequest, AwsProxyResponse> handler;
+    private static final SpringBootLambdaContainerHandler<AwsProxyRequest, AwsProxyResponse> HANDLER;
 
     static {
         try {
-            handler = SpringBootLambdaContainerHandler.getAwsProxyHandler(Application.class);
+            HANDLER = SpringBootLambdaContainerHandler.getAwsProxyHandler(Application.class);
         } catch (ContainerInitializationException e) {
             // if we fail here. We re-throw the exception to force another cold start
             e.printStackTrace();
@@ -44,7 +44,7 @@ public class StreamLambdaHandler implements RequestStreamHandler {
     @SuppressWarnings("DesignForExtension")
     @Override
     public void handleRequest(final InputStream inputStream, final OutputStream outputStream, final Context context) throws IOException {
-        handler.proxyStream(inputStream, outputStream, context);
+        HANDLER.proxyStream(inputStream, outputStream, context);
     }
 
 }

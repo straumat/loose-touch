@@ -17,54 +17,54 @@ public class Status {
      * Date the status was issued.
      */
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm a z")
-    private Date date;
+    private Date currentDate;
 
     /**
      * Number of users in the application.
      */
-    private long usersCount;
+    private long numberOfUsers;
 
     /**
      * Default constructor.
      */
     public Status() {
-        date = new Date();
+        currentDate = new Date();
     }
 
     /**
-     * Getter of date.
+     * Getter of currentDate.
      *
-     * @return date
+     * @return currentDate
      */
-    public final Date getDate() {
-        return date;
+    public final Date getCurrentDate() {
+        return currentDate;
     }
 
     /**
-     * Setter of date.
+     * Setter of currentDate.
      *
-     * @param newDate the date to set
+     * @param newDate the currentDate to set
      */
-    public final void setDate(final Date newDate) {
-        date = newDate;
+    public final void setCurrentDate(final Date newDate) {
+        currentDate = newDate;
     }
 
     /**
-     * Getter of usersCount.
+     * Getter of numberOfUsers.
      *
-     * @return usersCount
+     * @return numberOfUsers
      */
-    public final long getUsersCount() {
-        return usersCount;
+    public final long getNumberOfUsers() {
+        return numberOfUsers;
     }
 
     /**
-     * Setter of usersCount.
+     * Setter of numberOfUsers.
      *
-     * @param newApplicationUsers the usersCount to set
+     * @param newApplicationUsers the numberOfUsers to set
      */
-    public final void setUsersCount(final long newApplicationUsers) {
-        usersCount = newApplicationUsers;
+    public final void setNumberOfUsers(final long newApplicationUsers) {
+        numberOfUsers = newApplicationUsers;
     }
 
 }

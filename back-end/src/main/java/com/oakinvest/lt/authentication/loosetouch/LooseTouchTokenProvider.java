@@ -25,12 +25,12 @@ import java.util.Optional;
  * JWT is RFC 7519 standard for representing and sharing claims securely between communicating parties.
  */
 @Component
-public class JwtTokenProvider {
+public class LooseTouchTokenProvider {
 
     /**
      * Logger.
      */
-    private final Logger log = LoggerFactory.getLogger(JwtTokenProvider.class);
+    private final Logger log = LoggerFactory.getLogger(LooseTouchTokenProvider.class);
 
     /**
      * Secret key.
