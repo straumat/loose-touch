@@ -15,6 +15,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 import static com.oakinvest.lt.test.util.authentication.GoogleTokenRetrieverUser.USER_1;
 import static com.oakinvest.lt.test.util.authentication.GoogleTokenRetrieverUser.USER_2;
@@ -109,10 +110,12 @@ public class UserAPITest extends JUnitHelper {
 
             // Check that the user now exists and that the token is correct.
             Optional<User> u1 = userRepository.findUserByGoogleUsername(USER_1.getEmail());
-            assertTrue("User 1 doesn't exists", u1 .isPresent());
+            assertTrue("User 1 doesn't exists", u1.isPresent());
             assertEquals("There are too many users in the database", 1, userRepository.count());
             assertTrue("Token for user 1 is not valid", looseTouchTokenProvider.getUserId(looseTouchUser1Token1).isPresent());
             assertEquals("Token for user 1 doesn't have the good ID", u1.get().getId(), looseTouchTokenProvider.getUserId(looseTouchUser1Token1).get());
+
+            Thread.sleep(TimeUnit.SECONDS.toMillis(1));
 
             // Second login.
             result = mvc.perform(get("/v1/login/google")
@@ -122,9 +125,9 @@ public class UserAPITest extends JUnitHelper {
             String looseTouchUser1Token2 = result.getResponse().getContentAsString();
 
             // Check that the user is not created twice and that the token is new correct.
-            assertNotEquals("Token are not different", looseTouchUser1Token1, looseTouchUser1Token2);
+            assertFalse("Token are not different", looseTouchUser1Token1.equals(looseTouchUser1Token2));
             u1 = userRepository.findUserByGoogleUsername(USER_1.getEmail());
-            assertTrue("User 1 doesn't exists", u1 .isPresent());
+            assertTrue("User 1 doesn't exists", u1.isPresent());
             assertEquals("There are too many users in the database", 1, userRepository.count());
             assertTrue("Token for user 1 is not valid", looseTouchTokenProvider.getUserId(looseTouchUser1Token2).isPresent());
             assertEquals("Token for user 1 doesn't have the good ID", u1.get().getId(), looseTouchTokenProvider.getUserId(looseTouchUser1Token2).get());
@@ -150,7 +153,7 @@ public class UserAPITest extends JUnitHelper {
 
             // Check that the user now exists and that the token is correct.
             Optional<User> u2 = userRepository.findUserByGoogleUsername(USER_2.getEmail());
-            assertTrue("User 2 doesn't exists", u2 .isPresent());
+            assertTrue("User 2 doesn't exists", u2.isPresent());
             assertEquals("There are too many users in the database", 2, userRepository.count());
             assertTrue("Token for user 2 is not valid", looseTouchTokenProvider.getUserId(looseTouchUser2Token1).isPresent());
             assertEquals("Token for user 2 doesn't have the good ID", u2.get().getId(), looseTouchTokenProvider.getUserId(looseTouchUser2Token1).get());
@@ -165,7 +168,7 @@ public class UserAPITest extends JUnitHelper {
             // Check that the user is not created twice and that the token is new correct.
             assertNotEquals("Token are not different", looseTouchUser2Token1, looseTouchUser2Token2);
             u2 = userRepository.findUserByGoogleUsername(USER_1.getEmail());
-            assertTrue("User 2 doesn't exists", u2 .isPresent());
+            assertTrue("User 2 doesn't exists", u2.isPresent());
             assertEquals("There are too many users in the database", 2, userRepository.count());
             assertTrue("Token for user 2 is not valid", looseTouchTokenProvider.getUserId(looseTouchUser2Token2).isPresent());
             assertEquals("Token for user 2 doesn't have the good ID", u2.get().getId(), looseTouchTokenProvider.getUserId(looseTouchUser2Token2).get());

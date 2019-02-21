@@ -36,6 +36,11 @@ public class JUnitHelper {
     private final Logger log = LoggerFactory.getLogger(JUnitHelper.class);
 
     /**
+     * Dynamo DB Server.
+     */
+    private DynamoDBProxyServer server;
+
+    /**
      * DynamoDB connection.
      */
     @Autowired
@@ -47,10 +52,15 @@ public class JUnitHelper {
     private DynamoDBMapper mapper;
 
     /**
-     * Constructor.
+     * Start DynamoDB.
      */
     @Before
-    public void initDynamoDB() throws Exception {
+    public void startDynamoDB() throws Exception {
+        System.setProperty("sqlite4java.library.path", "native-libs");
+        final String[] localArgs = {"-sharedDb", "-inMemory"};
+        server = ServerRunner.createServerFromCommandLineArgs(localArgs);
+        server.start();
+
         mapper = new DynamoDBMapper(dynamoDB);
 
         // Drop the tables.
@@ -66,6 +76,15 @@ public class JUnitHelper {
 
         // Waits for every table to be created.
         TableUtils.waitUntilActive(dynamoDB, createUserTableRequest.getTableName());
+    }
+
+    /**
+     * Stop DynamoDB.
+     *
+     * @throws Exception exception
+     */
+    public void stopDynamoDB() throws Exception {
+        server.stop();
     }
 
     /**

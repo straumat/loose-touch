@@ -18,7 +18,7 @@ public enum GoogleTokenRetrieverUser {
     /**
      * USer email.
      */
-    private String email;
+    private final String email;
 
     /**
      * COnstructor.

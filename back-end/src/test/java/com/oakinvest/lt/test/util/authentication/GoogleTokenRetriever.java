@@ -146,7 +146,7 @@ public class GoogleTokenRetriever {
      * @param user user (USER_1 or USER_2).
      * @return google id token.
      */
-    public Optional<String>getIdTokenFromGoogle(final GoogleTokenRetrieverUser user) {
+    private Optional<String>getIdTokenFromGoogle(final GoogleTokenRetrieverUser user) {
         log.info("Saving google id token for " + user);
 
         // Refresh token.
