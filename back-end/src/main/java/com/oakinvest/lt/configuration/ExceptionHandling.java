@@ -13,12 +13,12 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
  * Exception handling controller.
  */
 @ControllerAdvice
-public class ExceptionHandlingConfiguration {
+public class ExceptionHandling {
 
     /**
      * Logger.
      */
-    private final Logger log = LoggerFactory.getLogger(ExceptionHandlingConfiguration.class);
+    private final Logger log = LoggerFactory.getLogger(ExceptionHandling.class);
 
     /**
      * Deal with cerise exception.

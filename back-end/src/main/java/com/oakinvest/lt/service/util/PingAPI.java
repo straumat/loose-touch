@@ -1,8 +1,5 @@
-package com.oakinvest.lt.service.v1;
+package com.oakinvest.lt.service.util;
 
-import com.oakinvest.lt.dto.Status;
-import com.oakinvest.lt.service.V1Service;
-import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -14,10 +11,9 @@ import static com.oakinvest.lt.util.rest.HttpStatus.STATUS_OK;
 import static com.oakinvest.lt.util.rest.HttpStatus.STATUS_OK_MESSAGE;
 
 /**
- * System API.
+ * Ping API.
  */
-@Api(tags = "System API")
-public interface SystemAPI extends V1Service {
+public interface PingAPI {
 
     /**
      * Ping.
@@ -31,18 +27,5 @@ public interface SystemAPI extends V1Service {
             @ApiResponse(code = STATUS_OK, message = STATUS_OK_MESSAGE)
     })
     String ping();
-
-    /**
-     * Returns application status.
-     *
-     * @return status
-     */
-    @RequestMapping(value = "/status", method = RequestMethod.GET)
-    @ApiOperation(value = "Returns application status", response = Status.class)
-    @ApiImplicitParams({})
-    @ApiResponses(value = {
-            @ApiResponse(code = STATUS_OK, message = STATUS_OK_MESSAGE)
-    })
-    Status getStatus();
 
 }

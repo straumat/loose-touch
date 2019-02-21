@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Configuration;
  * DynamoDB Configuration.
  */
 @Configuration
-public class DynamoDBConfiguration {
+public class DynamoDB {
 
     /**
      * Returns an amazonDynamoDB instance.
