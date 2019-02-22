@@ -1,4 +1,4 @@
-package com.oakinvest.lt.util.rest;
+package com.oakinvest.lt.util.error;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.annotations.ApiModelProperty;

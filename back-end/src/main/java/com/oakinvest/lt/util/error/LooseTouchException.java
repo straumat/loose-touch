@@ -1,4 +1,4 @@
-package com.oakinvest.lt.util.rest;
+package com.oakinvest.lt.util.error;
 
 import java.util.LinkedList;
 import java.util.List;

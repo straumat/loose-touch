@@ -1,7 +1,6 @@
 package com.oakinvest.lt.service.v1;
 
-import com.oakinvest.lt.service.V1Service;
-import com.oakinvest.lt.util.rest.LooseTouchError;
+import com.oakinvest.lt.util.error.LooseTouchError;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;

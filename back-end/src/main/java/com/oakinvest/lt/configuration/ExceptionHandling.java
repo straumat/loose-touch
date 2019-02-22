@@ -1,7 +1,7 @@
 package com.oakinvest.lt.configuration;
 
-import com.oakinvest.lt.util.rest.LooseTouchError;
-import com.oakinvest.lt.util.rest.LooseTouchException;
+import com.oakinvest.lt.util.error.LooseTouchError;
+import com.oakinvest.lt.util.error.LooseTouchException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;

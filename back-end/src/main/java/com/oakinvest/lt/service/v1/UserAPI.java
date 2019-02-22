@@ -1,7 +1,7 @@
 package com.oakinvest.lt.service.v1;
 
 import com.oakinvest.lt.authentication.loosetouch.AuthenticatedUser;
-import com.oakinvest.lt.service.V1Service;
+import com.oakinvest.lt.dto.v1.UserDTO;
 import io.swagger.annotations.Api;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -19,6 +19,6 @@ public interface UserAPI extends V1Service {
      */
     @RequestMapping(value = "/profile",
             method = RequestMethod.GET)
-    String getProfile(AuthenticatedUser authenticatedUser);
+    UserDTO getProfile(AuthenticatedUser authenticatedUser);
 
 }

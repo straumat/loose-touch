@@ -1,4 +1,4 @@
-package com.oakinvest.lt.util.rest;
+package com.oakinvest.lt.util.error;
 
 /**
  * Loose touch error type.

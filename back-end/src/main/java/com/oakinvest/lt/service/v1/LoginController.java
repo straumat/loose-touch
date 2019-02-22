@@ -5,14 +5,14 @@ import com.oakinvest.lt.authentication.google.GoogleTokenVerifier;
 import com.oakinvest.lt.authentication.loosetouch.LooseTouchTokenProvider;
 import com.oakinvest.lt.domain.User;
 import com.oakinvest.lt.repository.UserRepository;
-import com.oakinvest.lt.util.rest.LooseTouchException;
+import com.oakinvest.lt.util.error.LooseTouchException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Optional;
 
-import static com.oakinvest.lt.util.rest.LooseTouchErrorType.authentication_error;
-import static com.oakinvest.lt.util.rest.LooseTouchErrorType.invalid_request_error;
+import static com.oakinvest.lt.util.error.LooseTouchErrorType.authentication_error;
+import static com.oakinvest.lt.util.error.LooseTouchErrorType.invalid_request_error;
 
 /**
  * Login controller.
@@ -68,7 +68,7 @@ public class LoginController implements LoginAPI {
                 return looseTouchTokenProvider.createToken(user.get().getId());
             } else {
                 // If not, we create it first and then, we return a token.
-                String firstName = (String) token.get().get("name");
+                String firstName = (String) token.get().get("given_name");
                 String lastName = (String) token.get().get("family_name");
                 String email = token.get().getEmail();
                 User u = new User(firstName, lastName, email);

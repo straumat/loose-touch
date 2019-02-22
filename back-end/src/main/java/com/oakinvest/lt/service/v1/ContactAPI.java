@@ -1,6 +1,5 @@
 package com.oakinvest.lt.service.v1;
 
-import com.oakinvest.lt.service.V1Service;
 import io.swagger.annotations.Api;
 
 /**

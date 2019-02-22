@@ -1,6 +1,6 @@
 package com.oakinvest.lt.authentication.loosetouch;
 
-import com.oakinvest.lt.util.rest.LooseTouchException;
+import com.oakinvest.lt.util.error.LooseTouchException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
@@ -12,8 +12,8 @@ import java.util.Optional;
 import static com.oakinvest.lt.configuration.Application.BEARER_TYPE;
 import static com.oakinvest.lt.configuration.Application.LOOSE_TOUCH_TOKEN_PARAMETER;
 import static com.oakinvest.lt.configuration.Application.USER_ID_PARAMETER;
-import static com.oakinvest.lt.util.rest.LooseTouchErrorType.authentication_error;
-import static com.oakinvest.lt.util.rest.LooseTouchErrorType.invalid_request_error;
+import static com.oakinvest.lt.util.error.LooseTouchErrorType.authentication_error;
+import static com.oakinvest.lt.util.error.LooseTouchErrorType.invalid_request_error;
 
 /**
  * Authentication interceptor.

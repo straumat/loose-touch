@@ -1,4 +1,4 @@
-package com.oakinvest.lt.service;
+package com.oakinvest.lt.service.v1;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 

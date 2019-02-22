@@ -1,0 +1,35 @@
+package com.oakinvest.lt.util.mapper;
+
+import com.oakinvest.lt.domain.User;
+import com.oakinvest.lt.dto.v1.UserDTO;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.Mappings;
+import org.mapstruct.factory.Mappers;
+
+/**
+ * Loose touch mapper.
+ */
+@SuppressWarnings("unused")
+@Mapper
+public interface LooseTouchMapper {
+
+    /**
+     * Instance.
+     */
+    LooseTouchMapper INSTANCE = Mappers.getMapper(LooseTouchMapper.class);
+
+    /**
+     * Maps a user to a userDto.
+     *
+     * @param user user data
+     * @return userDTO
+     */
+    @Mappings({
+            @Mapping(source = "firstName", target = "firstName"),
+            @Mapping(source = "lastName", target = "lastName"),
+            @Mapping(source = "email", target = "email")
+    })
+    UserDTO userToUserDTO(User user);
+
+}
