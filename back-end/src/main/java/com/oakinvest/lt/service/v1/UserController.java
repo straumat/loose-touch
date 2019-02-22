@@ -18,7 +18,6 @@ import static com.oakinvest.lt.util.error.LooseTouchErrorType.api_error;
 /**
  * User controller.
  */
-@SuppressWarnings({"magicnumber", "unused"})
 @JsonInclude(NON_NULL)
 @RestController
 public class UserController implements UserAPI {

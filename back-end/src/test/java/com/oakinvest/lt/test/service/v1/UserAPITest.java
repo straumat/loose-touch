@@ -53,7 +53,7 @@ public class UserAPITest extends JUnitHelper {
         getMvc().perform(get(GET_PROFILE_URL)
                 .header("Authorization", "Bearer " + getLooseToucheToken(USER_1)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("firstName").value("loose"))
+                .andExpect(jsonPath("firstName").value("loose 1"))
                 .andExpect(jsonPath("lastName").value("touch 1"))
                 .andExpect(jsonPath("email").value("loose.touch.test.1@gmail.com"));
 
@@ -61,7 +61,7 @@ public class UserAPITest extends JUnitHelper {
         getMvc().perform(get(GET_PROFILE_URL)
                 .header("Authorization", "Bearer " + getLooseToucheToken(USER_2)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("firstName").value("loose"))
+                .andExpect(jsonPath("firstName").value("loose 2"))
                 .andExpect(jsonPath("lastName").value("touch 2"))
                 .andExpect(jsonPath("email").value("loose.touch.test.2@gmail.com"));
     }

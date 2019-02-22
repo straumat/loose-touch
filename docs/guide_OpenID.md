@@ -18,10 +18,14 @@ We use two ways to interact :
     * Client Secret : NsR7_eU8KCLZ85BEzske6v_C
 
   * Account loose.touch.test.1@gmail.com
+    * First name : loose 1
+    * Last name : touch 1
     * Password : stpide123 
     * Refresh token : 1/IMZ1k7G6ksE71CrvuaLXyKXswIIseVo039wv1cSwzY4
 
   * Account loose.touch.test.2@gmail.com
+    * First name : loose 2
+    * Last name : touch 2
     * Password : stpide123 
     * Refresh token : 1/2WbPyTeIpT2CH7744KE77WgcCWBxPjZkGRKYM2EUsWsMScMFzyZq0GmGy2WONcBp
 
