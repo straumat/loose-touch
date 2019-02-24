@@ -33,6 +33,11 @@ public class User {
     private String email;
 
     /**
+     * Profile image url.
+     */
+    private String imageUrl;
+
+    /**
      * Google username retrieved when signed up with google.
      */
     private String googleUsername;
@@ -49,11 +54,13 @@ public class User {
      * @param newFirstName first name
      * @param newLastName  last name
      * @param newEmail     email
+     * @param newImageUrl  image url
      */
-    public User(final String newFirstName, final String newLastName, final String newEmail) {
+    public User(final String newFirstName, final String newLastName, final String newEmail, final String newImageUrl) {
         this.firstName = newFirstName;
         this.lastName = newLastName;
         this.email = newEmail;
+        this.imageUrl = newImageUrl;
         this.googleUsername = newEmail;
     }
 
@@ -132,6 +139,24 @@ public class User {
      */
     public final void setEmail(final String newEmail) {
         email = newEmail;
+    }
+
+    /**
+     * Get imageUrl.
+     *
+     * @return imageUrl
+     */
+    public final String getImageUrl() {
+        return imageUrl;
+    }
+
+    /**
+     * Set imageUrl.
+     *
+     * @param newImageUrl the imageUrl to set
+     */
+    public final void setImageUrl(final String newImageUrl) {
+        imageUrl = newImageUrl;
     }
 
     /**

@@ -21,6 +21,11 @@ public class UserDTO {
     private String email;
 
     /**
+     * Profile image url.
+     */
+    private String imageUrl;
+
+    /**
      * Get firstName.
      *
      * @return firstName
@@ -74,4 +79,21 @@ public class UserDTO {
         email = newEmail;
     }
 
+    /**
+     * Get imageUrl.
+     *
+     * @return imageUrl
+     */
+    public final String getImageUrl() {
+        return imageUrl;
+    }
+
+    /**
+     * Set imageUrl.
+     *
+     * @param newImageUrl the imageUrl to set
+     */
+    public final void setImageUrl(final String newImageUrl) {
+        imageUrl = newImageUrl;
+    }
 }

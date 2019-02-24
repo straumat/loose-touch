@@ -71,7 +71,9 @@ public class LoginController implements LoginAPI {
                 String firstName = (String) token.get().get("given_name");
                 String lastName = (String) token.get().get("family_name");
                 String email = token.get().getEmail();
-                User u = new User(firstName, lastName, email);
+                String imageUrl = (String) token.get().get("picture");
+                System.out.println("===> " + imageUrl);
+                User u = new User(firstName, lastName, email, imageUrl);
                 userRepository.save(u);
                 return looseTouchTokenProvider.createToken(u.getId());
             }

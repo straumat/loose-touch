@@ -79,6 +79,7 @@ public class UserRepository {
                 .withKeyConditionExpression("GOOGLE_USERNAME = :googleUsername")
                 .withExpressionAttributeValues(eav);
 
+        // Run the query.
         List<User> users = mapper.query(User.class, queryExpression);
 
         // Returns the user if exists.
@@ -92,6 +93,7 @@ public class UserRepository {
 
     /**
      * Returns the number of users.
+     *
      * @return number of users.
      */
     public final long count() {
