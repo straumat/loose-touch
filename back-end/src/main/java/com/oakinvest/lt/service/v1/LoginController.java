@@ -4,8 +4,10 @@ import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 import com.oakinvest.lt.authentication.google.GoogleTokenVerifier;
 import com.oakinvest.lt.authentication.loosetouch.LooseTouchTokenProvider;
 import com.oakinvest.lt.domain.User;
+import com.oakinvest.lt.dto.v1.UserDTO;
 import com.oakinvest.lt.repository.UserRepository;
 import com.oakinvest.lt.util.error.LooseTouchException;
+import com.oakinvest.lt.util.mapper.LooseTouchMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -45,7 +47,7 @@ public class LoginController implements LoginAPI {
      * @return loose touch token
      */
     @Override
-    public final String googleLogin(final String googleIdToken) {
+    public final UserDTO googleLogin(final String googleIdToken) {
 
         // Google Id token missing.
         if (googleIdToken == null) {
@@ -61,21 +63,28 @@ public class LoginController implements LoginAPI {
             // It's a valid token.
 
             // Search for the user email address in the database.
-            Optional<User> user = userRepository.findUserByGoogleUsername(token.get().getEmail());
+            Optional<User> userInDatabase = userRepository.findUserByGoogleUsername(token.get().getEmail());
+            User user;
 
-            if (user.isPresent()) {
+            if (userInDatabase.isPresent()) {
                 // if the user in the database, we return a token.
-                return looseTouchTokenProvider.createToken(user.get().getId());
+                user = userInDatabase.get();
+                System.out.println("==>" + user);
+                System.out.println("==>" + user.getFirstName());
             } else {
                 // If not, we create it first and then, we return a token.
                 String firstName = (String) token.get().get("given_name");
                 String lastName = (String) token.get().get("family_name");
                 String email = token.get().getEmail();
                 String imageUrl = (String) token.get().get("picture");
-                User u = new User(firstName, lastName, email, imageUrl);
-                userRepository.save(u);
-                return looseTouchTokenProvider.createToken(u.getId());
+                user = new User(firstName, lastName, email, imageUrl);
+                userRepository.save(user);
             }
+
+            // Return the profile with the id token.
+            UserDTO u = LooseTouchMapper.INSTANCE.userToUserDTO(user);
+            u.setIdToken(looseTouchTokenProvider.createToken(user.getId()));
+            return u;
         }
 
     }

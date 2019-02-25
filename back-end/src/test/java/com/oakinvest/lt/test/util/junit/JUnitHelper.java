@@ -8,7 +8,10 @@ import com.amazonaws.services.dynamodbv2.model.CreateTableRequest;
 import com.amazonaws.services.dynamodbv2.model.CreateTableResult;
 import com.amazonaws.services.dynamodbv2.model.ProvisionedThroughput;
 import com.amazonaws.services.dynamodbv2.util.TableUtils;
+import com.jayway.jsonpath.JsonPath;
+import com.oakinvest.lt.authentication.loosetouch.LooseTouchTokenProvider;
 import com.oakinvest.lt.domain.User;
+import com.oakinvest.lt.repository.UserRepository;
 import com.oakinvest.lt.test.util.authentication.GoogleTokenRetriever;
 import com.oakinvest.lt.test.util.authentication.GoogleTokenRetrieverUser;
 import org.junit.After;
@@ -56,6 +59,18 @@ public class JUnitHelper {
      */
     @Autowired
     private AmazonDynamoDB dynamoDB;
+
+    /**
+     * User repository.
+     */
+    @Autowired
+    private UserRepository userRepository;
+
+    /**
+     * Loose touch token provider.
+     */
+    @Autowired
+    private LooseTouchTokenProvider looseTouchTokenProvider;
 
     /**
      * DynamoDB mapper.
@@ -115,7 +130,7 @@ public class JUnitHelper {
                     .param("googleIdToken", googleToken.get()))
                     .andExpect(status().isOk())
                     .andReturn();
-            return result.getResponse().getContentAsString();
+            return JsonPath.parse(result.getResponse().getContentAsString()).read("idToken").toString();
         } else {
             return null;
         }
@@ -138,6 +153,33 @@ public class JUnitHelper {
      */
     protected final MockMvc getMvc() {
         return mvc;
+    }
+
+    /**
+     * Get userRepository.
+     *
+     * @return userRepository
+     */
+    protected final UserRepository getUserRepository() {
+        return userRepository;
+    }
+
+    /**
+     * Get googleTokenRetriever.
+     *
+     * @return googleTokenRetriever
+     */
+    public final GoogleTokenRetriever getGoogleTokenRetriever() {
+        return googleTokenRetriever;
+    }
+
+    /**
+     * Get looseTouchTokenProvider.
+     *
+     * @return looseTouchTokenProvider
+     */
+    public final LooseTouchTokenProvider getLooseTouchTokenProvider() {
+        return looseTouchTokenProvider;
     }
 
 }

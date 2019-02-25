@@ -80,11 +80,13 @@ public class UserRepository {
                 .withExpressionAttributeValues(eav);
 
         // Run the query.
-        List<User> users = mapper.query(User.class, queryExpression);
+        List<User> user = mapper.query(User.class, queryExpression);
 
         // Returns the user if exists.
-        if (users.size() == 1) {
-            return Optional.of(users.get(0));
+        if (user.size() == 1) {
+            // TODO Try to understand why the mapping is not made automatically.
+            return getUser(user.get(0).getId());
+            //return Optional.of(user.get(0));
         } else {
             return Optional.empty();
         }

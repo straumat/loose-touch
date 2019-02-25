@@ -2,6 +2,7 @@ package com.oakinvest.lt.service.v1;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.oakinvest.lt.authentication.loosetouch.AuthenticatedUser;
+import com.oakinvest.lt.authentication.loosetouch.LooseTouchTokenProvider;
 import com.oakinvest.lt.domain.User;
 import com.oakinvest.lt.dto.v1.UserDTO;
 import com.oakinvest.lt.repository.UserRepository;
@@ -23,6 +24,12 @@ import static com.oakinvest.lt.util.error.LooseTouchErrorType.api_error;
 public class UserController implements UserAPI {
 
     /**
+     * JWT Token provider.
+     */
+    @Autowired
+    private LooseTouchTokenProvider looseTouchTokenProvider;
+
+    /**
      * User repository.
      */
     @Autowired
@@ -38,7 +45,9 @@ public class UserController implements UserAPI {
     public final UserDTO getProfile(final AuthenticatedUser authenticatedUser) {
         Optional<User> user = userRepository.getUser(authenticatedUser.getUserId());
         if (user.isPresent()) {
-            return LooseTouchMapper.INSTANCE.userToUserDTO(user.get());
+            UserDTO u = LooseTouchMapper.INSTANCE.userToUserDTO(user.get());
+            u.setIdToken(looseTouchTokenProvider.createToken(user.get().getId()));
+            return u;
         } else {
             throw new LooseTouchException(api_error, "User " + authenticatedUser.getUserId() + " not found");
         }

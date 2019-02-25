@@ -1,17 +1,20 @@
 package com.oakinvest.lt.test.service.v1;
 
+import com.jayway.jsonpath.JsonPath;
 import com.oakinvest.lt.test.util.junit.JUnitHelper;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.web.servlet.MvcResult;
 
 import static com.oakinvest.lt.test.util.authentication.GoogleTokenRetrieverUser.USER_1;
 import static com.oakinvest.lt.test.util.authentication.GoogleTokenRetrieverUser.USER_2;
 import static com.oakinvest.lt.util.error.LooseTouchErrorType.authentication_error;
 import static com.oakinvest.lt.util.error.LooseTouchErrorType.invalid_request_error;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
+import static org.springframework.test.util.AssertionErrors.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -50,22 +53,36 @@ public class UserAPITest extends JUnitHelper {
                 .andExpect(jsonPath("errors", hasSize(0)));
 
         // Getting user 1 profile.
-        getMvc().perform(get(GET_PROFILE_URL)
+        MvcResult result1 = getMvc().perform(get(GET_PROFILE_URL)
                 .header("Authorization", "Bearer " + getLooseToucheToken(USER_1)))
                 .andExpect(status().isOk())
+                .andExpect(jsonPath("idToken").isNotEmpty())
                 .andExpect(jsonPath("firstName").value("loose 1"))
                 .andExpect(jsonPath("lastName").value("touch 1"))
                 .andExpect(jsonPath("email").value("loose.touch.test.1@gmail.com"))
-                .andExpect(jsonPath("pictureUrl").value("https://lh5.googleusercontent.com/-vTIMhyL9ePM/AAAAAAAAAAI/AAAAAAAAAAA/ACevoQPEHAQw-lr-v1PCh4yr9AsWWmrITQ/s96-c/photo.jpg"));
+                .andExpect(jsonPath("pictureUrl").value("https://lh5.googleusercontent.com/-vTIMhyL9ePM/AAAAAAAAAAI/AAAAAAAAAAA/ACevoQPEHAQw-lr-v1PCh4yr9AsWWmrITQ/s96-c/photo.jpg"))
+                .andReturn();
+
+        // Check that the returned token is ok.
+        String looseTouchUser1Token = JsonPath.parse(result1.getResponse().getContentAsString()).read("idToken").toString();
+        assertTrue("Invalid token", getLooseTouchTokenProvider().getUserId(looseTouchUser1Token).isPresent());
+        assertTrue("Invalid user", getUserRepository().getUser(getLooseTouchTokenProvider().getUserId(looseTouchUser1Token).get()).isPresent());
 
         // Getting user 2 profile.
-        getMvc().perform(get(GET_PROFILE_URL)
+        MvcResult result2 = getMvc().perform(get(GET_PROFILE_URL)
                 .header("Authorization", "Bearer " + getLooseToucheToken(USER_2)))
                 .andExpect(status().isOk())
+                .andExpect(jsonPath("idToken").isNotEmpty())
                 .andExpect(jsonPath("firstName").value("loose 2"))
                 .andExpect(jsonPath("lastName").value("touch 2"))
                 .andExpect(jsonPath("email").value("loose.touch.test.2@gmail.com"))
-                .andExpect(jsonPath("pictureUrl").value("https://lh3.googleusercontent.com/-GxmjZPF4TI8/AAAAAAAAAAI/AAAAAAAAAAA/ACevoQMMdCafIH3Xd97DRl1nbQtbvuijAg/s96-c/photo.jpg"));
+                .andExpect(jsonPath("pictureUrl").value("https://lh3.googleusercontent.com/-GxmjZPF4TI8/AAAAAAAAAAI/AAAAAAAAAAA/ACevoQMMdCafIH3Xd97DRl1nbQtbvuijAg/s96-c/photo.jpg"))
+                .andReturn();
+
+        // Check that the returned token is ok.
+        String looseTouchUser2Token = JsonPath.parse(result2.getResponse().getContentAsString()).read("idToken").toString();
+        assertTrue("Invalid token", getLooseTouchTokenProvider().getUserId(looseTouchUser2Token).isPresent());
+        assertTrue("Invalid user", getUserRepository().getUser(getLooseTouchTokenProvider().getUserId(looseTouchUser2Token).get()).isPresent());
     }
 
 }

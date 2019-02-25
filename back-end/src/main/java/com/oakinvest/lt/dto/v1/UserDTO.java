@@ -6,6 +6,11 @@ package com.oakinvest.lt.dto.v1;
 public class UserDTO {
 
     /**
+     * ID Token.
+     */
+    private String idToken;
+
+    /**
      * First name.
      */
     private String firstName;
@@ -24,6 +29,24 @@ public class UserDTO {
      * Profile image url.
      */
     private String pictureUrl;
+
+    /**
+     * Get idToken.
+     *
+     * @return idToken
+     */
+    public final String getIdToken() {
+        return idToken;
+    }
+
+    /**
+     * Set idToken.
+     *
+     * @param newIdToken the idToken to set
+     */
+    public final void setIdToken(final String newIdToken) {
+        idToken = newIdToken;
+    }
 
     /**
      * Get firstName.
