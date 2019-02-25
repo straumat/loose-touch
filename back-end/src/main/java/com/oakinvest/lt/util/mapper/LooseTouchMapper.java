@@ -29,7 +29,7 @@ public interface LooseTouchMapper {
             @Mapping(source = "firstName", target = "firstName"),
             @Mapping(source = "lastName", target = "lastName"),
             @Mapping(source = "email", target = "email"),
-            @Mapping(source = "imageUrl", target = "imageUrl")
+            @Mapping(source = "pictureUrl", target = "pictureUrl")
     })
     UserDTO userToUserDTO(User user);
 

@@ -56,7 +56,7 @@ public class UserAPITest extends JUnitHelper {
                 .andExpect(jsonPath("firstName").value("loose 1"))
                 .andExpect(jsonPath("lastName").value("touch 1"))
                 .andExpect(jsonPath("email").value("loose.touch.test.1@gmail.com"))
-                .andExpect(jsonPath("imageUrl").value("https://lh5.googleusercontent.com/-vTIMhyL9ePM/AAAAAAAAAAI/AAAAAAAAAAA/ACevoQPEHAQw-lr-v1PCh4yr9AsWWmrITQ/s96-c/photo.jpg"));
+                .andExpect(jsonPath("pictureUrl").value("https://lh5.googleusercontent.com/-vTIMhyL9ePM/AAAAAAAAAAI/AAAAAAAAAAA/ACevoQPEHAQw-lr-v1PCh4yr9AsWWmrITQ/s96-c/photo.jpg"));
 
         // Getting user 2 profile.
         getMvc().perform(get(GET_PROFILE_URL)
@@ -65,7 +65,7 @@ public class UserAPITest extends JUnitHelper {
                 .andExpect(jsonPath("firstName").value("loose 2"))
                 .andExpect(jsonPath("lastName").value("touch 2"))
                 .andExpect(jsonPath("email").value("loose.touch.test.2@gmail.com"))
-                .andExpect(jsonPath("imageUrl").value("https://lh3.googleusercontent.com/-GxmjZPF4TI8/AAAAAAAAAAI/AAAAAAAAAAA/ACevoQMMdCafIH3Xd97DRl1nbQtbvuijAg/s96-c/photo.jpg"));
+                .andExpect(jsonPath("pictureUrl").value("https://lh3.googleusercontent.com/-GxmjZPF4TI8/AAAAAAAAAAI/AAAAAAAAAAA/ACevoQMMdCafIH3Xd97DRl1nbQtbvuijAg/s96-c/photo.jpg"));
     }
 
 }
