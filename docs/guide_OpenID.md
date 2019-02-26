@@ -27,7 +27,7 @@ We use two ways to interact :
     * First name : loose 2
     * Last name : touch 2
     * Password : stpide123 
-    * Refresh token : 1/2WbPyTeIpT2CH7744KE77WgcCWBxPjZkGRKYM2EUsWsMScMFzyZq0GmGy2WONcBp
+    * Refresh token : 1/lgRDorbgTjsJJvAJoyOjlLbVXBDiIiq2WK0mw9a_tNI
 
 ### How we use it.
 We use [Google Sign-In](https://developers.google.com/identity/sign-in/) to display a google sign-in button that launches the permission page and returns the google id_token to the page. The page then calls our back that check the google token and retrieves user information thanks to [Google client libraries](https://developers.google.com/identity/protocols/OpenIDConnect#libraries). Our back end returns our own JWT token.
@@ -190,7 +190,3 @@ function generateRefreshToken() {
 Run it once, it will provides you an url you have to connect to, in the URL, you will a code looking like `4/8QAS9khcUa0SuJ35AP_x6pVNp3lrS5DPgbYK5AN6Z42Yt4tidS7KP-NwRCIekkn7qAllFhAlv-gwnNZzT5fGOX4`.
 
 Insert this code in script as the value of the CODE variable and run it again, it will display your refresh code.
-
-You can now get as many refresh token as you want with the command :
-  * loose.touch.test.1@gmail.com : `curl https://www.googleapis.com/oauth2/v4/token -d client_id=408314219149-60s8l2ltrbal82hnuj35u81opt27ghsa.apps.googleusercontent.com -d client_secret=NsR7_eU8KCLZ85BEzske6v_C -d refresh_token=1/IMZ1k7G6ksE71CrvuaLXyKXswIIseVo039wv1cSwzY4 -d grant_type=refresh_token`
-  * loose.touch.test.2@gmail.com : `curl https://www.googleapis.com/oauth2/v4/token -d client_id=408314219149-60s8l2ltrbal82hnuj35u81opt27ghsa.apps.googleusercontent.com -d client_secret=NsR7_eU8KCLZ85BEzske6v_C -d refresh_token=1/2WbPyTeIpT2CH7744KE77WgcCWBxPjZkGRKYM2EUsWsMScMFzyZq0GmGy2WONcBp -d grant_type=refresh_token`

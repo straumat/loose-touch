@@ -9,8 +9,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MvcResult;
 
-import static com.oakinvest.lt.test.util.authentication.GoogleTokenRetrieverUser.USER_1;
-import static com.oakinvest.lt.test.util.authentication.GoogleTokenRetrieverUser.USER_2;
+import static com.oakinvest.lt.test.util.authentication.GoogleTestUsers.USER_1;
+import static com.oakinvest.lt.test.util.authentication.GoogleTestUsers.USER_2;
 import static com.oakinvest.lt.util.error.LooseTouchErrorType.authentication_error;
 import static com.oakinvest.lt.util.error.LooseTouchErrorType.invalid_request_error;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
@@ -57,10 +57,10 @@ public class UserAPITest extends JUnitHelper {
                 .header("Authorization", "Bearer " + getLooseToucheToken(USER_1)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("idToken").isNotEmpty())
-                .andExpect(jsonPath("firstName").value("loose 1"))
-                .andExpect(jsonPath("lastName").value("touch 1"))
-                .andExpect(jsonPath("email").value("loose.touch.test.1@gmail.com"))
-                .andExpect(jsonPath("pictureUrl").value("https://lh5.googleusercontent.com/-vTIMhyL9ePM/AAAAAAAAAAI/AAAAAAAAAAA/ACevoQPEHAQw-lr-v1PCh4yr9AsWWmrITQ/s96-c/photo.jpg"))
+                .andExpect(jsonPath("firstName").value(USER_1.getFirstName()))
+                .andExpect(jsonPath("lastName").value(USER_1.getLastName()))
+                .andExpect(jsonPath("email").value(USER_1.getEmail()))
+                .andExpect(jsonPath("pictureUrl").isString())
                 .andReturn();
 
         // Check that the returned token is ok.
@@ -73,10 +73,10 @@ public class UserAPITest extends JUnitHelper {
                 .header("Authorization", "Bearer " + getLooseToucheToken(USER_2)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("idToken").isNotEmpty())
-                .andExpect(jsonPath("firstName").value("loose 2"))
-                .andExpect(jsonPath("lastName").value("touch 2"))
-                .andExpect(jsonPath("email").value("loose.touch.test.2@gmail.com"))
-                .andExpect(jsonPath("pictureUrl").value("https://lh3.googleusercontent.com/-GxmjZPF4TI8/AAAAAAAAAAI/AAAAAAAAAAA/ACevoQMMdCafIH3Xd97DRl1nbQtbvuijAg/s96-c/photo.jpg"))
+                .andExpect(jsonPath("firstName").value(USER_2.getFirstName()))
+                .andExpect(jsonPath("lastName").value(USER_2.getLastName()))
+                .andExpect(jsonPath("email").value(USER_2.getEmail()))
+                .andExpect(jsonPath("pictureUrl").isString())
                 .andReturn();
 
         // Check that the returned token is ok.

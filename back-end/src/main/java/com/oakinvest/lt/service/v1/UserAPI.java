@@ -4,7 +4,6 @@ import com.oakinvest.lt.authentication.loosetouch.AuthenticatedUser;
 import com.oakinvest.lt.dto.v1.UserDTO;
 import com.oakinvest.lt.util.error.LooseTouchError;
 import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;

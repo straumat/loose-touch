@@ -1,8 +1,15 @@
 # Loose touch application configuration.
 application:
+  # Token configuration.
   jwt:
     secretKey: wM+aATpnGraHYHoEKa2Y4fXANZgffyoey2HPdv4SDzk=
     expirationDelay: 2592000000
+  # Test specific.
+  test:
+    user1:
+      refreshToken: 1/ST2ikxLlVoH3K352DN60nUQn8KW4NBpf2er2Q7QReF7qxNrXGNr4jqeLRBlPdwyc
+    user2:
+      refreshToken: 1/H50lw_FYGKr0xKJMDFC_FJ6jmEiTc8-WjEPRr8SWgLY
 
 # AWS Configuration.
 amazon:

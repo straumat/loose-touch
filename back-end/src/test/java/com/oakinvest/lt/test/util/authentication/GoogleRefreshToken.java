@@ -3,11 +3,13 @@ package com.oakinvest.lt.test.util.authentication;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.io.Serializable;
+
 /**
  * Google Token Response.
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class GoogleRefreshToken {
+public class GoogleRefreshToken implements Serializable {
 
     /**
      * A token that can be sent to a Google API.

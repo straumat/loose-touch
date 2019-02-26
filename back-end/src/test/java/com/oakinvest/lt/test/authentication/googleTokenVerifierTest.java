@@ -1,8 +1,10 @@
 package com.oakinvest.lt.test.authentication;
 
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 import com.oakinvest.lt.Application;
 import com.oakinvest.lt.authentication.google.GoogleTokenVerifier;
-import com.oakinvest.lt.test.util.authentication.GoogleTokenRetriever;
+import com.oakinvest.lt.test.util.authentication.GoogleRefreshToken;
+import com.oakinvest.lt.test.util.authentication.GoogleTokensRetriever;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -14,8 +16,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 import java.io.IOException;
 import java.util.Optional;
 
-import static com.oakinvest.lt.test.util.authentication.GoogleTokenRetrieverUser.USER_1;
-import static com.oakinvest.lt.test.util.authentication.GoogleTokenRetrieverUser.USER_2;
+import static com.oakinvest.lt.test.util.authentication.GoogleTestUsers.USER_1;
+import static com.oakinvest.lt.test.util.authentication.GoogleTestUsers.USER_2;
 import static junit.framework.TestCase.*;
 
 /**
@@ -24,11 +26,6 @@ import static junit.framework.TestCase.*;
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {Application.class})
 public class googleTokenVerifierTest {
-
-    /**
-     * Logger.
-     */
-    private final Logger log = LoggerFactory.getLogger(googleTokenVerifierTest.class);
 
     /**
      * Google token verifier.
@@ -40,7 +37,7 @@ public class googleTokenVerifierTest {
      * Google token retriever.
      */
     @Autowired
-    private GoogleTokenRetriever googleTokenRetriever;
+    private GoogleTokensRetriever googleTokenRetriever;
 
     /**
      * Test with user 1.
@@ -55,19 +52,26 @@ public class googleTokenVerifierTest {
         final String user1ExpiredToken = "eyJhbGciOiJSUzI1NiIsImtpZCI6IjdjMzA5ZTNhMWMxOTk5Y2IwNDA0YWI3MTI1ZWU0MGI3Y2RiY2FmN2QiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmdvb2dsZS5jb20iLCJhenAiOiI0MDgzMTQyMTkxNDktNjBzOGwybHRyYmFsODJobnVqMzV1ODFvcHQyN2doc2EuYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJhdWQiOiI0MDgzMTQyMTkxNDktNjBzOGwybHRyYmFsODJobnVqMzV1ODFvcHQyN2doc2EuYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJzdWIiOiIxMTU3ODc3MTAxOTYwNjc0NzY4ODEiLCJlbWFpbCI6Imxvb3NlLnRvdWNoLnRlc3QuMkBnbWFpbC5jb20iLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwiYXRfaGFzaCI6IjRMb180U0w4MzZjSXUyMkxJcE9rUXciLCJuYW1lIjoibG9vc2UgdG91Y2ggMiIsInBpY3R1cmUiOiJodHRwczovL2xoMy5nb29nbGV1c2VyY29udGVudC5jb20vLUd4bWpaUEY0VEk4L0FBQUFBQUFBQUFJL0FBQUFBQUFBQUFBL0FDZXZvUU1NZENhZklIM1hkOTdEUmwxbmJRdGJ2dWlqQWcvczk2LWMvcGhvdG8uanBnIiwiZ2l2ZW5fbmFtZSI6Imxvb3NlIiwiZmFtaWx5X25hbWUiOiJ0b3VjaCAyIiwibG9jYWxlIjoiZnIiLCJpYXQiOjE1NTAyMzI2MDksImV4cCI6MTU1MDIzNjIwOX0.vLeSIFRUtHJtiy58682xZOvIO3hPwuTGR0VTEoSHvwyT3yBtaOHYWPum4CTMbUxiBq6hupPJoJ3IMVbgDxLs0PfnYxQDrow50qaC5Lcio-BsTy2xJxnL1kCFILs6AYVnDEBhaGQ57M6u8BAKnaap2oOhK20x7I9n4hcxqba0dEqOkuy4NPgCe3UoXgg6hS8-XhEEzs7rPoMrzFvnz6HZANmU0GSNdI94xSG_a9PqYddBcjBLdWgEKshywlnKM7T5FvXq2Uo2Hl_wtp8qYFI2lDjGJdRzTBQ7VyU3BPNgkDB0ReGoOeT1webGSSCc8_txc7F_DIgv90KfvwbDNxEusg";
         assertFalse("Expired token was accepted", googleTokenVerifier.verifyToken(user1ExpiredToken).isPresent());
 
-        // getting a new token frm google.
-        Optional<String> token = googleTokenRetriever.getIdToken(USER_1);
-        assertTrue("No token was givern from gooogle.", token.isPresent());
-        assertNotNull("Empty token", token.get());
-        assertTrue("Invalid token", googleTokenVerifier.verifyToken(token.get()).isPresent());
-        assertEquals("Invalid user", USER_1.getEmail(), googleTokenVerifier.verifyToken(token.get()).get().getEmail());
+        // getting a new token from google.
+        Optional<GoogleRefreshToken> token = googleTokenRetriever.getIdToken(USER_1);
+        assertTrue("No token was given by google", token.isPresent());
+
+        // Check token data.
+/*
+        Optional<GoogleIdToken.Payload> payload = googleTokenVerifier.verifyToken(token.get().getIdToken());
+        assertTrue("No payload", payload.isPresent());
+        assertEquals("Invalid user", USER_1.getEmail(), payload.get().getEmail());
+        assertEquals("Wrong first name", "loose 1", payload.get().get("given_name"));
+        assertEquals("Wrong family name", "touch 1", payload.get().get("family_name"));
+        assertEquals("Picture url", "https://lh5.googleusercontent.com/-vTIMhyL9ePM/AAAAAAAAAAI/AAAAAAAAAAA/ACevoQPEHAQw-lr-v1PCh4yr9AsWWmrITQ/s96-c/photo.jpg", payload.get().get("picture"));
+*/
     }
 
     /**
      * Test with user 2.
      */
     @Test
-    public void user21TokenVerificationTest() throws IOException {
+    public void user2TokenVerificationTest() throws IOException {
         // Invalid token for user 2.
         final String user2InvalidToken = "eyJhbGciOiJIUzM4NCIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWUsImlhdCI6MTUxNjIzOTAyMn0.bQTnz6AuMJvmXXQsVPrxeQNvzDkimo7VNXxHeSBfClLufmCVZRUuyTwJF311JHuh";
         assertFalse("Invalid token was accepted", googleTokenVerifier.verifyToken(user2InvalidToken).isPresent());
@@ -76,12 +80,19 @@ public class googleTokenVerifierTest {
         final String user2ExpiredToken = "eyJhbGciOiJSUzI1NiIsImtpZCI6IjdjMzA5ZTNhMWMxOTk5Y2IwNDA0YWI3MTI1ZWU0MGI3Y2RiY2FmN2QiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmdvb2dsZS5jb20iLCJhenAiOiI0MDgzMTQyMTkxNDktNjBzOGwybHRyYmFsODJobnVqMzV1ODFvcHQyN2doc2EuYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJhdWQiOiI0MDgzMTQyMTkxNDktNjBzOGwybHRyYmFsODJobnVqMzV1ODFvcHQyN2doc2EuYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJzdWIiOiIxMTU3ODc3MTAxOTYwNjc0NzY4ODEiLCJlbWFpbCI6Imxvb3NlLnRvdWNoLnRlc3QuMkBnbWFpbC5jb20iLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwiYXRfaGFzaCI6IjRMb180U0w4MzZjSXUyMkxJcE9rUXciLCJuYW1lIjoibG9vc2UgdG91Y2ggMiIsInBpY3R1cmUiOiJodHRwczovL2xoMy5nb29nbGV1c2VyY29udGVudC5jb20vLUd4bWpaUEY0VEk4L0FBQUFBQUFBQUFJL0FBQUFBQUFBQUFBL0FDZXZvUU1NZENhZklIM1hkOTdEUmwxbmJRdGJ2dWlqQWcvczk2LWMvcGhvdG8uanBnIiwiZ2l2ZW5fbmFtZSI6Imxvb3NlIiwiZmFtaWx5X25hbWUiOiJ0b3VjaCAyIiwibG9jYWxlIjoiZnIiLCJpYXQiOjE1NTAyMzI2MDksImV4cCI6MTU1MDIzNjIwOX0.vLeSIFRUtHJtiy58682xZOvIO3hPwuTGR0VTEoSHvwyT3yBtaOHYWPum4CTMbUxiBq6hupPJoJ3IMVbgDxLs0PfnYxQDrow50qaC5Lcio-BsTy2xJxnL1kCFILs6AYVnDEBhaGQ57M6u8BAKnaap2oOhK20x7I9n4hcxqba0dEqOkuy4NPgCe3UoXgg6hS8-XhEEzs7rPoMrzFvnz6HZANmU0GSNdI94xSG_a9PqYddBcjBLdWgEKshywlnKM7T5FvXq2Uo2Hl_wtp8qYFI2lDjGJdRzTBQ7VyU3BPNgkDB0ReGoOeT1webGSSCc8_txc7F_DIgv90KfvwbDNxEusg";
         assertFalse("Expired token was accepted", googleTokenVerifier.verifyToken(user2ExpiredToken).isPresent());
 
-        // getting a new token frm google.
-        Optional<String> token = googleTokenRetriever.getIdToken(USER_2);
-        assertTrue("No token was givern from gooogle.", token.isPresent());
-        assertNotNull("Empty token", token.get());
-        assertTrue("Invalid token", googleTokenVerifier.verifyToken(token.get()).isPresent());
-        assertEquals("Invalid user", USER_2.getEmail(), googleTokenVerifier.verifyToken(token.get()).get().getEmail());
+        // getting a new token from google.
+        Optional<GoogleRefreshToken> token = googleTokenRetriever.getIdToken(USER_2);
+        assertTrue("No token was given by google", token.isPresent());
+
+        // Check payload data.
+/*
+        Optional<GoogleIdToken.Payload> payload = googleTokenVerifier.verifyToken(token.get().getIdToken());
+        assertTrue("No payload", payload.isPresent());
+        assertEquals("Invalid user", USER_2.getEmail(), payload.get().getEmail());
+        assertEquals("Wrong first name", "loose 2", payload.get().get("given_name"));
+        assertEquals("Wrong family name", "touch 2", payload.get().get("family_name"));
+        assertEquals("Picture url", "https://lh3.googleusercontent.com/-GxmjZPF4TI8/AAAAAAAAAAI/AAAAAAAAAAA/ACevoQMMdCafIH3Xd97DRl1nbQtbvuijAg/s96-c/photo.jpg", payload.get().get("picture"));
+*/
     }
 
 }

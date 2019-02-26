@@ -1,10 +1,9 @@
 package com.oakinvest.lt.test.service.v1;
 
 import com.jayway.jsonpath.JsonPath;
-import com.oakinvest.lt.authentication.loosetouch.LooseTouchTokenProvider;
 import com.oakinvest.lt.domain.User;
 import com.oakinvest.lt.repository.UserRepository;
-import com.oakinvest.lt.test.util.authentication.GoogleTokenRetriever;
+import com.oakinvest.lt.test.util.authentication.GoogleRefreshToken;
 import com.oakinvest.lt.test.util.junit.JUnitHelper;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -17,8 +16,8 @@ import org.springframework.test.web.servlet.MvcResult;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
-import static com.oakinvest.lt.test.util.authentication.GoogleTokenRetrieverUser.USER_1;
-import static com.oakinvest.lt.test.util.authentication.GoogleTokenRetrieverUser.USER_2;
+import static com.oakinvest.lt.test.util.authentication.GoogleTestUsers.USER_1;
+import static com.oakinvest.lt.test.util.authentication.GoogleTestUsers.USER_2;
 import static com.oakinvest.lt.util.error.LooseTouchErrorType.authentication_error;
 import static com.oakinvest.lt.util.error.LooseTouchErrorType.invalid_request_error;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
@@ -75,7 +74,7 @@ public class LoginAPITest extends JUnitHelper {
                 .andExpect(jsonPath("errors", hasSize(0)));
 
         // Valid user token (loose.touch.test.1@gmail.com).
-        Optional<String> user1GoogleToken = getGoogleTokenRetriever().getIdToken(USER_1);
+        Optional<GoogleRefreshToken> user1GoogleToken = getGoogleTokenRetriever().getIdToken(USER_1);
         if (user1GoogleToken.isPresent()) {
             // Check that there is no user in the database.
             assertEquals("There are users in the database", 0, userRepository.count());
@@ -83,14 +82,20 @@ public class LoginAPITest extends JUnitHelper {
             // Check that the user doesn't exists yet.
             assertFalse("User 1 already exists", userRepository.findUserByGoogleUsername(USER_1.getEmail()).isPresent());
 
+
+            System.out.println("==>" + user1GoogleToken.get().getIdToken());
+            System.out.println("==>" + user1GoogleToken.get().getAccessToken());
+
+
             // First login.
             MvcResult result = getMvc().perform(get(GOOGLE_LOGIN_URL)
-                    .param("googleIdToken", user1GoogleToken.get()))
+                    .param("googleIdToken", user1GoogleToken.get().getIdToken())
+                    .param("googleAccessToken", user1GoogleToken.get().getAccessToken()))
                     .andExpect(jsonPath("idToken").isNotEmpty())
-                    .andExpect(jsonPath("firstName").value("loose 1"))
-                    .andExpect(jsonPath("lastName").value("touch 1"))
-                    .andExpect(jsonPath("email").value("loose.touch.test.1@gmail.com"))
-                    .andExpect(jsonPath("pictureUrl").value("https://lh5.googleusercontent.com/-vTIMhyL9ePM/AAAAAAAAAAI/AAAAAAAAAAA/ACevoQPEHAQw-lr-v1PCh4yr9AsWWmrITQ/s96-c/photo.jpg"))
+                    .andExpect(jsonPath("firstName").value(USER_1.getFirstName()))
+                    .andExpect(jsonPath("lastName").value(USER_1.getLastName()))
+                    .andExpect(jsonPath("email").value(USER_1.getEmail()))
+                    .andExpect(jsonPath("pictureUrl").isString())
                     .andExpect(status().isOk())
                     .andReturn();
             String looseTouchUser1Token1 = JsonPath.parse(result.getResponse().getContentAsString()).read("idToken").toString();
@@ -106,13 +111,13 @@ public class LoginAPITest extends JUnitHelper {
 
             // Second login.
             result = getMvc().perform(get(GOOGLE_LOGIN_URL)
-                    .param("googleIdToken", user1GoogleToken.get()))
+                    .param("googleIdToken", user1GoogleToken.get().getIdToken()))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("idToken").isNotEmpty())
-                    .andExpect(jsonPath("firstName").value("loose 1"))
-                    .andExpect(jsonPath("lastName").value("touch 1"))
-                    .andExpect(jsonPath("email").value("loose.touch.test.1@gmail.com"))
-                    .andExpect(jsonPath("pictureUrl").value("https://lh5.googleusercontent.com/-vTIMhyL9ePM/AAAAAAAAAAI/AAAAAAAAAAA/ACevoQPEHAQw-lr-v1PCh4yr9AsWWmrITQ/s96-c/photo.jpg"))
+                    .andExpect(jsonPath("firstName").value(USER_1.getFirstName()))
+                    .andExpect(jsonPath("lastName").value(USER_1.getLastName()))
+                    .andExpect(jsonPath("email").value(USER_1.getEmail()))
+                    .andExpect(jsonPath("pictureUrl").isString())
                     .andReturn();
             String looseTouchUser1Token2 = JsonPath.parse(result.getResponse().getContentAsString()).read("idToken").toString();
 
@@ -128,7 +133,7 @@ public class LoginAPITest extends JUnitHelper {
         }
 
         // Another user.
-        Optional<String> user2GoogleToken = getGoogleTokenRetriever().getIdToken(USER_2);
+        Optional<GoogleRefreshToken> user2GoogleToken = getGoogleTokenRetriever().getIdToken(USER_2);
         if (user2GoogleToken.isPresent()) {
             // Check that there is one user in the database.
             assertEquals("There are two users in the database", 1, userRepository.count());
@@ -138,13 +143,14 @@ public class LoginAPITest extends JUnitHelper {
 
             // First login.
             MvcResult result = getMvc().perform(get(GOOGLE_LOGIN_URL)
-                    .param("googleIdToken", user2GoogleToken.get()))
+                    .param("googleIdToken", user2GoogleToken.get().getIdToken())
+                    .param("googleAccessToken", user2GoogleToken.get().getAccessToken()))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("idToken").isNotEmpty())
-                    .andExpect(jsonPath("firstName").value("loose 2"))
-                    .andExpect(jsonPath("lastName").value("touch 2"))
-                    .andExpect(jsonPath("email").value("loose.touch.test.2@gmail.com"))
-                    .andExpect(jsonPath("pictureUrl").value("https://lh3.googleusercontent.com/-GxmjZPF4TI8/AAAAAAAAAAI/AAAAAAAAAAA/ACevoQMMdCafIH3Xd97DRl1nbQtbvuijAg/s96-c/photo.jpg"))
+                    .andExpect(jsonPath("firstName").value(USER_2.getFirstName()))
+                    .andExpect(jsonPath("lastName").value(USER_2.getLastName()))
+                    .andExpect(jsonPath("email").value(USER_2.getEmail()))
+                    .andExpect(jsonPath("pictureUrl").isString())
                     .andReturn();
             String looseTouchUser2Token1 = JsonPath.parse(result.getResponse().getContentAsString()).read("idToken").toString();
 
@@ -159,13 +165,13 @@ public class LoginAPITest extends JUnitHelper {
 
             // Second login.
             result = getMvc().perform(get(GOOGLE_LOGIN_URL)
-                    .param("googleIdToken", user2GoogleToken.get()))
+                    .param("googleIdToken", user2GoogleToken.get().getIdToken()))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("idToken").isNotEmpty())
-                    .andExpect(jsonPath("firstName").value("loose 2"))
-                    .andExpect(jsonPath("lastName").value("touch 2"))
-                    .andExpect(jsonPath("email").value("loose.touch.test.2@gmail.com"))
-                    .andExpect(jsonPath("pictureUrl").value("https://lh3.googleusercontent.com/-GxmjZPF4TI8/AAAAAAAAAAI/AAAAAAAAAAA/ACevoQMMdCafIH3Xd97DRl1nbQtbvuijAg/s96-c/photo.jpg"))
+                    .andExpect(jsonPath("firstName").value(USER_2.getFirstName()))
+                    .andExpect(jsonPath("lastName").value(USER_2.getLastName()))
+                    .andExpect(jsonPath("email").value(USER_2.getEmail()))
+                    .andExpect(jsonPath("pictureUrl").isString())
                     .andReturn();
             String looseTouchUser2Token2 = JsonPath.parse(result.getResponse().getContentAsString()).read("idToken").toString();
 

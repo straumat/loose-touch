@@ -12,8 +12,9 @@ import com.jayway.jsonpath.JsonPath;
 import com.oakinvest.lt.authentication.loosetouch.LooseTouchTokenProvider;
 import com.oakinvest.lt.domain.User;
 import com.oakinvest.lt.repository.UserRepository;
-import com.oakinvest.lt.test.util.authentication.GoogleTokenRetriever;
-import com.oakinvest.lt.test.util.authentication.GoogleTokenRetrieverUser;
+import com.oakinvest.lt.test.util.authentication.GoogleRefreshToken;
+import com.oakinvest.lt.test.util.authentication.GoogleTokensRetriever;
+import com.oakinvest.lt.test.util.authentication.GoogleTestUsers;
 import org.junit.After;
 import org.junit.Before;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,8 +23,8 @@ import org.springframework.test.web.servlet.MvcResult;
 
 import java.util.Optional;
 
-import static com.oakinvest.lt.test.util.authentication.GoogleTokenRetrieverUser.USER_1;
-import static com.oakinvest.lt.test.util.authentication.GoogleTokenRetrieverUser.USER_2;
+import static com.oakinvest.lt.test.util.authentication.GoogleTestUsers.USER_1;
+import static com.oakinvest.lt.test.util.authentication.GoogleTestUsers.USER_2;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -52,7 +53,7 @@ public class JUnitHelper {
      * Google token retriever.
      */
     @Autowired
-    private GoogleTokenRetriever googleTokenRetriever;
+    private GoogleTokensRetriever googleTokenRetriever;
 
     /**
      * DynamoDB connection.
@@ -73,11 +74,6 @@ public class JUnitHelper {
     private LooseTouchTokenProvider looseTouchTokenProvider;
 
     /**
-     * DynamoDB mapper.
-     */
-    private DynamoDBMapper mapper;
-
-    /**
      * Start DynamoDB.
      */
     @Before
@@ -87,7 +83,7 @@ public class JUnitHelper {
         server = ServerRunner.createServerFromCommandLineArgs(localArgs);
         server.start();
 
-        mapper = new DynamoDBMapper(dynamoDB);
+        DynamoDBMapper mapper = new DynamoDBMapper(dynamoDB);
 
         // Creates the tables.
         ProvisionedThroughput provisionedThroughput = new ProvisionedThroughput(5L, 5L);
@@ -117,8 +113,8 @@ public class JUnitHelper {
      * @return token
      * @throws Exception exception
      */
-    protected String getLooseToucheToken(final GoogleTokenRetrieverUser user) throws Exception {
-        Optional<String> googleToken;
+    protected String getLooseToucheToken(final GoogleTestUsers user) throws Exception {
+        Optional<GoogleRefreshToken> googleToken;
         if (USER_1 == user) {
             googleToken = googleTokenRetriever.getIdToken(USER_1);
         } else {
@@ -127,7 +123,8 @@ public class JUnitHelper {
 
         if (googleToken.isPresent()) {
             MvcResult result = mvc.perform(get(GOOGLE_LOGIN_URL)
-                    .param("googleIdToken", googleToken.get()))
+                    .param("googleIdToken", googleToken.get().getIdToken())
+                    .param("googleAccessToken", googleToken.get().getAccessToken()))
                     .andExpect(status().isOk())
                     .andReturn();
             return JsonPath.parse(result.getResponse().getContentAsString()).read("idToken").toString();
@@ -135,15 +132,6 @@ public class JUnitHelper {
             return null;
         }
 
-    }
-
-    /**
-     * Get mapper.
-     *
-     * @return mapper
-     */
-    protected final DynamoDBMapper getMapper() {
-        return mapper;
     }
 
     /**
@@ -169,7 +157,7 @@ public class JUnitHelper {
      *
      * @return googleTokenRetriever
      */
-    public final GoogleTokenRetriever getGoogleTokenRetriever() {
+    public final GoogleTokensRetriever getGoogleTokenRetriever() {
         return googleTokenRetriever;
     }
 

@@ -33,7 +33,8 @@ public interface LoginAPI extends V1Service {
     /**
      * Application login for google (if the user doesn't exists, creates it).
      *
-     * @param googleIdToken Google ID token
+     * @param googleIdToken     Google ID token
+     * @param googleAccessToken Google access token
      * @return loose touch token
      */
     @RequestMapping(value = "/login/google",
@@ -43,7 +44,10 @@ public interface LoginAPI extends V1Service {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "googleIdToken",
                     dataType = "string",
-                    value = "Google ID token")
+                    value = "Google id token"),
+            @ApiImplicitParam(name = "googleAccessToken",
+                    dataType = "string",
+                    value = "Google access token")
     })
     @ApiResponses(value = {
             @ApiResponse(code = STATUS_OK, message = STATUS_OK_MESSAGE, response = UserDTO.class),
@@ -53,7 +57,9 @@ public interface LoginAPI extends V1Service {
             @ApiResponse(code = STATUS_REQUEST_FAILED, message = STATUS_REQUEST_FAILED_MESSAGE, response = LooseTouchError.class),
             @ApiResponse(code = STATUS_INTERNAL_SERVER_ERROR, message = STATUS_INTERNAL_SERVER_ERROR_MESSAGE, response = LooseTouchError.class)
     })
-    UserDTO googleLogin(@ApiParam(value = "Google ID token")
-                       @RequestParam(required = false) String googleIdToken);
+    UserDTO googleLogin(@ApiParam(value = "Google id token")
+                        @RequestParam(required = false) String googleIdToken,
+                        @ApiParam(value = "Google access token")
+                        @RequestParam(required = false) String googleAccessToken);
 
 }

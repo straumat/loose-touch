@@ -1,102 +1,29 @@
 <html lang="en">
 <head>
-    <script src="https://apis.google.com/js/platform.js?onload=init" async defer></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.18.0/axios.js" async defer></script>
+    <meta name="google-signin-scope" content="profile email">
+    <meta name="google-signin-client_id"
+          content="408314219149-60s8l2ltrbal82hnuj35u81opt27ghsa.apps.googleusercontent.com">
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
 </head>
 <body>
-<div class="g-signin2"  data-theme="dark"></div>
+<div class="g-signin2" data-onsuccess="onSignIn" data-theme="dark"></div>
 <script>
-    function init() {
-        gapi.load('auth2', function() {
-            // Ready.
-            gapi.auth2.authorize({
-                client_id: '332245545817-5nl0021fkonhclc7rbj5ehm3j2h51u8o.apps.googleusercontent.com',
-                scope: 'email profile openid',
-                response_type: 'accessToken idToken code',
-                accesstype: 'offline',
-                prompt: 'consent',
-                approval_prompt: 'force'
-            }, function(response) {
-                if (response.error) {
-                    console.log("error");
-                    return;
-                }
-                // The user authorized the application for the scopes requested.
-                var accessToken = response.accessToken;
-                var idToken = response.idToken;
-                var code = response.code;
-                console.log("accessToken " + accessToken);
-                console.log("idToken " + idToken);
-                console.log("code " + code);
-                console.log("refresh_token " + response.refresh_token);
+    function onSignIn(googleUser) {
+        // Useful data for your client-side scripts:
+        var profile = googleUser.getBasicProfile();
+        console.log("ID: " + profile.getId()); // Don't send this directly to your server!
+        console.log('Full Name: ' + profile.getName());
+        console.log('Given Name: ' + profile.getGivenName());
+        console.log('Family Name: ' + profile.getFamilyName());
+        console.log("Image URL: " + profile.getImageUrl());
+        console.log("Email: " + profile.getEmail());
 
-                console.log("json : " + JSON.stringify(response));
-
-
-
-                generateRefreshToken(code);
-
-                // You can also now use gapi.client to perform authenticated requests.
-            });
-        });
+        // The ID token you need to pass to your backend:
+        var id_token = googleUser.getAuthResponse().id_token;
+        var access_token = googleUser.getAuthResponse().access_token;
+        console.log("ID Token: " + id_token);
+        console.log("Access Token: " + access_token);
     }
-
-
-    /**
-     * Generates a refresh token given the authorization code.
-     */
-    function generateRefreshToken(code) {
-        var payload = {
-            code: code,
-            client_id: '332245545817-5nl0021fkonhclc7rbj5ehm3j2h51u8o.apps.googleusercontent.com',
-            client_secret: 'kulc8b4YpJ4vhuXYxGOD9CTB',
-            // Specify that no redirection should take place
-            // This is Google-specific and not part of the OAuth2 specification.
-            redirect_uri: 'urn:ietf:wg:oauth:2.0:oob',
-            grant_type: 'authorization_code'
-        };
-        var options = {body: payload, headers: {
-            'Access-Control-Allow-Origin': 'http://localhost:8080'
-            }};
-//        var response = UrlFetchApp.fetch('https://accounts.google.com/o/oauth2/token', options);
-
-        axios.get('https://accounts.google.com/o/oauth2/token', options)
-            .then(function(response) {console.log(JSON.stringify(response))});
-
-
-
-    }
-
-/*
-    var data = JSON.parse(response.getContentText());
-    if (data.refresh_token) {
-        var msg = 'Success! Refresh token: ' + data.refresh_token +
-            '\n\nThe following may also be a useful format for pasting into your ' +
-            'script:\n\n' +
-            'var REFRESH_TOKEN = \'' + data.refresh_token + '\';';
-        Logger.log(msg);
-    } else {
-        Logger.log(
-            'Error, failed to generate Refresh token: ' +
-            response.getContentText());
-    }
-
-*/
-
-    /*    function onSignIn(googleUser) {
-            // Useful data for your client-side scripts:
-            var profile = googleUser.getBasicProfile();
-            console.log("ID: " + profile.getId()); // Don't send this directly to your server!
-            console.log('Full Name: ' + profile.getName());
-            console.log('Given Name: ' + profile.getGivenName());
-            console.log('Family Name: ' + profile.getFamilyName());
-            console.log("Image URL: " + profile.getImageUrl());
-            console.log("Email: " + profile.getEmail());
-
-            // The ID token you need to pass to your backend:
-            var idToken = googleUser.getAuthResponse().idToken;
-            console.log("ID Token: " + idToken);
-        }*/
 </script>
 </body>
 </html>

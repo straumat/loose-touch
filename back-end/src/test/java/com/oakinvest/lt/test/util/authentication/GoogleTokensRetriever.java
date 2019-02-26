@@ -10,32 +10,31 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.charset.Charset;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
-import static com.oakinvest.lt.test.util.authentication.GoogleTokenRetrieverUser.USER_1;
+import static com.oakinvest.lt.test.util.authentication.GoogleTestUsers.USER_1;
 
 /**
  * Google token retriever.
  */
 @Component
-public class GoogleTokenRetriever {
+public class GoogleTokensRetriever {
 
     /**
      * Logger.
      */
-    private final Logger log = LoggerFactory.getLogger(GoogleTokenRetriever.class);
+    private final Logger log = LoggerFactory.getLogger(GoogleTokensRetriever.class);
 
     /**
      * Client id.
@@ -58,31 +57,34 @@ public class GoogleTokenRetriever {
     /**
      * Google refresh token for test user 1 (loose.touch.test.1@gmail.com).
      */
-    private static final String USER_1_GOOGLE_REFRESH_TOKEN = "1/IMZ1k7G6ksE71CrvuaLXyKXswIIseVo039wv1cSwzY4";
-
-    /**
-     * File name of the file where is stored google id token for test user 1 (loose.touch.test.1@gmail.com).
-     */
-    private static final String USER_1_GOOGLE_ID_TOKEN_FILE_NAME = "google-id-token-test-1.txt";
+    @Value("${application.test.user1.refreshToken}")
+    private String user1GoogleRefreshToken;
 
     /**
      * Google refresh token for test user 2 (loose.touch.test.2@gmail.com).
      */
-    private static final String USER_2_GOOGLE_REFRESH_TOKEN = "1/2WbPyTeIpT2CH7744KE77WgcCWBxPjZkGRKYM2EUsWsMScMFzyZq0GmGy2WONcBp";
+    @Value("${application.test.user2.refreshToken}")
+    private String user2GoogleRefreshToken;
 
     /**
-     * File name of the file where is stored google id token for test user 2 (loose.touch.test.2@gmail.com).
+     * File name of the file where is stored google tokens for test user 1 (loose.touch.test.1@gmail.com).
      */
-    private static final String USER_2_GOOGLE_ID_TOKEN_FILE_NAME = "google-id-token-test-2.txt";
+    private static final String USER_1_GOOGLE_TOKENS_FILE_NAME = "google-id-token-test-1.ser";
+
+    /**
+     * File name of the file where is stored google tokens for test user 2 (loose.touch.test.2@gmail.com).
+     */
+    private static final String USER_2_GOOGLE_TOKENS_FILE_NAME = "google-id-token-test-2.ser";
 
     /**
      * Retrieve an id ticket for a given user.
+     *
      * @param user user (USER_1 or USER_2).
      * @return google id token.
      */
-    public Optional<String> getIdToken(final GoogleTokenRetrieverUser user) throws IOException {
+    public Optional<GoogleRefreshToken> getIdToken(final GoogleTestUsers user) throws IOException {
         log.info("Asking for a token for user " + user);
-        Optional<String> idToken = getIdTokenFromCache(user);
+        Optional<GoogleRefreshToken> idToken = getIdTokenFromCache(user);
 
         if (idToken.isPresent()) {
             log.info("Token for user " + user + " found in cache : " + idToken.get());
@@ -102,16 +104,17 @@ public class GoogleTokenRetriever {
 
     /**
      * Retrieve an id ticket from cache for a given user.
+     *
      * @param user user (USER_1 or USER_2).
      * @return google id token.
      */
-    private Optional<String>getIdTokenFromCache(final GoogleTokenRetrieverUser user) throws IOException {
+    private Optional<GoogleRefreshToken> getIdTokenFromCache(final GoogleTestUsers user) throws IOException {
         // File containing the token.
         File googleIdTokenFile;
         if (user.equals(USER_1)) {
-            googleIdTokenFile = new File(USER_1_GOOGLE_ID_TOKEN_FILE_NAME);
+            googleIdTokenFile = new File(USER_1_GOOGLE_TOKENS_FILE_NAME);
         } else {
-            googleIdTokenFile = new File(USER_2_GOOGLE_ID_TOKEN_FILE_NAME);
+            googleIdTokenFile = new File(USER_2_GOOGLE_TOKENS_FILE_NAME);
         }
 
         // If the file exists.
@@ -120,8 +123,8 @@ public class GoogleTokenRetriever {
             // If the file is older than google id token expiration, we delete it.
             BasicFileAttributes fileAttributes = Files.readAttributes(googleIdTokenFile.toPath(), BasicFileAttributes.class);
             final long fileCreationDate = fileAttributes.creationTime().toMillis();
-            final long currentDate =  Calendar.getInstance().getTimeInMillis();
-            final long delaySinceFileCreation = currentDate-fileCreationDate;
+            final long currentDate = Calendar.getInstance().getTimeInMillis();
+            final long delaySinceFileCreation = currentDate - fileCreationDate;
             log.info("Google token file is " + TimeUnit.MILLISECONDS.toMinutes(delaySinceFileCreation) + " minutes old");
 
             if (TimeUnit.MILLISECONDS.toHours(delaySinceFileCreation) >= 1) {
@@ -133,7 +136,7 @@ public class GoogleTokenRetriever {
                 return Optional.empty();
             } else {
                 // We return the content.
-                return Optional.of(Files.readAllLines(googleIdTokenFile.toPath()).get(0));
+                return Optional.of((GoogleRefreshToken) loadObjectFromFile(googleIdTokenFile));
             }
         } else {
             // No file.
@@ -143,18 +146,19 @@ public class GoogleTokenRetriever {
 
     /**
      * Retrieve an id ticket from google for a given user.
+     *
      * @param user user (USER_1 or USER_2).
      * @return google id token.
      */
-    private Optional<String>getIdTokenFromGoogle(final GoogleTokenRetrieverUser user) {
+    private Optional<GoogleRefreshToken> getIdTokenFromGoogle(final GoogleTestUsers user) {
         log.info("Saving google id token for " + user);
 
         // Refresh token.
         String refreshToken;
         if (user.equals(USER_1)) {
-            refreshToken = USER_1_GOOGLE_REFRESH_TOKEN;
+            refreshToken = user1GoogleRefreshToken;
         } else {
-            refreshToken = USER_2_GOOGLE_REFRESH_TOKEN;
+            refreshToken = user2GoogleRefreshToken;
         }
 
         // Headers.
@@ -175,7 +179,7 @@ public class GoogleTokenRetriever {
         GoogleRefreshToken result = new RestTemplate().postForObject(accessTokenUri, request, GoogleRefreshToken.class);
 
         if (result != null) {
-            return Optional.of(result.getIdToken());
+            return Optional.of(result);
         } else {
             return Optional.empty();
         }
@@ -183,23 +187,63 @@ public class GoogleTokenRetriever {
 
     /**
      * Save a token in cache
-     * @param user user (USER_1 or USER_2).
-     * @param idToken google id token
+     *
+     * @param user   user (USER_1 or USER_2).
+     * @param tokens tokens to save
      */
-    private void saveTokenInCache(final GoogleTokenRetrieverUser user, final String idToken) throws IOException {
-        log.info("Saving google id in file for user " + user);
+    private void saveTokenInCache(final GoogleTestUsers user, final GoogleRefreshToken tokens) throws IOException {
+        log.info("Saving google tokens in cache for user " + user);
 
         // File containing the token.
-        Path googleIdTokenFile;
+        String path;
         if (user.equals(USER_1)) {
-            googleIdTokenFile = Paths.get(USER_1_GOOGLE_ID_TOKEN_FILE_NAME);
+            path = USER_1_GOOGLE_TOKENS_FILE_NAME;
         } else {
-            googleIdTokenFile = Paths.get(USER_2_GOOGLE_ID_TOKEN_FILE_NAME);
+            path = USER_2_GOOGLE_TOKENS_FILE_NAME;
         }
 
         // Writing
-        List<String> lines = Collections.singletonList(idToken);
-        Files.write(googleIdTokenFile, lines, Charset.forName("UTF-8"));
+        writeObjectToFile(path, tokens);
+    }
+
+    /**
+     * Write an object to a file (serialize).
+     *
+     * @param path path to file
+     * @param o    object
+     */
+    private void writeObjectToFile(final String path, final Object o) {
+        try {
+            FileOutputStream fileOut = new FileOutputStream(path);
+            ObjectOutputStream out = new ObjectOutputStream(fileOut);
+            out.writeObject(o);
+            out.close();
+            fileOut.close();
+        } catch (IOException e) {
+            log.error("Error (IOException) : " + e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Load an object from a file (deserialize).
+     *
+     * @param file file
+     * @return the object
+     */
+    private Object loadObjectFromFile(final File file) {
+        Object o = null;
+        try {
+            FileInputStream fileIn = new FileInputStream(file.getPath());
+            ObjectInputStream in = new ObjectInputStream(fileIn);
+            o = in.readObject();
+            in.close();
+            fileIn.close();
+        } catch (IOException e) {
+            log.error("Error (IOException) : " + e.getMessage(), e);
+        } catch (ClassNotFoundException c) {
+            log.error("Error (ClassNotFoundException) : " + c.getMessage(), c);
+        }
+        return o;
     }
 
 }
