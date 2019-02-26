@@ -21,7 +21,7 @@ public interface PingAPI {
      * @return pong
      */
     @RequestMapping(path = "/ping", method = RequestMethod.GET)
-    @ApiOperation(value = "Returns pong (keep alive method", response = String.class)
+    @ApiOperation(value = "Returns pong (keep alive method)", response = String.class)
     @ApiImplicitParams({})
     @ApiResponses(value = {
             @ApiResponse(code = STATUS_OK, message = STATUS_OK_MESSAGE)

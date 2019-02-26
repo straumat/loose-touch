@@ -55,16 +55,6 @@ public class googleTokenVerifierTest {
         // getting a new token from google.
         Optional<GoogleRefreshToken> token = googleTokenRetriever.getIdToken(USER_1);
         assertTrue("No token was given by google", token.isPresent());
-
-        // Check token data.
-/*
-        Optional<GoogleIdToken.Payload> payload = googleTokenVerifier.verifyToken(token.get().getIdToken());
-        assertTrue("No payload", payload.isPresent());
-        assertEquals("Invalid user", USER_1.getEmail(), payload.get().getEmail());
-        assertEquals("Wrong first name", "loose 1", payload.get().get("given_name"));
-        assertEquals("Wrong family name", "touch 1", payload.get().get("family_name"));
-        assertEquals("Picture url", "https://lh5.googleusercontent.com/-vTIMhyL9ePM/AAAAAAAAAAI/AAAAAAAAAAA/ACevoQPEHAQw-lr-v1PCh4yr9AsWWmrITQ/s96-c/photo.jpg", payload.get().get("picture"));
-*/
     }
 
     /**
@@ -83,16 +73,6 @@ public class googleTokenVerifierTest {
         // getting a new token from google.
         Optional<GoogleRefreshToken> token = googleTokenRetriever.getIdToken(USER_2);
         assertTrue("No token was given by google", token.isPresent());
-
-        // Check payload data.
-/*
-        Optional<GoogleIdToken.Payload> payload = googleTokenVerifier.verifyToken(token.get().getIdToken());
-        assertTrue("No payload", payload.isPresent());
-        assertEquals("Invalid user", USER_2.getEmail(), payload.get().getEmail());
-        assertEquals("Wrong first name", "loose 2", payload.get().get("given_name"));
-        assertEquals("Wrong family name", "touch 2", payload.get().get("family_name"));
-        assertEquals("Picture url", "https://lh3.googleusercontent.com/-GxmjZPF4TI8/AAAAAAAAAAI/AAAAAAAAAAA/ACevoQMMdCafIH3Xd97DRl1nbQtbvuijAg/s96-c/photo.jpg", payload.get().get("picture"));
-*/
     }
 
 }

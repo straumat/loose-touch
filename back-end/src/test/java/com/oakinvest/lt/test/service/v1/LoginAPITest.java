@@ -132,7 +132,7 @@ public class LoginAPITest extends JUnitHelper {
             fail("Impossible to retrieve a token for user 1");
         }
 
-        // Another user.
+        // Another user (loose.touch.test.2@gmail.com)..
         Optional<GoogleRefreshToken> user2GoogleToken = getGoogleTokenRetriever().getIdToken(USER_2);
         if (user2GoogleToken.isPresent()) {
             // Check that there is one user in the database.

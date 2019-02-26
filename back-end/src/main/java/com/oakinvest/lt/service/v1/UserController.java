@@ -1,6 +1,5 @@
 package com.oakinvest.lt.service.v1;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.oakinvest.lt.authentication.loosetouch.AuthenticatedUser;
 import com.oakinvest.lt.authentication.loosetouch.LooseTouchTokenProvider;
 import com.oakinvest.lt.domain.User;
@@ -13,13 +12,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Optional;
 
-import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 import static com.oakinvest.lt.util.error.LooseTouchErrorType.api_error;
 
 /**
  * User controller.
  */
-@JsonInclude(NON_NULL)
 @RestController
 public class UserController implements UserAPI {
 

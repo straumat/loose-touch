@@ -16,7 +16,7 @@ import java.util.List;
  */
 @Configuration
 @EnableWebMvc
-public class Web implements WebMvcConfigurer {
+public class Spring implements WebMvcConfigurer {
 
     /**
      * Returns authentication interceptor.

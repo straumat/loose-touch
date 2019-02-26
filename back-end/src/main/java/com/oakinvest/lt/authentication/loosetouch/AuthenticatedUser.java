@@ -18,11 +18,11 @@ public class AuthenticatedUser {
     /**
      * Constructor.
      * @param newLooseTouchToken loose touch token.
-     * @param newUuserId user id.
+     * @param newUserId user id.
      */
-    AuthenticatedUser(final String newLooseTouchToken, final String newUuserId) {
+    AuthenticatedUser(final String newLooseTouchToken, final String newUserId) {
         this.looseTouchToken = newLooseTouchToken;
-        this.userId = newUuserId;
+        this.userId = newUserId;
     }
 
     /**
