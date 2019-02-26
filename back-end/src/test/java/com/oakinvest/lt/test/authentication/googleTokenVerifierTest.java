@@ -1,28 +1,29 @@
 package com.oakinvest.lt.test.authentication;
 
-import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 import com.oakinvest.lt.Application;
 import com.oakinvest.lt.authentication.google.GoogleTokenVerifier;
 import com.oakinvest.lt.test.util.authentication.GoogleRefreshToken;
 import com.oakinvest.lt.test.util.authentication.GoogleTokensRetriever;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.IOException;
 import java.util.Optional;
 
+import static com.oakinvest.lt.configuration.Application.LOCAL_DYNAMODB_ENVIRONMENT;
 import static com.oakinvest.lt.test.util.authentication.GoogleTestUsers.USER_1;
 import static com.oakinvest.lt.test.util.authentication.GoogleTestUsers.USER_2;
-import static junit.framework.TestCase.*;
+import static junit.framework.TestCase.assertFalse;
+import static junit.framework.TestCase.assertTrue;
 
 /**
  * Google token verifier test.
  */
+@ActiveProfiles(LOCAL_DYNAMODB_ENVIRONMENT)
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {Application.class})
 public class googleTokenVerifierTest {

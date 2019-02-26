@@ -12,6 +12,16 @@ public final class Application {
     }
 
     /**
+     * Parameter for local DynamoDB.
+     */
+    public static final String LOCAL_DYNAMODB_PARAMETER = "--start-local-dynamodb";
+
+    /**
+     * Environment for local DynamoDB.
+     */
+    public static final String LOCAL_DYNAMODB_ENVIRONMENT = "local-dynamodb";
+
+    /**
      * Parameter containing user id.
      */
     public static final String USER_ID_PARAMETER = "userId";

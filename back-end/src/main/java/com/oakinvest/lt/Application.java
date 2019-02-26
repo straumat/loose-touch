@@ -7,7 +7,6 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.amazonaws.services.dynamodbv2.local.main.ServerRunner;
 import com.amazonaws.services.dynamodbv2.local.server.DynamoDBProxyServer;
 import com.amazonaws.services.dynamodbv2.model.CreateTableRequest;
-import com.amazonaws.services.dynamodbv2.model.CreateTableResult;
 import com.amazonaws.services.dynamodbv2.model.ProvisionedThroughput;
 import com.amazonaws.services.dynamodbv2.util.TableUtils;
 import com.oakinvest.lt.domain.User;
@@ -19,6 +18,10 @@ import org.springframework.web.servlet.HandlerAdapter;
 import org.springframework.web.servlet.HandlerMapping;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
+
+import java.util.Arrays;
+
+import static com.oakinvest.lt.configuration.Application.LOCAL_DYNAMODB_PARAMETER;
 
 /**
  * Application.
@@ -33,7 +36,8 @@ public class Application extends SpringBootServletInitializer {
      * @throws Exception if dynamodb server start fails.
      */
     public static void main(final String[] args) throws Exception {
-        if (args.length == 1 && "-start-dynamodb".equalsIgnoreCase(args[0])) {
+        // Start a local dynamodb server.
+        if (Arrays.asList(args).contains(LOCAL_DYNAMODB_PARAMETER)) {
 
             // Start server.
             System.setProperty("sqlite4java.library.path", "native-libs");
@@ -54,7 +58,7 @@ public class Application extends SpringBootServletInitializer {
             CreateTableRequest createUserTableRequest = mapper.generateCreateTableRequest(User.class)
                     .withProvisionedThroughput(provisionedThroughput);
             createUserTableRequest.getGlobalSecondaryIndexes().forEach(v -> v.setProvisionedThroughput(provisionedThroughput));
-            CreateTableResult table = dynamoDB.createTable(createUserTableRequest);
+            dynamoDB.createTable(createUserTableRequest);
 
             // Waits for every table to be created.
             TableUtils.waitUntilActive(dynamoDB, createUserTableRequest.getTableName());
