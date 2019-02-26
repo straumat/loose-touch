@@ -75,7 +75,7 @@ public class LooseTouchException extends RuntimeException {
 
     @Override
     public final String toString() {
-        StringBuilder value = new StringBuilder("CeriseException{type=" + type + ", message=" + getMessage() + "}, errors {");
+        StringBuilder value = new StringBuilder("Loose Touch Exception {type=" + type + ", message=" + getMessage() + "}, errors {");
         for (LooseTouchErrorDetail error : getErrors()) {
             value.append("{code=")
                     .append(error.getCode())

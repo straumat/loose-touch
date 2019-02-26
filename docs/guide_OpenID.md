@@ -21,13 +21,13 @@ We use two ways to interact :
     * First name : loose 1
     * Last name : touch 1
     * Password : stpide123 
-    * Refresh token : 1/IMZ1k7G6ksE71CrvuaLXyKXswIIseVo039wv1cSwzY4
+    * Refresh token : cf. loose-touch/back-end/src/test/resources/application.yml
 
   * Account loose.touch.test.2@gmail.com
     * First name : loose 2
     * Last name : touch 2
     * Password : stpide123 
-    * Refresh token : 1/lgRDorbgTjsJJvAJoyOjlLbVXBDiIiq2WK0mw9a_tNI
+    * Refresh token : cf. loose-touch/back-end/src/test/resources/application.yml
 
 ### How we use it.
 We use [Google Sign-In](https://developers.google.com/identity/sign-in/) to display a google sign-in button that launches the permission page and returns the google id_token to the page. The page then calls our back that check the google token and retrieves user information thanks to [Google client libraries](https://developers.google.com/identity/protocols/OpenIDConnect#libraries). Our back end returns our own JWT token.
