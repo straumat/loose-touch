@@ -97,6 +97,11 @@ public class LoginController implements LoginAPI {
             if (userInDatabase.isPresent()) {
                 // if the user in the database, we return a token.
                 user = userInDatabase.get();
+
+                // Return the profile with the id token.
+                UserDTO u = LooseTouchMapper.INSTANCE.userToUserDTO(user);
+                u.setIdToken(looseTouchTokenProvider.createToken(user.getId()));
+                return u;
             } else {
                 // If not, we create it first and then, we return a token.
 
@@ -122,12 +127,13 @@ public class LoginController implements LoginAPI {
                 }
                 user = new User(firstName, lastName, email, imageUrl, GOOGLE);
                 userRepository.save(user);
-            }
 
-            // Return the profile with the id token.
-            UserDTO u = LooseTouchMapper.INSTANCE.userToUserDTO(user);
-            u.setIdToken(looseTouchTokenProvider.createToken(user.getId()));
-            return u;
+                // Return the profile with the id token.
+                UserDTO u = LooseTouchMapper.INSTANCE.userToUserDTO(user);
+                u.setIdToken(looseTouchTokenProvider.createToken(user.getId()));
+                u.setNewAccount(true);
+                return u;
+            }
         }
 
     }

@@ -58,6 +58,15 @@ public class UserDTO {
     private String pictureUrl;
 
     /**
+     * Indicates if this account has just been created.
+     */
+    @ApiModelProperty(value = "Indicates if this account has just been created",
+            example = "true",
+            required = true,
+            position = 6)
+    private boolean newAccount = false;
+
+    /**
      * Get idToken.
      *
      * @return idToken
@@ -145,6 +154,24 @@ public class UserDTO {
      */
     public final void setPictureUrl(final String newImageUrl) {
         pictureUrl = newImageUrl;
+    }
+
+    /**
+     * Get newAccount.
+     *
+     * @return newAccount
+     */
+    public final boolean isNewAccount() {
+        return newAccount;
+    }
+
+    /**
+     * Set newAccount.
+     *
+     * @param newNewAccount the newAccount to set
+     */
+    public final void setNewAccount(final boolean newNewAccount) {
+        newAccount = newNewAccount;
     }
 
 }

@@ -64,6 +64,7 @@ public class UserAPITest extends JUnitHelper {
                 .andExpect(jsonPath("lastName").value(USER_1.getLastName()))
                 .andExpect(jsonPath("email").value(USER_1.getEmail()))
                 .andExpect(jsonPath("pictureUrl").isString())
+                .andExpect(jsonPath("newAccount").value(false))
                 .andReturn();
 
         // Check that the returned token is ok.
@@ -80,6 +81,7 @@ public class UserAPITest extends JUnitHelper {
                 .andExpect(jsonPath("lastName").value(USER_2.getLastName()))
                 .andExpect(jsonPath("email").value(USER_2.getEmail()))
                 .andExpect(jsonPath("pictureUrl").isString())
+                .andExpect(jsonPath("newAccount").value(false))
                 .andReturn();
 
         // Check that the returned token is ok.

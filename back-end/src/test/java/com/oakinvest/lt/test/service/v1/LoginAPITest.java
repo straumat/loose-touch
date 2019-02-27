@@ -95,6 +95,7 @@ public class LoginAPITest extends JUnitHelper {
                     .andExpect(jsonPath("lastName").value(USER_1.getLastName()))
                     .andExpect(jsonPath("email").value(USER_1.getEmail()))
                     .andExpect(jsonPath("pictureUrl").isString())
+                    .andExpect(jsonPath("newAccount").value(true))
                     .andExpect(status().isOk())
                     .andReturn();
             String looseTouchUser1Token1 = JsonPath.parse(result.getResponse().getContentAsString()).read("idToken").toString();
@@ -118,6 +119,7 @@ public class LoginAPITest extends JUnitHelper {
                     .andExpect(jsonPath("lastName").value(USER_1.getLastName()))
                     .andExpect(jsonPath("email").value(USER_1.getEmail()))
                     .andExpect(jsonPath("pictureUrl").isString())
+                    .andExpect(jsonPath("newAccount").value(false))
                     .andReturn();
             String looseTouchUser1Token2 = JsonPath.parse(result.getResponse().getContentAsString()).read("idToken").toString();
 
@@ -151,6 +153,7 @@ public class LoginAPITest extends JUnitHelper {
                     .andExpect(jsonPath("lastName").value(USER_2.getLastName()))
                     .andExpect(jsonPath("email").value(USER_2.getEmail()))
                     .andExpect(jsonPath("pictureUrl").isString())
+                    .andExpect(jsonPath("newAccount").value(true))
                     .andReturn();
             String looseTouchUser2Token1 = JsonPath.parse(result.getResponse().getContentAsString()).read("idToken").toString();
 
@@ -172,6 +175,7 @@ public class LoginAPITest extends JUnitHelper {
                     .andExpect(jsonPath("lastName").value(USER_2.getLastName()))
                     .andExpect(jsonPath("email").value(USER_2.getEmail()))
                     .andExpect(jsonPath("pictureUrl").isString())
+                    .andExpect(jsonPath("newAccount").value(false))
                     .andReturn();
             String looseTouchUser2Token2 = JsonPath.parse(result.getResponse().getContentAsString()).read("idToken").toString();
 
