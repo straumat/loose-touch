@@ -6,6 +6,8 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBHashKey;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBIndexHashKey;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
 
+import static com.oakinvest.lt.domain.UserAuthentication.GOOGLE;
+
 /**
  * User.
  */
@@ -44,6 +46,12 @@ public class User {
     private String pictureUrl;
 
     /**
+     * Authentication.
+     */
+    @DynamoDBAttribute(attributeName = "AUTHENTICATION")
+    private String authentication;
+
+    /**
      * Google username retrieved when signed up with google.
      */
     @DynamoDBIndexHashKey(attributeName = "GOOGLE_USERNAME", globalSecondaryIndexName = "INDEX_GOOGLE_USERNAME")
@@ -58,17 +66,23 @@ public class User {
     /**
      * Constructor.
      *
-     * @param newFirstName first name
-     * @param newLastName  last name
-     * @param newEmail     email
-     * @param newImageUrl  image url
+     * @param newFirstName       first name
+     * @param newLastName        last name
+     * @param newEmail           email
+     * @param newImageUrl        image url
+     * @param userAuthentication user authentication (google)
      */
-    public User(final String newFirstName, final String newLastName, final String newEmail, final String newImageUrl) {
+    public User(final String newFirstName, final String newLastName, final String newEmail, final String newImageUrl, final UserAuthentication userAuthentication) {
         this.firstName = newFirstName;
         this.lastName = newLastName;
         this.email = newEmail;
         this.pictureUrl = newImageUrl;
-        this.googleUsername = newEmail;
+
+        // Authentication type GOOGLE.
+        if (userAuthentication == GOOGLE) {
+            authentication = GOOGLE.toString();
+            this.googleUsername = newEmail;
+        }
     }
 
     /**
@@ -159,6 +173,24 @@ public class User {
      */
     public final void setPictureUrl(final String newImageUrl) {
         pictureUrl = newImageUrl;
+    }
+
+    /**
+     * Get authentication.
+     *
+     * @return authentication
+     */
+    public final String getAuthentication() {
+        return authentication;
+    }
+
+    /**
+     * Set authentication.
+     *
+     * @param newAuthentication the authentication to set
+     */
+    public final void setAuthentication(final String newAuthentication) {
+        authentication = newAuthentication;
     }
 
     /**

@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+import static com.oakinvest.lt.domain.UserAuthentication.GOOGLE;
 import static com.oakinvest.lt.util.error.LooseTouchErrorType.authentication_error;
 import static com.oakinvest.lt.util.error.LooseTouchErrorType.invalid_request_error;
 
@@ -119,7 +120,7 @@ public class LoginController implements LoginAPI {
                     email = googleUserInfo.getEmail();
                     imageUrl = googleUserInfo.getPicture();
                 }
-                user = new User(firstName, lastName, email, imageUrl);
+                user = new User(firstName, lastName, email, imageUrl, GOOGLE);
                 userRepository.save(user);
             }
 

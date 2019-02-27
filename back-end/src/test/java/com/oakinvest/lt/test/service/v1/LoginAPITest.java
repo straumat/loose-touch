@@ -18,6 +18,7 @@ import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 import static com.oakinvest.lt.configuration.Application.LOCAL_DYNAMODB_ENVIRONMENT;
+import static com.oakinvest.lt.domain.UserAuthentication.GOOGLE;
 import static com.oakinvest.lt.test.util.authentication.GoogleTestUsers.USER_1;
 import static com.oakinvest.lt.test.util.authentication.GoogleTestUsers.USER_2;
 import static com.oakinvest.lt.util.error.LooseTouchErrorType.authentication_error;
@@ -85,11 +86,6 @@ public class LoginAPITest extends JUnitHelper {
             // Check that the user doesn't exists yet.
             assertFalse("User 1 already exists", userRepository.findUserByGoogleUsername(USER_1.getEmail()).isPresent());
 
-
-            System.out.println("==>" + user1GoogleToken.get().getIdToken());
-            System.out.println("==>" + user1GoogleToken.get().getAccessToken());
-
-
             // First login.
             MvcResult result = getMvc().perform(get(GOOGLE_LOGIN_URL)
                     .param("googleIdToken", user1GoogleToken.get().getIdToken())
@@ -106,6 +102,7 @@ public class LoginAPITest extends JUnitHelper {
             // Check that the user now exists and that the token is correct.
             Optional<User> u1 = userRepository.findUserByGoogleUsername(USER_1.getEmail());
             assertTrue("User 1 doesn't exists", u1.isPresent());
+            assertEquals("User 1 has wrong authentication", GOOGLE.toString(), u1.get().getAuthentication());
             assertEquals("There are too many users in the database", 1, userRepository.count());
             assertTrue("Token for user 1 is not valid", getLooseTouchTokenProvider().getUserId(looseTouchUser1Token1).isPresent());
             assertEquals("Token for user 1 doesn't have the good ID", u1.get().getId(), getLooseTouchTokenProvider().getUserId(looseTouchUser1Token1).get());
