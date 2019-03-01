@@ -1,15 +1,11 @@
 package com.oakinvest.lt.dto.v1;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.annotations.ApiModelProperty;
-
-import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 
 /**
  * User DTO.
  */
 @SuppressWarnings({"magicnumber", "unused"})
-@JsonInclude(NON_NULL)
 public class UserDTO {
 
     /**

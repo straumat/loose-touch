@@ -6,15 +6,19 @@ import com.amazonaws.services.dynamodbv2.local.main.ServerRunner;
 import com.amazonaws.services.dynamodbv2.local.server.DynamoDBProxyServer;
 import com.amazonaws.services.dynamodbv2.model.CreateTableRequest;
 import com.amazonaws.services.dynamodbv2.model.CreateTableResult;
+import com.amazonaws.services.dynamodbv2.model.Projection;
+import com.amazonaws.services.dynamodbv2.model.ProjectionType;
 import com.amazonaws.services.dynamodbv2.model.ProvisionedThroughput;
 import com.amazonaws.services.dynamodbv2.util.TableUtils;
 import com.jayway.jsonpath.JsonPath;
 import com.oakinvest.lt.authentication.loosetouch.LooseTouchTokenProvider;
+import com.oakinvest.lt.domain.Contact;
 import com.oakinvest.lt.domain.User;
+import com.oakinvest.lt.repository.ContactRepository;
 import com.oakinvest.lt.repository.UserRepository;
 import com.oakinvest.lt.test.util.authentication.GoogleRefreshToken;
 import com.oakinvest.lt.test.util.authentication.GoogleTokensRetriever;
-import com.oakinvest.lt.test.util.authentication.GoogleTestUsers;
+import com.oakinvest.lt.test.util.data.TestUsers;
 import org.junit.After;
 import org.junit.Before;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,8 +27,8 @@ import org.springframework.test.web.servlet.MvcResult;
 
 import java.util.Optional;
 
-import static com.oakinvest.lt.test.util.authentication.GoogleTestUsers.USER_1;
-import static com.oakinvest.lt.test.util.authentication.GoogleTestUsers.USER_2;
+import static com.oakinvest.lt.test.util.data.TestUsers.GOOGLE_USER_1;
+import static com.oakinvest.lt.test.util.data.TestUsers.GOOGLE_USER_2;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -68,6 +72,12 @@ public class JUnitHelper {
     private UserRepository userRepository;
 
     /**
+     * Contact repository.
+     */
+    @Autowired
+    private ContactRepository contactRepository;
+
+    /**
      * Loose touch token provider.
      */
     @Autowired
@@ -84,16 +94,26 @@ public class JUnitHelper {
         server.start();
 
         DynamoDBMapper mapper = new DynamoDBMapper(dynamoDB);
-
-        // Creates the tables.
         ProvisionedThroughput provisionedThroughput = new ProvisionedThroughput(5L, 5L);
-        CreateTableRequest createUserTableRequest = mapper.generateCreateTableRequest(User.class)
+
+        // Creates the tables USERS.
+        CreateTableRequest createUsersTableRequest = mapper.generateCreateTableRequest(User.class)
                 .withProvisionedThroughput(provisionedThroughput);
-        createUserTableRequest.getGlobalSecondaryIndexes().forEach(v -> v.setProvisionedThroughput(provisionedThroughput));
-        CreateTableResult table = dynamoDB.createTable(createUserTableRequest);
+        createUsersTableRequest.getGlobalSecondaryIndexes().forEach(v -> {
+            v.withProjection(new Projection().withProjectionType(ProjectionType.ALL));
+            v.setProvisionedThroughput(provisionedThroughput);
+        });
+
+        dynamoDB.createTable(createUsersTableRequest);
+
+        // Creates the table CONTACTS.
+        CreateTableRequest createContactsTableRequest = mapper.generateCreateTableRequest(Contact.class).withProvisionedThroughput(provisionedThroughput);
+        //createContactsTableRequest.get().forEach(v -> v.setProvisionedThroughput(provisionedThroughput));
+        dynamoDB.createTable(createContactsTableRequest);
 
         // Waits for every table to be created.
-        TableUtils.waitUntilActive(dynamoDB, createUserTableRequest.getTableName());
+        TableUtils.waitUntilActive(dynamoDB, createUsersTableRequest.getTableName());
+        TableUtils.waitUntilActive(dynamoDB, createContactsTableRequest.getTableName());
     }
 
     /**
@@ -109,16 +129,16 @@ public class JUnitHelper {
     /**
      * Return a loose touch toker for a user.
      *
-     * @param user USER_1 or USER_2.
+     * @param user GOOGLE_USER_1 or GOOGLE_USER_2.
      * @return token
      * @throws Exception exception
      */
-    protected String getLooseToucheToken(final GoogleTestUsers user) throws Exception {
+    protected String getLooseToucheToken(final TestUsers user) throws Exception {
         Optional<GoogleRefreshToken> googleToken;
-        if (USER_1 == user) {
-            googleToken = googleTokenRetriever.getIdToken(USER_1);
+        if (GOOGLE_USER_1 == user) {
+            googleToken = googleTokenRetriever.getIdToken(GOOGLE_USER_1);
         } else {
-            googleToken = googleTokenRetriever.getIdToken(USER_2);
+            googleToken = googleTokenRetriever.getIdToken(GOOGLE_USER_2);
         }
 
         if (googleToken.isPresent()) {
@@ -150,6 +170,15 @@ public class JUnitHelper {
      */
     protected final UserRepository getUserRepository() {
         return userRepository;
+    }
+
+    /**
+     * Get contactRepository.
+     *
+     * @return contactRepository
+     */
+    public final ContactRepository getContactRepository() {
+        return contactRepository;
     }
 
     /**

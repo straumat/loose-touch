@@ -1,14 +1,14 @@
-package com.oakinvest.lt.test.util.authentication;
+package com.oakinvest.lt.test.util.data;
 
 /**
  * Google test users.
  */
-public enum GoogleTestUsers {
+public enum TestUsers {
 
     /**
      * loose.touch.test.1@gmail.com.
      */
-    USER_1("loose 1",
+    GOOGLE_USER_1("loose 1",
             "touch 1",
             "loose.touch.test.1@gmail.com",
             "https://lh5.googleusercontent.com/-vTIMhyL9ePM/AAAAAAAAAAI/AAAAAAAAAAA/ACevoQPEHAQw-lr-v1PCh4yr9AsWWmrITQ/s96-c/photo.jpg"),
@@ -16,7 +16,7 @@ public enum GoogleTestUsers {
     /**
      * loose.touch.test.2@gmail.com.
      */
-    USER_2("loose 2",
+    GOOGLE_USER_2("loose 2",
             "touch 2",
             "loose.touch.test.2@gmail.com",
             "https://lh3.googleusercontent.com/-GxmjZPF4TI8/AAAAAAAAAAI/AAAAAAAAAAA/ACHi3rc7nhCokY3mTuBd80Fk1nLAvs96wQ/mo/photo.jpg");
@@ -49,7 +49,7 @@ public enum GoogleTestUsers {
      * @param newEmail     email
      * @param newImageUrl  image url
      */
-    GoogleTestUsers(final String newFirstName, final String newLastName, final String newEmail, final String newImageUrl) {
+    TestUsers(final String newFirstName, final String newLastName, final String newEmail, final String newImageUrl) {
         this.firstName = newFirstName;
         this.lastName = newLastName;
         this.email = newEmail;

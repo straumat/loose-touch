@@ -15,8 +15,8 @@ import java.io.IOException;
 import java.util.Optional;
 
 import static com.oakinvest.lt.configuration.Application.LOCAL_DYNAMODB_ENVIRONMENT;
-import static com.oakinvest.lt.test.util.authentication.GoogleTestUsers.USER_1;
-import static com.oakinvest.lt.test.util.authentication.GoogleTestUsers.USER_2;
+import static com.oakinvest.lt.test.util.data.TestUsers.GOOGLE_USER_1;
+import static com.oakinvest.lt.test.util.data.TestUsers.GOOGLE_USER_2;
 import static junit.framework.TestCase.assertFalse;
 import static junit.framework.TestCase.assertTrue;
 
@@ -54,7 +54,7 @@ public class googleTokenVerifierTest {
         assertFalse("Expired token was accepted", googleTokenVerifier.verifyToken(user1ExpiredToken).isPresent());
 
         // getting a new token from google.
-        Optional<GoogleRefreshToken> token = googleTokenRetriever.getIdToken(USER_1);
+        Optional<GoogleRefreshToken> token = googleTokenRetriever.getIdToken(GOOGLE_USER_1);
         assertTrue("No token was given by google", token.isPresent());
     }
 
@@ -72,7 +72,7 @@ public class googleTokenVerifierTest {
         assertFalse("Expired token was accepted", googleTokenVerifier.verifyToken(user2ExpiredToken).isPresent());
 
         // getting a new token from google.
-        Optional<GoogleRefreshToken> token = googleTokenRetriever.getIdToken(USER_2);
+        Optional<GoogleRefreshToken> token = googleTokenRetriever.getIdToken(GOOGLE_USER_2);
         assertTrue("No token was given by google", token.isPresent());
     }
 

@@ -42,7 +42,7 @@ Resources:
             - AttributeName: "GOOGLE_USERNAME"
               KeyType: "HASH"
           Projection:                                                             # Attributes that are copied (projected) from the source table into the index.
-            ProjectionType: "KEYS_ONLY"                                           # The set of attributes that are projected into the index. KEYS_ONLY : Only the index and primary keys are projected into the index.
+            ProjectionType: "ALL"                                                 # The set of attributes that are projected into the index. KEYS_ONLY : Only the index and primary keys are projected into the index.
       TableName: "USERS"                                                          # A name for the table. If you don't specify a name, AWS CloudFormation generates a unique physical ID and uses that ID for the table name.
       KeySchema:                                                                  # Specifies the attributes that make up the primary key for the table.
         - AttributeName: "ID"

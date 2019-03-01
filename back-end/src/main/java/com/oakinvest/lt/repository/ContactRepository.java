@@ -4,8 +4,11 @@ import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBQueryExpression;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
+import com.amazonaws.services.dynamodbv2.model.ComparisonOperator;
+import com.amazonaws.services.dynamodbv2.model.Condition;
 import com.amazonaws.services.dynamodbv2.model.ScanRequest;
 import com.amazonaws.services.dynamodbv2.model.ScanResult;
+import com.oakinvest.lt.domain.Contact;
 import com.oakinvest.lt.domain.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -17,10 +20,10 @@ import java.util.Map;
 import java.util.Optional;
 
 /**
- * User repository.
+ * Contact repository.
  */
 @Component
-public class UserRepository {
+public class ContactRepository {
 
     /**
      * DynamoDB connection.
@@ -42,49 +45,43 @@ public class UserRepository {
     }
 
     /**
-     * Save a user in database.
+     * Save a contact in database.
      *
-     * @param user user
+     * @param contact contact
      */
-    public final void save(final User user) {
-        mapper.save(user);
+    public final void save(final Contact contact) {
+        mapper.save(contact);
     }
 
     /**
-     * Returns a user by its key.
+     * Returns a contact by its email.
      *
-     * @param id user id
-     * @return user
+     * @param userId user id
+     * @param email  contact email
+     * @return contact
      */
-    public final Optional<User> getUser(final String id) {
-        return Optional.ofNullable(mapper.load(User.class, id));
-    }
+    public final Optional<Contact> findContactByEmail(final String userId, final String email) {
 
-    /**
-     * Returns a user by its google username.
-     *
-     * @param googleUsername google username
-     * @return user
-     */
-    public final Optional<User> findUserByGoogleUsername(final String googleUsername) {
+        // User id.
+        Contact c = new Contact();
+        c.setUserId(userId);
 
-        // Set parameters.
-        Map<String, AttributeValue> eav = new HashMap<>();
-        eav.put(":googleUsername", new AttributeValue().withS(googleUsername));
+        // Email.
+        Condition rangeKeyCondition = new Condition();
+        rangeKeyCondition.withComparisonOperator(ComparisonOperator.EQ)
+                .withAttributeValueList(new AttributeValue().withS(email));
 
         // Define the query.
-        DynamoDBQueryExpression<User> queryExpression = new DynamoDBQueryExpression<User>()
-                .withConsistentRead(false)
-                .withIndexName("INDEX_GOOGLE_USERNAME")
-                .withKeyConditionExpression("GOOGLE_USERNAME = :googleUsername")
-                .withExpressionAttributeValues(eav);
+        DynamoDBQueryExpression<Contact> queryExpression = new DynamoDBQueryExpression<Contact>()
+                .withHashKeyValues(c)
+                .withRangeKeyCondition("EMAIL", rangeKeyCondition);
 
         // Run the query.
-        List<User> user = mapper.query(User.class, queryExpression);
+        List<Contact> contacts = mapper.query(Contact.class, queryExpression);
 
         // Returns the user if exists.
-        if (user.size() == 1) {
-            return Optional.ofNullable(user.get(0));
+        if (contacts.size() == 1) {
+            return Optional.ofNullable(contacts.get(0));
         } else {
             return Optional.empty();
         }
@@ -97,7 +94,7 @@ public class UserRepository {
      * @return number of users.
      */
     public final long count() {
-        ScanRequest scanRequest = new ScanRequest().withTableName("USERS");
+        ScanRequest scanRequest = new ScanRequest().withTableName("CONTACTS");
         ScanResult result = dynamoDB.scan(scanRequest);
         return result.getCount();
     }

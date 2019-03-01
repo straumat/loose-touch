@@ -22,6 +22,16 @@ public final class HttpStatus {
     public static final String STATUS_OK_MESSAGE = "Everything worked as expected";
 
     /**
+     * Created.
+     */
+    public static final int STATUS_CREATED = 201;
+
+    /**
+     * Created message.
+     */
+    public static final String STATUS_CREATED_MESSAGE = "Created";
+
+    /**
      * 400.
      */
     public static final int STATUS_BAD_REQUEST = 400;
@@ -59,7 +69,7 @@ public final class HttpStatus {
     /**
      * The requested resource doesn't exist.
      */
-    public static final String STATUS_NOT_FOUND_MESSAGE =  "The requested resource doesn't exist";
+    public static final String STATUS_NOT_FOUND_MESSAGE = "The requested resource doesn't exist";
 
     /**
      * Something went wrong on the server.

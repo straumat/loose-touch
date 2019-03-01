@@ -46,12 +46,6 @@ public class User {
     private String pictureUrl;
 
     /**
-     * Authentication.
-     */
-    @DynamoDBAttribute(attributeName = "AUTHENTICATION")
-    private String authentication;
-
-    /**
      * Google username retrieved when signed up with google.
      */
     @DynamoDBIndexHashKey(attributeName = "GOOGLE_USERNAME", globalSecondaryIndexName = "INDEX_GOOGLE_USERNAME")
@@ -80,7 +74,6 @@ public class User {
 
         // Authentication type GOOGLE.
         if (userAuthentication == GOOGLE) {
-            authentication = GOOGLE.toString();
             this.googleUsername = newEmail;
         }
     }
@@ -173,24 +166,6 @@ public class User {
      */
     public final void setPictureUrl(final String newImageUrl) {
         pictureUrl = newImageUrl;
-    }
-
-    /**
-     * Get authentication.
-     *
-     * @return authentication
-     */
-    public final String getAuthentication() {
-        return authentication;
-    }
-
-    /**
-     * Set authentication.
-     *
-     * @param newAuthentication the authentication to set
-     */
-    public final void setAuthentication(final String newAuthentication) {
-        authentication = newAuthentication;
     }
 
     /**

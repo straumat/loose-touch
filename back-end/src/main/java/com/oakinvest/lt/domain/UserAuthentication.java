@@ -25,17 +25,6 @@ public enum UserAuthentication {
     }
 
     /**
-     * Equals.
-     *
-     * @param otherValue other value
-     * @return true if equals
-     */
-    public boolean equals(final String otherValue) {
-        // (otherName == null) check is not needed because name.equals(null) returns false
-        return value.equals(otherValue);
-    }
-
-    /**
      * To display value.
      *
      * @return value

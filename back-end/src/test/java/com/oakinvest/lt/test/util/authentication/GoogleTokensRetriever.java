@@ -1,5 +1,6 @@
 package com.oakinvest.lt.test.util.authentication;
 
+import com.oakinvest.lt.test.util.data.TestUsers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -23,7 +24,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
-import static com.oakinvest.lt.test.util.authentication.GoogleTestUsers.USER_1;
+import static com.oakinvest.lt.test.util.data.TestUsers.GOOGLE_USER_1;
 
 /**
  * Google token retriever.
@@ -79,10 +80,10 @@ public class GoogleTokensRetriever {
     /**
      * Retrieve an id ticket for a given user.
      *
-     * @param user user (USER_1 or USER_2).
+     * @param user user (GOOGLE_USER_1 or GOOGLE_USER_2).
      * @return google id token.
      */
-    public Optional<GoogleRefreshToken> getIdToken(final GoogleTestUsers user) throws IOException {
+    public Optional<GoogleRefreshToken> getIdToken(final TestUsers user) throws IOException {
         log.info("Asking for a token for user " + user);
         Optional<GoogleRefreshToken> idToken = getIdTokenFromCache(user);
 
@@ -105,13 +106,13 @@ public class GoogleTokensRetriever {
     /**
      * Retrieve an id ticket from cache for a given user.
      *
-     * @param user user (USER_1 or USER_2).
+     * @param user user (GOOGLE_USER_1 or GOOGLE_USER_2).
      * @return google id token.
      */
-    private Optional<GoogleRefreshToken> getIdTokenFromCache(final GoogleTestUsers user) throws IOException {
+    private Optional<GoogleRefreshToken> getIdTokenFromCache(final TestUsers user) throws IOException {
         // File containing the token.
         File googleIdTokenFile;
-        if (user.equals(USER_1)) {
+        if (user.equals(GOOGLE_USER_1)) {
             googleIdTokenFile = new File(USER_1_GOOGLE_TOKENS_FILE_NAME);
         } else {
             googleIdTokenFile = new File(USER_2_GOOGLE_TOKENS_FILE_NAME);
@@ -147,15 +148,15 @@ public class GoogleTokensRetriever {
     /**
      * Retrieve an id ticket from google for a given user.
      *
-     * @param user user (USER_1 or USER_2).
+     * @param user user (GOOGLE_USER_1 or GOOGLE_USER_2).
      * @return google id token.
      */
-    private Optional<GoogleRefreshToken> getIdTokenFromGoogle(final GoogleTestUsers user) {
+    private Optional<GoogleRefreshToken> getIdTokenFromGoogle(final TestUsers user) {
         log.info("Saving google id token for " + user);
 
         // Refresh token.
         String refreshToken;
-        if (user.equals(USER_1)) {
+        if (user.equals(GOOGLE_USER_1)) {
             refreshToken = user1GoogleRefreshToken;
         } else {
             refreshToken = user2GoogleRefreshToken;
@@ -188,15 +189,15 @@ public class GoogleTokensRetriever {
     /**
      * Save a token in cache
      *
-     * @param user   user (USER_1 or USER_2).
+     * @param user   user (GOOGLE_USER_1 or GOOGLE_USER_2).
      * @param tokens tokens to save
      */
-    private void saveTokenInCache(final GoogleTestUsers user, final GoogleRefreshToken tokens) throws IOException {
+    private void saveTokenInCache(final TestUsers user, final GoogleRefreshToken tokens) throws IOException {
         log.info("Saving google tokens in cache for user " + user);
 
         // File containing the token.
         String path;
-        if (user.equals(USER_1)) {
+        if (user.equals(GOOGLE_USER_1)) {
             path = USER_1_GOOGLE_TOKENS_FILE_NAME;
         } else {
             path = USER_2_GOOGLE_TOKENS_FILE_NAME;
