@@ -35,6 +35,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8;
 import static org.springframework.test.util.AssertionErrors.assertTrue;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -51,7 +52,7 @@ public class ContactAPITest extends JUnitHelper {
     /**
      * Google login URL.
      */
-    protected static final String CONTACT_URL = "/v1/contacts";
+    private static final String CONTACT_URL = "/v1/contacts";
 
     /**
      * Create test.
@@ -60,8 +61,6 @@ public class ContactAPITest extends JUnitHelper {
      */
     @Test
     public void createTest() throws Exception {
-        ObjectMapper mapper = new ObjectMapper();
-
         // Configuration
         final String looseToucheTokenForUser1 = getLooseToucheToken(GOOGLE_USER_1);
         final String user1Id = getUserRepository().findUserByGoogleUsername(GOOGLE_USER_1.getEmail()).get().getId();
@@ -101,7 +100,7 @@ public class ContactAPITest extends JUnitHelper {
         getMvc().perform(post(CONTACT_URL)
                 .contentType(APPLICATION_JSON_UTF8)
                 .header("Authorization", "Bearer " + looseToucheTokenForUser1)
-                .content(mapper.writeValueAsString(contact)))
+                .content(getMapper().writeValueAsString(contact)))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("type").value(invalid_request_error.toString()))
                 .andExpect(jsonPath("message").value("Errors in the contact data"))
@@ -123,7 +122,7 @@ public class ContactAPITest extends JUnitHelper {
         getMvc().perform(post(CONTACT_URL)
                 .contentType(APPLICATION_JSON_UTF8)
                 .header("Authorization", "Bearer " + looseToucheTokenForUser1)
-                .content(mapper.writeValueAsString(contact)))
+                .content(getMapper().writeValueAsString(contact)))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("type").value(invalid_request_error.toString()))
                 .andExpect(jsonPath("message").value("Errors in the contact data"))
@@ -143,7 +142,7 @@ public class ContactAPITest extends JUnitHelper {
         getMvc().perform(post(CONTACT_URL)
                 .contentType(APPLICATION_JSON_UTF8)
                 .header("Authorization", "Bearer " + looseToucheTokenForUser1)
-                .content(mapper.writeValueAsString(CONTACT_1.toDTO())))
+                .content(getMapper().writeValueAsString(CONTACT_1.toDTO())))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("email").value(CONTACT_1.getEmail()))
                 .andExpect(jsonPath("firstName").value(CONTACT_1.getFirstName()))
@@ -159,7 +158,7 @@ public class ContactAPITest extends JUnitHelper {
         getMvc().perform(post(CONTACT_URL)
                 .contentType(APPLICATION_JSON_UTF8)
                 .header("Authorization", "Bearer " + looseToucheTokenForUser1)
-                .content(mapper.writeValueAsString(CONTACT_1.toDTO())))
+                .content(getMapper().writeValueAsString(CONTACT_1.toDTO())))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("type").value(invalid_request_error.toString()))
                 .andExpect(jsonPath("message").value("Contact already exists"));
@@ -184,7 +183,7 @@ public class ContactAPITest extends JUnitHelper {
         getMvc().perform(post(CONTACT_URL)
                 .contentType(APPLICATION_JSON_UTF8)
                 .header("Authorization", "Bearer " + looseToucheTokenForUser1)
-                .content(mapper.writeValueAsString(CONTACT_2.toDTO())))
+                .content(getMapper().writeValueAsString(CONTACT_2.toDTO())))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("email").value(CONTACT_2.getEmail()))
                 .andExpect(jsonPath("firstName").value(CONTACT_2.getFirstName()))
@@ -200,39 +199,85 @@ public class ContactAPITest extends JUnitHelper {
         getMvc().perform(post(CONTACT_URL)
                 .contentType(APPLICATION_JSON_UTF8)
                 .header("Authorization", "Bearer " + looseToucheTokenForUser1)
-                .content(mapper.writeValueAsString(CONTACT_1.toDTO())))
+                .content(getMapper().writeValueAsString(CONTACT_1.toDTO())))
                 .andExpect(status().isBadRequest());
         getMvc().perform(post(CONTACT_URL)
                 .contentType(APPLICATION_JSON_UTF8)
                 .header("Authorization", "Bearer " + looseToucheTokenForUser1)
-                .content(mapper.writeValueAsString(CONTACT_2.toDTO())))
+                .content(getMapper().writeValueAsString(CONTACT_2.toDTO())))
                 .andExpect(status().isBadRequest());
         getMvc().perform(post(CONTACT_URL)
                 .contentType(APPLICATION_JSON_UTF8)
                 .header("Authorization", "Bearer " + looseToucheTokenForUser1)
-                .content(mapper.writeValueAsString(CONTACT_3.toDTO())))
-                .andExpect(status().isCreated());
+                .content(getMapper().writeValueAsString(CONTACT_3.toDTO())))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("contactDueDate").value("31/12/2022"));
         getMvc().perform(post(CONTACT_URL)
                 .contentType(APPLICATION_JSON_UTF8)
                 .header("Authorization", "Bearer " + looseToucheTokenForUser1)
-                .content(mapper.writeValueAsString(CONTACT_4.toDTO())))
+                .content(getMapper().writeValueAsString(CONTACT_4.toDTO())))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("contactDueDate").value("04/01/2020"));
+        getMvc().perform(post(CONTACT_URL)
+                .contentType(APPLICATION_JSON_UTF8)
+                .header("Authorization", "Bearer " + looseToucheTokenForUser2)
+                .content(getMapper().writeValueAsString(CONTACT_1.toDTO())))
                 .andExpect(status().isCreated());
         getMvc().perform(post(CONTACT_URL)
                 .contentType(APPLICATION_JSON_UTF8)
                 .header("Authorization", "Bearer " + looseToucheTokenForUser2)
-                .content(mapper.writeValueAsString(CONTACT_1.toDTO())))
-                .andExpect(status().isCreated());
-        getMvc().perform(post(CONTACT_URL)
-                .contentType(APPLICATION_JSON_UTF8)
-                .header("Authorization", "Bearer " + looseToucheTokenForUser2)
-                .content(mapper.writeValueAsString(CONTACT_1.toDTO())))
+                .content(getMapper().writeValueAsString(CONTACT_1.toDTO())))
                 .andExpect(status().isBadRequest());
         getMvc().perform(post(CONTACT_URL)
                 .contentType(APPLICATION_JSON_UTF8)
                 .header("Authorization", "Bearer " + looseToucheTokenForUser2)
-                .content(mapper.writeValueAsString(CONTACT_2.toDTO())))
+                .content(getMapper().writeValueAsString(CONTACT_2.toDTO())))
                 .andExpect(status().isCreated());
         assertEquals(getContactRepository().count(), 6);
+
+    }
+
+    /**
+     * GetContact test.
+     */
+    @Test
+    public final void getContactTest() throws Exception {
+        // Configuration.
+        final String looseToucheTokenForUser1 = getLooseToucheToken(GOOGLE_USER_1);
+        final String looseToucheTokenForUser2 = getLooseToucheToken(GOOGLE_USER_2);
+
+        // Contact 1 for user 1 should not exists.
+        getMvc().perform(get(CONTACT_URL + "/" + CONTACT_1.getEmail() + "/")
+                .contentType(APPLICATION_JSON_UTF8)
+                .header("Authorization", "Bearer " + looseToucheTokenForUser1))
+                .andExpect(status().isNotFound());
+
+        // Create contact 1 for user 1.
+        getMvc().perform(post(CONTACT_URL)
+                .contentType(APPLICATION_JSON_UTF8)
+                .header("Authorization", "Bearer " + looseToucheTokenForUser1)
+                .content(getMapper().writeValueAsString(CONTACT_1.toDTO())))
+                .andExpect(status().isCreated());
+
+        // Contact 1 for user 1 should exists.
+        getMvc().perform(get(CONTACT_URL + "/" + CONTACT_1.getEmail() + "/")
+                .contentType(APPLICATION_JSON_UTF8)
+                .header("Authorization", "Bearer " + looseToucheTokenForUser1))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("email").value(CONTACT_1.getEmail()))
+                .andExpect(jsonPath("firstName").value(CONTACT_1.getFirstName()))
+                .andExpect(jsonPath("lastName").value(CONTACT_1.getLastName()))
+                .andExpect(jsonPath("notes").value(CONTACT_1.getNotes()))
+                .andExpect(jsonPath("contactRecurrenceType").value(CONTACT_1.getContactRecurrenceType()))
+                .andExpect(jsonPath("contactRecurrenceValue").value(CONTACT_1.getContactRecurrenceValue()))
+                .andExpect(jsonPath("contactRecurrenceValue").value(CONTACT_1.getContactRecurrenceValue()))
+                .andExpect(jsonPath("contactDueDate").value("01/01/2020"));
+
+        // Contact 1 for user 2 should not exists.
+        getMvc().perform(get(CONTACT_URL + "/" + CONTACT_1.getEmail() + "/")
+                .contentType(APPLICATION_JSON_UTF8)
+                .header("Authorization", "Bearer " + looseToucheTokenForUser2))
+                .andExpect(status().isNotFound());
 
     }
 

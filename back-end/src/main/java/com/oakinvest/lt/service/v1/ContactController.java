@@ -14,15 +14,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.text.SimpleDateFormat;
-import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 
 import static com.oakinvest.lt.domain.ContactRecurrenceType.DAY;
 import static com.oakinvest.lt.domain.ContactRecurrenceType.MONTH;
 import static com.oakinvest.lt.domain.ContactRecurrenceType.YEAR;
 import static com.oakinvest.lt.util.error.LooseTouchErrorType.invalid_request_error;
+import static com.oakinvest.lt.util.error.LooseTouchErrorType.resource_not_found;
 
 /**
  * Contact controller.
@@ -92,6 +93,16 @@ public class ContactController implements ContactAPI {
         return LooseTouchMapper.INSTANCE.contactToContactDTO(contactToCreate);
     }
 
+    @Override
+    public final ContactDTO getContact(final AuthenticatedUser authenticatedUser, final String email) {
+        Optional<Contact> contact = contactRepository.findContactByEmail(authenticatedUser.getUserId(), email);
+        if (contact.isPresent()) {
+            return LooseTouchMapper.INSTANCE.contactToContactDTO(contact.get());
+        } else {
+            throw new LooseTouchException(resource_not_found, "Contact not found");
+        }
+    }
+
     /**
      * Calculate next contact due date.
      *
@@ -117,7 +128,6 @@ public class ContactController implements ContactAPI {
         }
 
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyy");
-        System.out.println("=> Date : " + sdf.format(DateUtils.truncate(dueDate, Calendar.DATE).getTime()));
         return DateUtils.truncate(dueDate, Calendar.DATE);
     }
 

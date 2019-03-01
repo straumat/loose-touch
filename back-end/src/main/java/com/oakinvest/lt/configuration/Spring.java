@@ -32,12 +32,13 @@ public class Spring implements WebMvcConfigurer {
     @Override
     public final void addInterceptors(final InterceptorRegistry registry) {
         registry.addInterceptor(authenticationInterceptor())
-                .addPathPatterns("/v1/*")
+                .addPathPatterns("/v1/**/*")
                 .excludePathPatterns("/v1/login/*");
     }
 
     /**
      * Returns authentication user resolver.
+     *
      * @return authentication user resolver
      */
     @Bean

@@ -10,6 +10,7 @@ import com.amazonaws.services.dynamodbv2.model.Projection;
 import com.amazonaws.services.dynamodbv2.model.ProjectionType;
 import com.amazonaws.services.dynamodbv2.model.ProvisionedThroughput;
 import com.amazonaws.services.dynamodbv2.util.TableUtils;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
 import com.oakinvest.lt.authentication.loosetouch.LooseTouchTokenProvider;
 import com.oakinvest.lt.domain.Contact;
@@ -82,6 +83,11 @@ public class JUnitHelper {
      */
     @Autowired
     private LooseTouchTokenProvider looseTouchTokenProvider;
+
+    /**
+     * Object mapper.
+     */
+    ObjectMapper mapper = new ObjectMapper();
 
     /**
      * Start DynamoDB.
@@ -199,4 +205,12 @@ public class JUnitHelper {
         return looseTouchTokenProvider;
     }
 
+    /**
+     * Get mapper.
+     *
+     * @return mapper
+     */
+    public final ObjectMapper getMapper() {
+        return mapper;
+    }
 }

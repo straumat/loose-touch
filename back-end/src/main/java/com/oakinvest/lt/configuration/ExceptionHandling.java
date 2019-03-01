@@ -49,6 +49,9 @@ public class ExceptionHandling {
             case invalid_request_error:
                 status = HttpStatus.BAD_REQUEST;
                 break;
+            case resource_not_found:
+                status = HttpStatus.NOT_FOUND;
+                break;
             case rate_limit_error:
                 status = HttpStatus.TOO_MANY_REQUESTS;
                 break;

@@ -26,6 +26,11 @@ public enum LooseTouchErrorType {
     invalid_request_error,
 
     /**
+     * Resource not found.
+     */
+    resource_not_found,
+
+    /**
      * Too many requests hit the API too quickly.
      */
     rate_limit_error,
