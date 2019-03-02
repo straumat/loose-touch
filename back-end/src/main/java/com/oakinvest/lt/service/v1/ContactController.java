@@ -103,6 +103,11 @@ public class ContactController implements ContactAPI {
         }
     }
 
+    @Override
+    public final ContactDTO update(final AuthenticatedUser authenticatedUser, final String email, final ContactDTO contact) {
+        return null;
+    }
+
     /**
      * Calculate next contact due date.
      *

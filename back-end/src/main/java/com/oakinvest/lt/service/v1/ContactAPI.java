@@ -2,6 +2,7 @@ package com.oakinvest.lt.service.v1;
 
 import com.oakinvest.lt.authentication.loosetouch.AuthenticatedUser;
 import com.oakinvest.lt.dto.v1.ContactDTO;
+import com.oakinvest.lt.service.util.V1Service;
 import com.oakinvest.lt.util.error.LooseTouchError;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -13,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -90,5 +92,34 @@ public interface ContactAPI extends V1Service {
     ContactDTO getContact(AuthenticatedUser authenticatedUser,
                           @PathVariable("email") String email);
 
+    /**
+     * Update a contact.
+     *
+     * @param authenticatedUser authenticated user
+     * @param email             email of the contact to update
+     * @param contact           contact data
+     * @return contact updated
+     */
+    @PutMapping(value = "/contacts/{email:.+}")
+    @ApiOperation(value = "Update a contact",
+            response = ContactDTO.class)
+    @ApiImplicitParams({@ApiImplicitParam(name = "email",
+            dataTypeClass = String.class,
+            value = "Email of the contact to update"),
+            @ApiImplicitParam(name = "contact",
+                    dataTypeClass = ContactDTO.class,
+                    value = "Contact data")
+    })
+    @ApiResponses(value = {
+            @ApiResponse(code = STATUS_OK, message = STATUS_OK_MESSAGE, response = ContactDTO.class),
+            @ApiResponse(code = STATUS_BAD_REQUEST, message = STATUS_BAD_REQUEST_MESSAGE, response = LooseTouchError.class),
+            @ApiResponse(code = STATUS_UNAUTHORIZED, message = STATUS_UNAUTHORIZED_MESSAGE, response = LooseTouchError.class),
+            @ApiResponse(code = STATUS_NOT_FOUND, message = STATUS_NOT_FOUND_MESSAGE, response = LooseTouchError.class),
+            @ApiResponse(code = STATUS_REQUEST_FAILED, message = STATUS_REQUEST_FAILED_MESSAGE, response = LooseTouchError.class),
+            @ApiResponse(code = STATUS_INTERNAL_SERVER_ERROR, message = STATUS_INTERNAL_SERVER_ERROR_MESSAGE, response = LooseTouchError.class)
+    })
+    ContactDTO update(AuthenticatedUser authenticatedUser,
+                      @PathVariable("email") String email,
+                      @RequestBody ContactDTO contact);
 
 }
