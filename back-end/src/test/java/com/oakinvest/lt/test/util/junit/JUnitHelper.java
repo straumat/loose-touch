@@ -131,7 +131,7 @@ public class JUnitHelper {
     }
 
     /**
-     * Return a loose touch toker for a user.
+     * Return a loose touch token for a user.
      *
      * @param user GOOGLE_USER_1 or GOOGLE_USER_2.
      * @return token

@@ -4,7 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * Loost touch exception.
+ * Loose touch exception.
  */
 public class LooseTouchException extends RuntimeException {
 

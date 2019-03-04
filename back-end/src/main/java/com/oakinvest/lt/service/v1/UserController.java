@@ -120,7 +120,7 @@ public class UserController implements UserAPI {
                     email = payload.get().getEmail();
                     imageUrl = (String) payload.get().get("picture");
                 } else {
-                    // else we search them via google userinfo.
+                    // else we search them via google user info.
                     GoogleUserInfoDTO googleUserInfo = getGoogleUserInfo(googleAccessToken);
                     firstName = googleUserInfo.getGivenName();
                     lastName = googleUserInfo.getFamilyName();

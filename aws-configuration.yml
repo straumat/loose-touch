@@ -1,6 +1,6 @@
 # The AWSTemplateFormatVersion section (optional) identifies the capabilities of the template. The latest template format version is 2010-09-09 and is currently the only valid value.
 AWSTemplateFormatVersion: '2010-09-09'
-# For serverless applications (also referred to as Lambda-based applications), specifies the version of the AWS Serverless Application Model (AWS SAM) to use.
+# For serverless applications (also referred to as Lambda-based applications), specifies the version of the AWS serverless Application Model (AWS SAM) to use.
 Transform: AWS::Serverless-2016-10-31
 # A text string that describes the template. This section must always follow the template format version section.
 Description: Loose touch

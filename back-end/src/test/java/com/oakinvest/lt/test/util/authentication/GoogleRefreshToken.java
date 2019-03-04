@@ -91,7 +91,7 @@ public class GoogleRefreshToken implements Serializable {
 
     /**
      * Get token type.
-     * @return token tyoe
+     * @return token type
      */
     public final String getTokenType() {
         return tokenType;
