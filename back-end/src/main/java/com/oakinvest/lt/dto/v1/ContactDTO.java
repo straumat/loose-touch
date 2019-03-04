@@ -70,7 +70,10 @@ public class ContactDTO {
     /**
      * Contact due date.
      */
-    @JsonFormat(pattern = "dd/MM/yyyy")
+    @JsonFormat(shape = JsonFormat.Shape.STRING,
+            pattern = "dd/MM/yyyy",
+            locale = "fr-FR",
+            timezone = "Europe/Paris")
     @DateTimeFormat(pattern = "dd/MM/yyyy")
     @ApiModelProperty(value = "When the contact is due (dd/MM/yyyy)",
             example = "21/12/2019",

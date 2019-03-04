@@ -9,6 +9,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import static com.oakinvest.lt.configuration.Application.LOCAL_DYNAMODB_ENVIRONMENT;
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -30,7 +31,7 @@ public class PingAPITest extends JUnitHelper {
     public void statusTest() throws Exception {
         getMvc().perform(get("/ping"))
                 .andExpect(status().isOk())
-                .andExpect(content().string(is("pong")));
+                .andExpect(content().string(containsString("pong at")));
     }
 
 }

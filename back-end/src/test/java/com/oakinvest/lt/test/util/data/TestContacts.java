@@ -1,8 +1,6 @@
 package com.oakinvest.lt.test.util.data;
 
-import com.oakinvest.lt.domain.Contact;
 import com.oakinvest.lt.dto.v1.ContactDTO;
-import com.oakinvest.lt.dto.v1.UserDTO;
 
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -114,37 +112,37 @@ public enum TestContacts {
     /**
      * Email.
      */
-    private String email;
+    private final String email;
 
     /**
      * First name.
      */
-    private String firstName;
+    private final String firstName;
 
     /**
      * Last name.
      */
-    private String lastName;
+    private final String lastName;
 
     /**
      * Notes.
      */
-    private String notes;
+    private final String notes;
 
     /**
      * Contact recurrence type (DAY, MONTH, YEAR).
      */
-    private String contactRecurrenceType;
+    private final String contactRecurrenceType;
 
     /**
      * Contact recurrence value.
      */
-    private int contactRecurrenceValue;
+    private final int contactRecurrenceValue;
 
     /**
      * Contact due date.
      */
-    private Calendar contactDueDate;
+    private final Calendar contactDueDate;
 
     /**
      * Returns a UserDTO.

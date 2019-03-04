@@ -37,12 +37,6 @@ public class ExceptionHandling {
         // Choosing http status.
         HttpStatus status;
         switch (ex.getType()) {
-            case api_connection_error:
-                status = HttpStatus.INTERNAL_SERVER_ERROR;
-                break;
-            case api_error:
-                status = HttpStatus.INTERNAL_SERVER_ERROR;
-                break;
             case authentication_error:
                 status = HttpStatus.UNAUTHORIZED;
                 break;
@@ -55,12 +49,10 @@ public class ExceptionHandling {
             case rate_limit_error:
                 status = HttpStatus.TOO_MANY_REQUESTS;
                 break;
-            case unspecified_error:
-                status = HttpStatus.INTERNAL_SERVER_ERROR;
-                break;
+            case api_connection_error:
             case unknown_error:
-                status = HttpStatus.INTERNAL_SERVER_ERROR;
-                break;
+            case unspecified_error:
+            case api_error:
             default:
                 status = HttpStatus.INTERNAL_SERVER_ERROR;
                 break;

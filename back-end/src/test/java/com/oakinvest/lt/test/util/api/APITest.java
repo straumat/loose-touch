@@ -112,7 +112,7 @@ public abstract class APITest {
     /**
      * Object mapper.
      */
-    private ObjectMapper mapper = new ObjectMapper();
+    private final ObjectMapper mapper = new ObjectMapper();
 
     /**
      * Authentication test.

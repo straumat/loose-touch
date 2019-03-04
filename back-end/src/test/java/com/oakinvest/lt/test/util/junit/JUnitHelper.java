@@ -5,7 +5,6 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.amazonaws.services.dynamodbv2.local.main.ServerRunner;
 import com.amazonaws.services.dynamodbv2.local.server.DynamoDBProxyServer;
 import com.amazonaws.services.dynamodbv2.model.CreateTableRequest;
-import com.amazonaws.services.dynamodbv2.model.CreateTableResult;
 import com.amazonaws.services.dynamodbv2.model.Projection;
 import com.amazonaws.services.dynamodbv2.model.ProjectionType;
 import com.amazonaws.services.dynamodbv2.model.ProvisionedThroughput;
@@ -41,7 +40,7 @@ public class JUnitHelper {
     /**
      * Google login URL.
      */
-    protected static final String GOOGLE_LOGIN_URL = "/v1/login/google";
+    private static final String GOOGLE_LOGIN_URL = "/v1/login/google";
 
     /**
      * Dynamo DB Server.
@@ -87,7 +86,7 @@ public class JUnitHelper {
     /**
      * Object mapper.
      */
-    private ObjectMapper mapper = new ObjectMapper();
+    private final ObjectMapper mapper = new ObjectMapper();
 
     /**
      * Start DynamoDB.

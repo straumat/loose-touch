@@ -8,7 +8,12 @@ public enum UserAuthentication {
     /**
      * Authentication with google.
      */
-    GOOGLE("google");
+    GOOGLE("google"),
+
+    /**
+     * Twitter.
+     */
+    TWITTER("twitter");
 
     /**
      * Value.

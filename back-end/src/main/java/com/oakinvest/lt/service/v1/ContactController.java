@@ -8,7 +8,6 @@ import com.oakinvest.lt.util.error.LooseTouchErrorCode;
 import com.oakinvest.lt.util.error.LooseTouchErrorDetail;
 import com.oakinvest.lt.util.error.LooseTouchException;
 import com.oakinvest.lt.util.mapper.LooseTouchMapper;
-import org.apache.commons.lang3.time.DateUtils;
 import org.apache.commons.validator.routines.EmailValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RestController;
@@ -106,7 +105,45 @@ public class ContactController implements ContactAPI {
 
     @Override
     public final ContactDTO updateContact(final AuthenticatedUser authenticatedUser, final String email, final ContactDTO contact) {
-        return null;
+        // If email is null, error.
+        if (email == null) {
+            throw new LooseTouchException(invalid_request_error, "Email parameter is missing");
+        }
+
+        // Check if the contact exists.
+        Optional<Contact> c = contactRepository.findContactByEmail(authenticatedUser.getUserId(), email);
+        if (!c.isPresent()) {
+            throw new LooseTouchException(resource_not_found, "Contact not found");
+        } else {
+            // If email is null, error.
+            if (contact == null) {
+                throw new LooseTouchException(invalid_request_error, "Contact data are missing");
+            }
+
+            // Test contact data.
+            List<LooseTouchErrorDetail> errors = getContactDataErrors(contact);
+            if (errors.size() > 0) {
+                throw new LooseTouchException(invalid_request_error, "Errors in the contact data", errors);
+            }
+
+            // Make the update.
+            c.get().setFirstName(contact.getFirstName());
+            c.get().setLastName(contact.getLastName());
+            c.get().setNotes(contact.getNotes());
+            c.get().setContactRecurrenceType(contact.getContactRecurrenceType());
+            c.get().setContactRecurrenceValue(contact.getContactRecurrenceValue());
+            if (contact.getContactDueDate() != null) {
+                c.get().setContactDueDate(contact.getContactDueDate());
+            }
+            contactRepository.save(c.get());
+            return LooseTouchMapper.INSTANCE.contactToContactDTO(c.get());
+        }
+    }
+
+    @Override
+    public final void delete(final AuthenticatedUser authenticatedUser, final String email) {
+        Optional<Contact> contact = contactRepository.findContactByEmail(authenticatedUser.getUserId(), email);
+
     }
 
     /**
@@ -131,7 +168,8 @@ public class ContactController implements ContactAPI {
             default:
                 break;
         }
-        return DateUtils.truncate(startDate, Calendar.HOUR);
+        return startDate;
+        //return DateUtils.truncate(startDate, Calendar.HOUR);
     }
 
     /**

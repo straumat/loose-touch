@@ -16,7 +16,7 @@ public class LooseTouchErrorDetail {
      * Error code.
      */
     @ApiModelProperty(value = "Error code",
-            example = "", // TODO add an example.
+            example = "email_required",
             required = true,
             position = 1)
     private final LooseTouchErrorCode code;
@@ -25,7 +25,7 @@ public class LooseTouchErrorDetail {
      * Error message.
      */
     @ApiModelProperty(value = "A human-readable message providing more details about the error",
-            example = "", // TODO add an example.
+            example = "The contact email is required",
             required = true,
             position = 2)
     private final String message;

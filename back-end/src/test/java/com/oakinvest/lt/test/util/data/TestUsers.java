@@ -24,22 +24,22 @@ public enum TestUsers {
     /**
      * First name.
      */
-    private String firstName;
+    private final String firstName;
 
     /**
      * Last name.
      */
-    private String lastName;
+    private final String lastName;
 
     /**
      * Email.
      */
-    private String email;
+    private final String email;
 
     /**
      * Profile image url.
      */
-    private String pictureUrl;
+    private final String pictureUrl;
 
     /**
      * Constructor.

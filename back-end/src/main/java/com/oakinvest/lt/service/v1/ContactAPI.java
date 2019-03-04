@@ -11,6 +11,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -90,7 +91,7 @@ public interface ContactAPI extends V1Service {
             @ApiResponse(code = STATUS_INTERNAL_SERVER_ERROR, message = STATUS_INTERNAL_SERVER_ERROR_MESSAGE, response = LooseTouchError.class)
     })
     ContactDTO getContact(AuthenticatedUser authenticatedUser,
-                          @PathVariable("email") String email);
+                          @PathVariable(value = "email", required = false) String email);
 
     /**
      * Update a contact.
@@ -103,10 +104,12 @@ public interface ContactAPI extends V1Service {
     @PutMapping(value = "/contacts/{email:.+}")
     @ApiOperation(value = "Update a contact",
             response = ContactDTO.class)
-    @ApiImplicitParams({@ApiImplicitParam(name = "email",
-            dataTypeClass = String.class,
-            value = "Email of the contact to updateContact"),
-            @ApiImplicitParam(name = "contact",
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "email",
+                    dataTypeClass = String.class,
+                    value = "Email of the contact to find"),
+            @ApiImplicitParam(
+                    name = "contact",
                     dataTypeClass = ContactDTO.class,
                     value = "Contact data")
     })
@@ -119,7 +122,30 @@ public interface ContactAPI extends V1Service {
             @ApiResponse(code = STATUS_INTERNAL_SERVER_ERROR, message = STATUS_INTERNAL_SERVER_ERROR_MESSAGE, response = LooseTouchError.class)
     })
     ContactDTO updateContact(AuthenticatedUser authenticatedUser,
-                             @PathVariable("email") String email,
-                             @RequestBody ContactDTO contact);
+                             @PathVariable(value = "email", required = false) String email,
+                             @RequestBody(required = false) ContactDTO contact);
+
+    /**
+     * Delete a contact.
+     *
+     * @param authenticatedUser authenticated user.
+     * @param email             email of the contact to delete
+     */
+    @DeleteMapping(value = "/contacts/{email:.+}")
+    @ApiOperation(value = "Delete a contact")
+    @ApiImplicitParams({@ApiImplicitParam(name = "email",
+            dataTypeClass = String.class,
+            value = "Email of the contact to delete")
+    })
+    @ApiResponses(value = {
+            @ApiResponse(code = STATUS_OK, message = STATUS_OK_MESSAGE),
+            @ApiResponse(code = STATUS_BAD_REQUEST, message = STATUS_BAD_REQUEST_MESSAGE, response = LooseTouchError.class),
+            @ApiResponse(code = STATUS_UNAUTHORIZED, message = STATUS_UNAUTHORIZED_MESSAGE, response = LooseTouchError.class),
+            @ApiResponse(code = STATUS_NOT_FOUND, message = STATUS_NOT_FOUND_MESSAGE, response = LooseTouchError.class),
+            @ApiResponse(code = STATUS_REQUEST_FAILED, message = STATUS_REQUEST_FAILED_MESSAGE, response = LooseTouchError.class),
+            @ApiResponse(code = STATUS_INTERNAL_SERVER_ERROR, message = STATUS_INTERNAL_SERVER_ERROR_MESSAGE, response = LooseTouchError.class)
+    })
+    void delete(AuthenticatedUser authenticatedUser,
+                @PathVariable("email") String email);
 
 }

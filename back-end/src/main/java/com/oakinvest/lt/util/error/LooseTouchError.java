@@ -15,7 +15,7 @@ public class LooseTouchError {
      * The error type.
      */
     @ApiModelProperty(value = "The type of error returned",
-            example = "", // TODO Add an example
+            example = "resource_not_found",
             required = true,
             position = 1)
     private final LooseTouchErrorType type;
@@ -24,7 +24,7 @@ public class LooseTouchError {
      * A human-readable message providing more details about the error.
      */
     @ApiModelProperty(value = "A human-readable message providing more details about the error",
-            example = "", // TODO Add an example
+            example = "The contact was not found",
             required = true,
             position = 2)
     private final String message;
