@@ -13,7 +13,6 @@ import org.apache.commons.validator.routines.EmailValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
@@ -48,7 +47,7 @@ public class ContactController implements ContactAPI {
     private ContactRepository contactRepository;
 
     @Override
-    public final ContactDTO create(final AuthenticatedUser authenticatedUser, final ContactDTO contact) {
+    public final ContactDTO createContact(final AuthenticatedUser authenticatedUser, final ContactDTO contact) {
 
         // =============================================================================================================
         // Managing errors.
@@ -74,10 +73,12 @@ public class ContactController implements ContactAPI {
 
         // If date is set, set a new date.
         Calendar dueDate;
-        if (contact.getContactDueDate() != null) {
-            dueDate = calculateNextContactDate(contact.getContactDueDate(), contact.getContactRecurrenceType(), contact.getContactRecurrenceValue());
-        } else {
+        if (contact.getContactDueDate() == null) {
+            // If not date is set, we calculate one.
             dueDate = calculateNextContactDate(Calendar.getInstance(), contact.getContactRecurrenceType(), contact.getContactRecurrenceValue());
+        } else {
+            // if it's set, we use it.
+            dueDate = contact.getContactDueDate();
         }
 
         // Create contact.
@@ -104,7 +105,7 @@ public class ContactController implements ContactAPI {
     }
 
     @Override
-    public final ContactDTO update(final AuthenticatedUser authenticatedUser, final String email, final ContactDTO contact) {
+    public final ContactDTO updateContact(final AuthenticatedUser authenticatedUser, final String email, final ContactDTO contact) {
         return null;
     }
 
@@ -131,9 +132,7 @@ public class ContactController implements ContactAPI {
             default:
                 break;
         }
-
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyy");
-        return DateUtils.truncate(dueDate, Calendar.DATE);
+        return DateUtils.truncate(dueDate, Calendar.HOUR);
     }
 
     /**

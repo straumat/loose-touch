@@ -93,7 +93,7 @@ public class LooseTouchTokenProviderTest {
     }
 
     /**
-     * Test that we can create token with user ID generated for dynamo db.
+     * Test that we can createContact token with user ID generated for dynamo db.
      */
     @Test
     public final void testDynamoDBUserToken() {

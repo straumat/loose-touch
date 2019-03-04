@@ -7,8 +7,10 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.amazonaws.services.dynamodbv2.local.main.ServerRunner;
 import com.amazonaws.services.dynamodbv2.local.server.DynamoDBProxyServer;
 import com.amazonaws.services.dynamodbv2.model.CreateTableRequest;
+import com.amazonaws.services.dynamodbv2.model.Projection;
+import com.amazonaws.services.dynamodbv2.model.ProjectionType;
 import com.amazonaws.services.dynamodbv2.model.ProvisionedThroughput;
-import com.amazonaws.services.dynamodbv2.util.TableUtils;
+import com.oakinvest.lt.domain.Contact;
 import com.oakinvest.lt.domain.User;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -53,15 +55,21 @@ public class Application extends SpringBootServletInitializer {
                     .build();
             DynamoDBMapper mapper = new DynamoDBMapper(dynamoDB);
 
-            // Creates the tables.
             ProvisionedThroughput provisionedThroughput = new ProvisionedThroughput(1L, 1L);
-            CreateTableRequest createUserTableRequest = mapper.generateCreateTableRequest(User.class)
-                    .withProvisionedThroughput(provisionedThroughput);
-            createUserTableRequest.getGlobalSecondaryIndexes().forEach(v -> v.setProvisionedThroughput(provisionedThroughput));
-            dynamoDB.createTable(createUserTableRequest);
 
-            // Waits for every table to be created.
-            TableUtils.waitUntilActive(dynamoDB, createUserTableRequest.getTableName());
+            // Creates the tables USERS.
+            CreateTableRequest createUsersTableRequest = mapper.generateCreateTableRequest(User.class)
+                    .withProvisionedThroughput(provisionedThroughput);
+            createUsersTableRequest.getGlobalSecondaryIndexes().forEach(v -> {
+                v.withProjection(new Projection().withProjectionType(ProjectionType.ALL));
+                v.setProvisionedThroughput(provisionedThroughput);
+            });
+
+            dynamoDB.createTable(createUsersTableRequest);
+
+            // Creates the table CONTACTS.
+            CreateTableRequest createContactsTableRequest = mapper.generateCreateTableRequest(Contact.class).withProvisionedThroughput(provisionedThroughput);
+            dynamoDB.createTable(createContactsTableRequest);
         }
 
         SpringApplication.run(Application.class, args);

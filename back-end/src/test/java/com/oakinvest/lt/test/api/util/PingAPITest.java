@@ -1,4 +1,4 @@
-package com.oakinvest.lt.test.service.util;
+package com.oakinvest.lt.test.api.util;
 
 import com.oakinvest.lt.test.util.junit.JUnitHelper;
 import org.junit.Test;

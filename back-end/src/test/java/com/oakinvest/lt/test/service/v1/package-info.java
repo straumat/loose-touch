@@ -1,4 +1,0 @@
-/**
- * Service test V1.
- */
-package com.oakinvest.lt.test.service.v1;

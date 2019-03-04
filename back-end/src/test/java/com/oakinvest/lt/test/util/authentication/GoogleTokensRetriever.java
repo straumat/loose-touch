@@ -97,7 +97,7 @@ public class GoogleTokensRetriever {
                 log.info("Token for user " + user + " returned by google : " + idToken.get());
                 saveTokenInCache(user, idToken.get());
             } else {
-                log.info("Impossible to get a token for user " + user + " from Google");
+                log.info("Impossible to getContact a token for user " + user + " from Google");
             }
             return idToken;
         }

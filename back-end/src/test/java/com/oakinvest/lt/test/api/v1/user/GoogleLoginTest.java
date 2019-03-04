@@ -1,22 +1,16 @@
-package com.oakinvest.lt.test.service.v1;
+package com.oakinvest.lt.test.api.v1.user;
 
 import com.jayway.jsonpath.JsonPath;
 import com.oakinvest.lt.domain.User;
+import com.oakinvest.lt.test.util.api.APITest;
 import com.oakinvest.lt.test.util.authentication.GoogleRefreshToken;
-import com.oakinvest.lt.test.util.junit.JUnitHelper;
 import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.http.HttpStatus;
 import org.springframework.test.web.servlet.MvcResult;
 
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
-import static com.oakinvest.lt.configuration.Application.LOCAL_DYNAMODB_ENVIRONMENT;
 import static com.oakinvest.lt.test.util.data.TestUsers.GOOGLE_USER_1;
 import static com.oakinvest.lt.test.util.data.TestUsers.GOOGLE_USER_2;
 import static com.oakinvest.lt.util.error.LooseTouchErrorType.authentication_error;
@@ -27,30 +21,26 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.fail;
 import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8;
-import static org.springframework.test.util.AssertionErrors.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
- * User API Test.
+ * Google login test.
  */
-@ActiveProfiles(LOCAL_DYNAMODB_ENVIRONMENT)
-@RunWith(SpringRunner.class)
-@SpringBootTest
-@AutoConfigureMockMvc
-public class UserAPITest extends JUnitHelper {
+public class GoogleLoginTest extends APITest {
 
-    /**
-     * Get profile URL.
-     */
-    private static final String GET_PROFILE_URL = "/v1/profile";
+    @Override
+    public void authenticationTest() throws Exception {
+        // No google token provided.
+        final MvcResult mvcResult = getMvc().perform(get(GOOGLE_LOGIN_URL)
+                .contentType(APPLICATION_JSON_UTF8))
+                .andReturn();
+        assertNotEquals("Login not allowed", HttpStatus.FORBIDDEN, mvcResult.getResponse().getStatus());
+    }
 
-    /**
-     * Ping test.
-     */
-    @Test
-    public void googleLoginTest() throws Exception {
+    @Override
+    public void validDataTest() throws Exception {
         // No google token provided.
         getMvc().perform(get(GOOGLE_LOGIN_URL)
                 .contentType(APPLICATION_JSON_UTF8))
@@ -77,7 +67,10 @@ public class UserAPITest extends JUnitHelper {
                 .andExpect(jsonPath("type").value(authentication_error.toString()))
                 .andExpect(jsonPath("message").value("Invalid Google Id token : " + user1InvalidToken))
                 .andExpect(jsonPath("errors", hasSize(0)));
+    }
 
+    @Override
+    public void businessLogicTest() throws Exception {
         // Valid user token (loose.touch.test.1@gmail.com).
         Optional<GoogleRefreshToken> user1GoogleToken = getGoogleTokenRetriever().getIdToken(GOOGLE_USER_1);
         if (user1GoogleToken.isPresent()) {
@@ -135,7 +128,7 @@ public class UserAPITest extends JUnitHelper {
             fail("Impossible to retrieve a token for user 1");
         }
 
-        // Another user (loose.touch.test.2@gmail.com)..
+        // Another user (loose.touch.test.2@gmail.com).
         Optional<GoogleRefreshToken> user2GoogleToken = getGoogleTokenRetriever().getIdToken(GOOGLE_USER_2);
         if (user2GoogleToken.isPresent()) {
             // Check that there is one user in the database.
@@ -190,68 +183,8 @@ public class UserAPITest extends JUnitHelper {
             Assert.assertTrue("Token for user 2 is not valid", getLooseTouchTokenProvider().getUserId(looseTouchUser2Token2).isPresent());
             assertEquals("Token for user 2 doesn't have the good ID", u2.get().getId(), getLooseTouchTokenProvider().getUserId(looseTouchUser2Token2).get());
         } else {
-            fail("Impossible to retrieve a token for user 1");
+            fail("Impossible to retrieve a token for user 2");
         }
-
-    }
-
-    /**
-     * Test get profile.
-     */
-    @Test
-    public void getProfileTest() throws Exception {
-        // No google token provided.
-        getMvc().perform(get(GET_PROFILE_URL)
-                .contentType(APPLICATION_JSON_UTF8))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("type").value(invalid_request_error.toString()))
-                .andExpect(jsonPath("message").value("Loose touch token missing"))
-                .andExpect(jsonPath("errors", hasSize(0)));
-
-        // Dummy bearer.
-        getMvc().perform(get(GET_PROFILE_URL)
-                .contentType(APPLICATION_JSON_UTF8)
-                .header("Authorization", "Bearer invalidToken"))
-                .andExpect(status().isUnauthorized())
-                .andExpect(jsonPath("type").value(authentication_error.toString()))
-                .andExpect(jsonPath("message").value("Invalid loose touch token : invalidToken"))
-                .andExpect(jsonPath("errors", hasSize(0)));
-
-        // Getting user 1 profile.
-        MvcResult result1 = getMvc().perform(get(GET_PROFILE_URL)
-                .contentType(APPLICATION_JSON_UTF8)
-                .header("Authorization", "Bearer " + getLooseToucheToken(GOOGLE_USER_1)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("idToken").isNotEmpty())
-                .andExpect(jsonPath("firstName").value(GOOGLE_USER_1.getFirstName()))
-                .andExpect(jsonPath("lastName").value(GOOGLE_USER_1.getLastName()))
-                .andExpect(jsonPath("email").value(GOOGLE_USER_1.getEmail()))
-                .andExpect(jsonPath("pictureUrl").isString())
-                .andExpect(jsonPath("newAccount").value(false))
-                .andReturn();
-
-        // Check that the returned token is ok.
-        String looseTouchUser1Token = JsonPath.parse(result1.getResponse().getContentAsString()).read("idToken").toString();
-        assertTrue("Invalid token", getLooseTouchTokenProvider().getUserId(looseTouchUser1Token).isPresent());
-        assertTrue("Invalid user", getUserRepository().getUser(getLooseTouchTokenProvider().getUserId(looseTouchUser1Token).get()).isPresent());
-
-        // Getting user 2 profile.
-        MvcResult result2 = getMvc().perform(get(GET_PROFILE_URL)
-                .contentType(APPLICATION_JSON_UTF8)
-                .header("Authorization", "Bearer " + getLooseToucheToken(GOOGLE_USER_2)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("idToken").isNotEmpty())
-                .andExpect(jsonPath("firstName").value(GOOGLE_USER_2.getFirstName()))
-                .andExpect(jsonPath("lastName").value(GOOGLE_USER_2.getLastName()))
-                .andExpect(jsonPath("email").value(GOOGLE_USER_2.getEmail()))
-                .andExpect(jsonPath("pictureUrl").isString())
-                .andExpect(jsonPath("newAccount").value(false))
-                .andReturn();
-
-        // Check that the returned token is ok.
-        String looseTouchUser2Token = JsonPath.parse(result2.getResponse().getContentAsString()).read("idToken").toString();
-        assertTrue("Invalid token", getLooseTouchTokenProvider().getUserId(looseTouchUser2Token).isPresent());
-        assertTrue("Invalid user", getUserRepository().getUser(getLooseTouchTokenProvider().getUserId(looseTouchUser2Token).get()).isPresent());
     }
 
 }

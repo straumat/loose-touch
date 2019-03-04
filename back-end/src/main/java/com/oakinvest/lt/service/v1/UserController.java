@@ -105,7 +105,7 @@ public class UserController implements UserAPI {
                 u.setIdToken(looseTouchTokenProvider.createToken(user.getId()));
                 return u;
             } else {
-                // If not, we create it first and then, we return a token.
+                // If not, we createContact it first and then, we return a token.
 
                 // User data
                 String firstName;
@@ -141,7 +141,25 @@ public class UserController implements UserAPI {
     }
 
     /**
-     * get google user info.
+     * Get the user profile.
+     *
+     * @param authenticatedUser authenticated user
+     * @return profile
+     */
+    @Override
+    public final UserDTO getProfile(final AuthenticatedUser authenticatedUser) {
+        Optional<User> user = userRepository.getUser(authenticatedUser.getUserId());
+        if (user.isPresent()) {
+            UserDTO u = LooseTouchMapper.INSTANCE.userToUserDTO(user.get());
+            u.setIdToken(looseTouchTokenProvider.createToken(user.get().getId()));
+            return u;
+        } else {
+            throw new LooseTouchException(api_error, "User " + authenticatedUser.getUserId() + " not found");
+        }
+    }
+
+    /**
+     * getContact google user info.
      *
      * @param googleAccessToken google access token
      * @return google user info
@@ -161,24 +179,6 @@ public class UserController implements UserAPI {
         // Calling google.
         HttpEntity<?> request = new HttpEntity<>(payload, headers);
         return new RestTemplate().getForObject("https://www.googleapis.com/oauth2/v2/userinfo?access_token={access_token}", GoogleUserInfoDTO.class, googleAccessToken);
-    }
-
-    /**
-     * Get the user profile.
-     *
-     * @param authenticatedUser authenticated user
-     * @return profile
-     */
-    @Override
-    public final UserDTO getProfile(final AuthenticatedUser authenticatedUser) {
-        Optional<User> user = userRepository.getUser(authenticatedUser.getUserId());
-        if (user.isPresent()) {
-            UserDTO u = LooseTouchMapper.INSTANCE.userToUserDTO(user.get());
-            u.setIdToken(looseTouchTokenProvider.createToken(user.get().getId()));
-            return u;
-        } else {
-            throw new LooseTouchException(api_error, "User " + authenticatedUser.getUserId() + " not found");
-        }
     }
 
 }

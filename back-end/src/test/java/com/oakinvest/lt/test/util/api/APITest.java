@@ -1,11 +1,10 @@
-package com.oakinvest.lt.test.util.junit;
+package com.oakinvest.lt.test.util.api;
 
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.amazonaws.services.dynamodbv2.local.main.ServerRunner;
 import com.amazonaws.services.dynamodbv2.local.server.DynamoDBProxyServer;
 import com.amazonaws.services.dynamodbv2.model.CreateTableRequest;
-import com.amazonaws.services.dynamodbv2.model.CreateTableResult;
 import com.amazonaws.services.dynamodbv2.model.Projection;
 import com.amazonaws.services.dynamodbv2.model.ProjectionType;
 import com.amazonaws.services.dynamodbv2.model.ProvisionedThroughput;
@@ -22,26 +21,52 @@ import com.oakinvest.lt.test.util.authentication.GoogleTokensRetriever;
 import com.oakinvest.lt.test.util.data.TestUsers;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
 import java.util.Optional;
 
+import static com.oakinvest.lt.configuration.Application.LOCAL_DYNAMODB_ENVIRONMENT;
 import static com.oakinvest.lt.test.util.data.TestUsers.GOOGLE_USER_1;
 import static com.oakinvest.lt.test.util.data.TestUsers.GOOGLE_USER_2;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
- * JUnit helper.
+ * API Test.
  */
-public class JUnitHelper {
+@ActiveProfiles(LOCAL_DYNAMODB_ENVIRONMENT)
+@RunWith(SpringRunner.class)
+@SpringBootTest
+@AutoConfigureMockMvc
+public abstract class APITest {
 
     /**
      * Google login URL.
      */
     protected static final String GOOGLE_LOGIN_URL = "/v1/login/google";
+
+    /**
+     * Profile URL.
+     */
+    protected static final String PROFILE_URL = "/v1/profile";
+
+    /**
+     * Contact URL.
+     */
+    protected static final String CONTACT_URL = "/v1/contacts";
+
+    /**
+     * Date format used everywhere.
+     */
+    protected static final String DATE_FORMAT = "dd/MM/yyyy";
 
     /**
      * Dynamo DB Server.
@@ -59,6 +84,12 @@ public class JUnitHelper {
      */
     @Autowired
     private GoogleTokensRetriever googleTokenRetriever;
+
+    /**
+     * Loose touch token provider.
+     */
+    @Autowired
+    private LooseTouchTokenProvider looseTouchTokenProvider;
 
     /**
      * DynamoDB connection.
@@ -79,18 +110,38 @@ public class JUnitHelper {
     private ContactRepository contactRepository;
 
     /**
-     * Loose touch token provider.
-     */
-    @Autowired
-    private LooseTouchTokenProvider looseTouchTokenProvider;
-
-    /**
      * Object mapper.
      */
     private ObjectMapper mapper = new ObjectMapper();
 
     /**
+     * Authentication test.
+     *
+     * @throws Exception error
+     */
+    @Test
+    public abstract void authenticationTest() throws Exception;
+
+    /**
+     * Valid data test.
+     *
+     * @throws Exception error
+     */
+    @Test
+    public abstract void validDataTest() throws Exception;
+
+    /**
+     * Business logic test.
+     *
+     * @throws Exception error
+     */
+    @Test
+    public abstract void businessLogicTest() throws Exception;
+
+    /**
      * Start DynamoDB.
+     *
+     * @throws Exception error starting DynamoDB
      */
     @Before
     public void startDynamoDB() throws Exception {
@@ -102,14 +153,13 @@ public class JUnitHelper {
         DynamoDBMapper mapper = new DynamoDBMapper(dynamoDB);
         ProvisionedThroughput provisionedThroughput = new ProvisionedThroughput(5L, 5L);
 
-        // Creates the tables USERS.
+        // Creates the table USERS.
         CreateTableRequest createUsersTableRequest = mapper.generateCreateTableRequest(User.class)
                 .withProvisionedThroughput(provisionedThroughput);
         createUsersTableRequest.getGlobalSecondaryIndexes().forEach(v -> {
             v.withProjection(new Projection().withProjectionType(ProjectionType.ALL));
             v.setProvisionedThroughput(provisionedThroughput);
         });
-
         dynamoDB.createTable(createUsersTableRequest);
 
         // Creates the table CONTACTS.
@@ -132,7 +182,7 @@ public class JUnitHelper {
     }
 
     /**
-     * Return a loose touch toker for a user.
+     * Return a loose touch for a user.
      *
      * @param user GOOGLE_USER_1 or GOOGLE_USER_2.
      * @return token
@@ -163,26 +213,8 @@ public class JUnitHelper {
      *
      * @return mvc
      */
-    protected final MockMvc getMvc() {
+    public final MockMvc getMvc() {
         return mvc;
-    }
-
-    /**
-     * Get userRepository.
-     *
-     * @return userRepository
-     */
-    protected final UserRepository getUserRepository() {
-        return userRepository;
-    }
-
-    /**
-     * Get contactRepository.
-     *
-     * @return contactRepository
-     */
-    protected final ContactRepository getContactRepository() {
-        return contactRepository;
     }
 
     /**
@@ -190,7 +222,7 @@ public class JUnitHelper {
      *
      * @return googleTokenRetriever
      */
-    protected final GoogleTokensRetriever getGoogleTokenRetriever() {
+    public final GoogleTokensRetriever getGoogleTokenRetriever() {
         return googleTokenRetriever;
     }
 
@@ -199,8 +231,35 @@ public class JUnitHelper {
      *
      * @return looseTouchTokenProvider
      */
-    protected final LooseTouchTokenProvider getLooseTouchTokenProvider() {
+    public final LooseTouchTokenProvider getLooseTouchTokenProvider() {
         return looseTouchTokenProvider;
+    }
+
+    /**
+     * Get dynamoDB.
+     *
+     * @return dynamoDB
+     */
+    public final AmazonDynamoDB getDynamoDB() {
+        return dynamoDB;
+    }
+
+    /**
+     * Get userRepository.
+     *
+     * @return userRepository
+     */
+    public final UserRepository getUserRepository() {
+        return userRepository;
+    }
+
+    /**
+     * Get contactRepository.
+     *
+     * @return contactRepository
+     */
+    public final ContactRepository getContactRepository() {
+        return contactRepository;
     }
 
     /**
@@ -208,7 +267,7 @@ public class JUnitHelper {
      *
      * @return mapper
      */
-    protected final ObjectMapper getMapper() {
+    public final ObjectMapper getMapper() {
         return mapper;
     }
 

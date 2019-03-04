@@ -1,25 +1,19 @@
-package com.oakinvest.lt.test.service.v1;
+package com.oakinvest.lt.test.api.v1.contact;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.oakinvest.lt.domain.Contact;
 import com.oakinvest.lt.dto.v1.ContactDTO;
-import com.oakinvest.lt.test.util.junit.JUnitHelper;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringRunner;
+import com.oakinvest.lt.test.util.api.APITest;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Optional;
 
-import static com.oakinvest.lt.configuration.Application.LOCAL_DYNAMODB_ENVIRONMENT;
 import static com.oakinvest.lt.test.util.data.TestContacts.CONTACT_1;
 import static com.oakinvest.lt.test.util.data.TestContacts.CONTACT_2;
 import static com.oakinvest.lt.test.util.data.TestContacts.CONTACT_3;
 import static com.oakinvest.lt.test.util.data.TestContacts.CONTACT_4;
+import static com.oakinvest.lt.test.util.data.TestContacts.CONTACT_5;
+import static com.oakinvest.lt.test.util.data.TestContacts.CONTACT_6;
 import static com.oakinvest.lt.test.util.data.TestUsers.GOOGLE_USER_1;
 import static com.oakinvest.lt.test.util.data.TestUsers.GOOGLE_USER_2;
 import static com.oakinvest.lt.util.error.LooseTouchErrorCode.contact_recurrence_type_invalid;
@@ -30,43 +24,25 @@ import static com.oakinvest.lt.util.error.LooseTouchErrorCode.email_invalid;
 import static com.oakinvest.lt.util.error.LooseTouchErrorCode.email_required;
 import static com.oakinvest.lt.util.error.LooseTouchErrorType.authentication_error;
 import static com.oakinvest.lt.util.error.LooseTouchErrorType.invalid_request_error;
+import static java.util.Calendar.DATE;
+import static java.util.Calendar.MONTH;
+import static java.util.Calendar.YEAR;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8;
 import static org.springframework.test.util.AssertionErrors.assertTrue;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
- * Contact API test.
+ * Create contact test.
  */
-@ActiveProfiles(LOCAL_DYNAMODB_ENVIRONMENT)
-@RunWith(SpringRunner.class)
-@SpringBootTest
-@AutoConfigureMockMvc
-public class ContactAPITest extends JUnitHelper {
+public class CreateTest extends APITest {
 
-    /**
-     * Google login URL.
-     */
-    private static final String CONTACT_URL = "/v1/contacts";
-
-    /**
-     * Create test.
-     *
-     * @throws Exception exception
-     */
-    @Test
-    public void createTest() throws Exception {
-        // Configuration
-        final String looseToucheTokenForUser1 = getLooseToucheToken(GOOGLE_USER_1);
-        final String user1Id = getUserRepository().findUserByGoogleUsername(GOOGLE_USER_1.getEmail()).get().getId();
-        final String looseToucheTokenForUser2 = getLooseToucheToken(GOOGLE_USER_2);
-        final String user2Id = getUserRepository().findUserByGoogleUsername(GOOGLE_USER_2.getEmail()).get().getId();
-
+    @Override
+    public void authenticationTest() throws Exception {
         // No token provided.
         getMvc().perform(post(CONTACT_URL)
                 .contentType(APPLICATION_JSON_UTF8))
@@ -83,8 +59,14 @@ public class ContactAPITest extends JUnitHelper {
                 .andExpect(jsonPath("type").value(authentication_error.toString()))
                 .andExpect(jsonPath("message").value("Invalid loose touch token : invalidToken"))
                 .andExpect(jsonPath("errors", hasSize(0)));
+    }
 
-        // Trying to create a contact without contact data.
+    @Override
+    public void validDataTest() throws Exception {
+        // Configuration.
+        final String looseToucheTokenForUser1 = getLooseToucheToken(GOOGLE_USER_1);
+
+        // Trying to createContact a contact without contact data.
         getMvc().perform(post(CONTACT_URL)
                 .contentType(APPLICATION_JSON_UTF8)
                 .header("Authorization", "Bearer " + looseToucheTokenForUser1))
@@ -92,11 +74,12 @@ public class ContactAPITest extends JUnitHelper {
                 .andExpect(jsonPath("type").value(invalid_request_error.toString()))
                 .andExpect(jsonPath("message").value("Contact data missing"))
                 .andExpect(jsonPath("errors", hasSize(0)));
+        assertEquals(getContactRepository().count(), 0);
 
         // Creating a ContactDTO.
         ContactDTO contact = new ContactDTO();
 
-        // Trying to create a contact with empty contact data.
+        // Trying to createContact a contact with empty contact data.
         getMvc().perform(post(CONTACT_URL)
                 .contentType(APPLICATION_JSON_UTF8)
                 .header("Authorization", "Bearer " + looseToucheTokenForUser1)
@@ -114,8 +97,9 @@ public class ContactAPITest extends JUnitHelper {
                 // Third error.
                 .andExpect(jsonPath("errors[2].code").value(contact_recurrence_value_required.toString()))
                 .andExpect(jsonPath("errors[2].message").value("Contact recurrence value is required"));
+        assertEquals(getContactRepository().count(), 0);
 
-        // Trying to create a contact with invalid data
+        // Trying to createContact a contact with invalid data
         contact.setEmail("invalid");
         contact.setContactRecurrenceType("contact");
         contact.setContactRecurrenceValue(-1);
@@ -136,25 +120,73 @@ public class ContactAPITest extends JUnitHelper {
                 // Third error.
                 .andExpect(jsonPath("errors[2].code").value(contact_recurrence_value_invalid.toString()))
                 .andExpect(jsonPath("errors[2].message").value("Contact recurrence value is invalid (must be between 1 and 1000)"));
-
-        // Creates contact number 1 for user 1.
         assertEquals(getContactRepository().count(), 0);
+
+        // Trying to createContact a contact with invalid data
+        contact.setEmail("test@test.fr");
+        contact.setContactRecurrenceType("contact");
+        contact.setContactRecurrenceValue(-1);
+        getMvc().perform(post(CONTACT_URL)
+                .contentType(APPLICATION_JSON_UTF8)
+                .header("Authorization", "Bearer " + looseToucheTokenForUser1)
+                .content(getMapper().writeValueAsString(contact)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("type").value(invalid_request_error.toString()))
+                .andExpect(jsonPath("message").value("Errors in the contact data"))
+                .andExpect(jsonPath("errors", hasSize(2)))
+                // First error.
+                .andExpect(jsonPath("errors[0].code").value(contact_recurrence_type_invalid.toString()))
+                .andExpect(jsonPath("errors[0].message").value("Contact recurrence type is invalid (valid values are DAY, MONTH, YEAR)"))
+                // Second error.
+                .andExpect(jsonPath("errors[1].code").value(contact_recurrence_value_invalid.toString()))
+                .andExpect(jsonPath("errors[1].message").value("Contact recurrence value is invalid (must be between 1 and 1000)"));
+        assertEquals(getContactRepository().count(), 0);
+
+        // Trying to createContact a contact with invalid data
+        contact.setEmail("test@test.fr");
+        contact.setContactRecurrenceType("DAY");
+        contact.setContactRecurrenceValue(1001);
+        getMvc().perform(post(CONTACT_URL)
+                .contentType(APPLICATION_JSON_UTF8)
+                .header("Authorization", "Bearer " + looseToucheTokenForUser1)
+                .content(getMapper().writeValueAsString(contact)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("type").value(invalid_request_error.toString()))
+                .andExpect(jsonPath("message").value("Errors in the contact data"))
+                .andExpect(jsonPath("errors", hasSize(1)))
+                // First error.
+                .andExpect(jsonPath("errors[0].code").value(contact_recurrence_value_invalid.toString()))
+                .andExpect(jsonPath("errors[0].message").value("Contact recurrence value is invalid (must be between 1 and 1000)"));
+        assertEquals(getContactRepository().count(), 0);
+
+        // Trying to createContact a contact with valid data
+        contact.setEmail("test@test.fr");
+        contact.setContactRecurrenceType("DAY");
+        contact.setContactRecurrenceValue(10);
+        getMvc().perform(post(CONTACT_URL)
+                .contentType(APPLICATION_JSON_UTF8)
+                .header("Authorization", "Bearer " + looseToucheTokenForUser1)
+                .content(getMapper().writeValueAsString(contact)))
+                .andExpect(status().isCreated());
+        assertEquals(getContactRepository().count(), 1);
+
+        // Creates contact number 1 for user 1 (date set).
         getMvc().perform(post(CONTACT_URL)
                 .contentType(APPLICATION_JSON_UTF8)
                 .header("Authorization", "Bearer " + looseToucheTokenForUser1)
                 .content(getMapper().writeValueAsString(CONTACT_1.toDTO())))
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("email").value(CONTACT_1.getEmail()))
-                .andExpect(jsonPath("firstName").value(CONTACT_1.getFirstName()))
-                .andExpect(jsonPath("lastName").value(CONTACT_1.getLastName()))
-                .andExpect(jsonPath("notes").value(CONTACT_1.getNotes()))
-                .andExpect(jsonPath("contactRecurrenceType").value(CONTACT_1.getContactRecurrenceType()))
-                .andExpect(jsonPath("contactRecurrenceValue").value(CONTACT_1.getContactRecurrenceValue()))
-                .andExpect(jsonPath("contactRecurrenceValue").value(CONTACT_1.getContactRecurrenceValue()))
-                .andExpect(jsonPath("contactDueDate").value("01/01/2020"));
-        assertEquals(getContactRepository().count(), 1);
+                .andExpect(status().isCreated());
+        assertEquals(getContactRepository().count(), 2);
 
-        // Try to create a duplicate contact.
+        // Creates contact number 4 for user 1 (date not set).
+        getMvc().perform(post(CONTACT_URL)
+                .contentType(APPLICATION_JSON_UTF8)
+                .header("Authorization", "Bearer " + looseToucheTokenForUser1)
+                .content(getMapper().writeValueAsString(CONTACT_4.toDTO())))
+                .andExpect(status().isCreated());
+        assertEquals(getContactRepository().count(), 3);
+
+        // Try to createContact a duplicate contact.
         getMvc().perform(post(CONTACT_URL)
                 .contentType(APPLICATION_JSON_UTF8)
                 .header("Authorization", "Bearer " + looseToucheTokenForUser1)
@@ -162,6 +194,24 @@ public class ContactAPITest extends JUnitHelper {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("type").value(invalid_request_error.toString()))
                 .andExpect(jsonPath("message").value("Contact already exists"));
+        assertEquals(getContactRepository().count(), 3);
+    }
+
+    @Override
+    public void businessLogicTest() throws Exception {
+        // Configuration
+        final String looseToucheTokenForUser1 = getLooseToucheToken(GOOGLE_USER_1);
+        final String user1Id = getUserRepository().findUserByGoogleUsername(GOOGLE_USER_1.getEmail()).get().getId();
+        final String looseToucheTokenForUser2 = getLooseToucheToken(GOOGLE_USER_2);
+        final String user2Id = getUserRepository().findUserByGoogleUsername(GOOGLE_USER_2.getEmail()).get().getId();
+        assertEquals(getContactRepository().count(), 0);
+
+        // Creates contact 1 for user 1.
+        getMvc().perform(post(CONTACT_URL)
+                .contentType(APPLICATION_JSON_UTF8)
+                .header("Authorization", "Bearer " + looseToucheTokenForUser1)
+                .content(getMapper().writeValueAsString(CONTACT_1.toDTO())))
+                .andExpect(status().isCreated());
         assertEquals(getContactRepository().count(), 1);
 
         // Test the contact 1 created in database.
@@ -173,7 +223,7 @@ public class ContactAPITest extends JUnitHelper {
         assertEquals("Contact 1 notes is incorrect", CONTACT_1.getNotes(), contactCreated.get().getNotes());
         assertEquals("Contact 1 recurrence type is incorrect", CONTACT_1.getContactRecurrenceType(), contactCreated.get().getContactRecurrenceType());
         assertEquals("Contact 1 recurrence value is incorrect", CONTACT_1.getContactRecurrenceValue(), contactCreated.get().getContactRecurrenceValue());
-        assertEquals("Contact 1 contact due date is incorrect", "01/01/2020", new SimpleDateFormat("dd/MM/YYYY").format(contactCreated.get().getContactDueDate().getTime()));
+        assertEquals("Contact 1 contact due date is incorrect", "31/12/2019", getFormattedContactDueDate(contactCreated.get()));
 
         // Test that no other contact has been created.
         Optional<Contact> contactNotCreated = getContactRepository().findContactByEmail(user1Id, CONTACT_2.getEmail());
@@ -192,93 +242,85 @@ public class ContactAPITest extends JUnitHelper {
                 .andExpect(jsonPath("contactRecurrenceType").value(CONTACT_2.getContactRecurrenceType()))
                 .andExpect(jsonPath("contactRecurrenceValue").value(CONTACT_2.getContactRecurrenceValue()))
                 .andExpect(jsonPath("contactRecurrenceValue").value(CONTACT_2.getContactRecurrenceValue()))
-                .andExpect(jsonPath("contactDueDate").value("29/02/2020"));
+                .andExpect(jsonPath("contactDueDate").value("16/11/2019"));
         assertEquals(getContactRepository().count(), 2);
 
-        // Creating contacts for user1 & user 2.
+        // Creating contacts for user1 & user 2 and check next due contact calculation algorithm.
+        // User 1 / contact 1.
         getMvc().perform(post(CONTACT_URL)
                 .contentType(APPLICATION_JSON_UTF8)
                 .header("Authorization", "Bearer " + looseToucheTokenForUser1)
                 .content(getMapper().writeValueAsString(CONTACT_1.toDTO())))
                 .andExpect(status().isBadRequest());
+        // User 1 / contact 2.
         getMvc().perform(post(CONTACT_URL)
                 .contentType(APPLICATION_JSON_UTF8)
                 .header("Authorization", "Bearer " + looseToucheTokenForUser1)
                 .content(getMapper().writeValueAsString(CONTACT_2.toDTO())))
                 .andExpect(status().isBadRequest());
+        // User 1 / contact 3.
         getMvc().perform(post(CONTACT_URL)
                 .contentType(APPLICATION_JSON_UTF8)
                 .header("Authorization", "Bearer " + looseToucheTokenForUser1)
                 .content(getMapper().writeValueAsString(CONTACT_3.toDTO())))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("contactDueDate").value("31/12/2022"));
+                .andExpect(jsonPath("contactDueDate").value("01/09/2019"));
+        // User 1 / contact 4.
+        Calendar date = Calendar.getInstance();
+        date.add(DATE, 4);
         getMvc().perform(post(CONTACT_URL)
                 .contentType(APPLICATION_JSON_UTF8)
                 .header("Authorization", "Bearer " + looseToucheTokenForUser1)
                 .content(getMapper().writeValueAsString(CONTACT_4.toDTO())))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("contactDueDate").value("04/01/2020"));
+                .andExpect(jsonPath("contactDueDate").value(new SimpleDateFormat(DATE_FORMAT).format(date.getTime())));
+        // User 1 / Contact 5.
+        date = Calendar.getInstance();
+        date.add(MONTH, 5);
+        getMvc().perform(post(CONTACT_URL)
+                .contentType(APPLICATION_JSON_UTF8)
+                .header("Authorization", "Bearer " + looseToucheTokenForUser1)
+                .content(getMapper().writeValueAsString(CONTACT_5.toDTO())))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("contactDueDate").value(new SimpleDateFormat(DATE_FORMAT).format(date.getTime())));
+        // User 1 / Contact 6.
+        date = Calendar.getInstance();
+        date.add(YEAR, 6);
+        getMvc().perform(post(CONTACT_URL)
+                .contentType(APPLICATION_JSON_UTF8)
+                .header("Authorization", "Bearer " + looseToucheTokenForUser1)
+                .content(getMapper().writeValueAsString(CONTACT_6.toDTO())))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("contactDueDate").value(new SimpleDateFormat(DATE_FORMAT).format(date.getTime())));
+        // User 2 / Contact 1.
         getMvc().perform(post(CONTACT_URL)
                 .contentType(APPLICATION_JSON_UTF8)
                 .header("Authorization", "Bearer " + looseToucheTokenForUser2)
                 .content(getMapper().writeValueAsString(CONTACT_1.toDTO())))
                 .andExpect(status().isCreated());
+        // User 2 / Contact 1 (error duplicate).
         getMvc().perform(post(CONTACT_URL)
                 .contentType(APPLICATION_JSON_UTF8)
                 .header("Authorization", "Bearer " + looseToucheTokenForUser2)
                 .content(getMapper().writeValueAsString(CONTACT_1.toDTO())))
                 .andExpect(status().isBadRequest());
+        // User 2 / Contact 2.
         getMvc().perform(post(CONTACT_URL)
                 .contentType(APPLICATION_JSON_UTF8)
                 .header("Authorization", "Bearer " + looseToucheTokenForUser2)
                 .content(getMapper().writeValueAsString(CONTACT_2.toDTO())))
                 .andExpect(status().isCreated());
-        assertEquals(getContactRepository().count(), 6);
-
+        assertEquals(getContactRepository().count(), 8);
     }
 
     /**
-     * GetContact test.
+     * Returns formatted date of a contact.
+     *
+     * @param c contact
+     * @return formatted date
      */
-    @Test
-    public final void getContactTest() throws Exception {
-        // Configuration.
-        final String looseToucheTokenForUser1 = getLooseToucheToken(GOOGLE_USER_1);
-        final String looseToucheTokenForUser2 = getLooseToucheToken(GOOGLE_USER_2);
-
-        // Contact 1 for user 1 should not exists.
-        getMvc().perform(get(CONTACT_URL + "/" + CONTACT_1.getEmail() + "/")
-                .contentType(APPLICATION_JSON_UTF8)
-                .header("Authorization", "Bearer " + looseToucheTokenForUser1))
-                .andExpect(status().isNotFound());
-
-        // Create contact 1 for user 1.
-        getMvc().perform(post(CONTACT_URL)
-                .contentType(APPLICATION_JSON_UTF8)
-                .header("Authorization", "Bearer " + looseToucheTokenForUser1)
-                .content(getMapper().writeValueAsString(CONTACT_1.toDTO())))
-                .andExpect(status().isCreated());
-
-        // Contact 1 for user 1 should exists.
-        getMvc().perform(get(CONTACT_URL + "/" + CONTACT_1.getEmail() + "/")
-                .contentType(APPLICATION_JSON_UTF8)
-                .header("Authorization", "Bearer " + looseToucheTokenForUser1))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("email").value(CONTACT_1.getEmail()))
-                .andExpect(jsonPath("firstName").value(CONTACT_1.getFirstName()))
-                .andExpect(jsonPath("lastName").value(CONTACT_1.getLastName()))
-                .andExpect(jsonPath("notes").value(CONTACT_1.getNotes()))
-                .andExpect(jsonPath("contactRecurrenceType").value(CONTACT_1.getContactRecurrenceType()))
-                .andExpect(jsonPath("contactRecurrenceValue").value(CONTACT_1.getContactRecurrenceValue()))
-                .andExpect(jsonPath("contactRecurrenceValue").value(CONTACT_1.getContactRecurrenceValue()))
-                .andExpect(jsonPath("contactDueDate").value("01/01/2020"));
-
-        // Contact 1 for user 2 should not exists.
-        getMvc().perform(get(CONTACT_URL + "/" + CONTACT_1.getEmail() + "/")
-                .contentType(APPLICATION_JSON_UTF8)
-                .header("Authorization", "Bearer " + looseToucheTokenForUser2))
-                .andExpect(status().isNotFound());
-
+    private String getFormattedContactDueDate(Contact c) {
+        return new SimpleDateFormat(DATE_FORMAT).format(c.getContactDueDate().getTime());
     }
 
 }

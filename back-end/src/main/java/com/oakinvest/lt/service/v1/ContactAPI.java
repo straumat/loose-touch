@@ -45,7 +45,7 @@ public interface ContactAPI extends V1Service {
      * Create a contact.
      *
      * @param authenticatedUser authenticated user
-     * @param contact           contact to create
+     * @param contact           contact to createContact
      * @return contact created
      */
     @PostMapping(value = "Create a new contact")
@@ -56,7 +56,7 @@ public interface ContactAPI extends V1Service {
             response = ContactDTO.class)
     @ApiImplicitParams({@ApiImplicitParam(name = "contact",
             dataTypeClass = ContactDTO.class,
-            value = "Contact to create")})
+            value = "Contact to createContact")})
     @ApiResponses(value = {
             @ApiResponse(code = STATUS_CREATED, message = STATUS_CREATED_MESSAGE, response = ContactDTO.class),
             @ApiResponse(code = STATUS_BAD_REQUEST, message = STATUS_BAD_REQUEST_MESSAGE, response = LooseTouchError.class),
@@ -65,8 +65,8 @@ public interface ContactAPI extends V1Service {
             @ApiResponse(code = STATUS_REQUEST_FAILED, message = STATUS_REQUEST_FAILED_MESSAGE, response = LooseTouchError.class),
             @ApiResponse(code = STATUS_INTERNAL_SERVER_ERROR, message = STATUS_INTERNAL_SERVER_ERROR_MESSAGE, response = LooseTouchError.class)
     })
-    ContactDTO create(AuthenticatedUser authenticatedUser,
-                      @RequestBody(required = false) ContactDTO contact);
+    ContactDTO createContact(AuthenticatedUser authenticatedUser,
+                             @RequestBody(required = false) ContactDTO contact);
 
     /**
      * Get a contact.
@@ -96,7 +96,7 @@ public interface ContactAPI extends V1Service {
      * Update a contact.
      *
      * @param authenticatedUser authenticated user
-     * @param email             email of the contact to update
+     * @param email             email of the contact to updateContact
      * @param contact           contact data
      * @return contact updated
      */
@@ -105,7 +105,7 @@ public interface ContactAPI extends V1Service {
             response = ContactDTO.class)
     @ApiImplicitParams({@ApiImplicitParam(name = "email",
             dataTypeClass = String.class,
-            value = "Email of the contact to update"),
+            value = "Email of the contact to updateContact"),
             @ApiImplicitParam(name = "contact",
                     dataTypeClass = ContactDTO.class,
                     value = "Contact data")
@@ -118,8 +118,8 @@ public interface ContactAPI extends V1Service {
             @ApiResponse(code = STATUS_REQUEST_FAILED, message = STATUS_REQUEST_FAILED_MESSAGE, response = LooseTouchError.class),
             @ApiResponse(code = STATUS_INTERNAL_SERVER_ERROR, message = STATUS_INTERNAL_SERVER_ERROR_MESSAGE, response = LooseTouchError.class)
     })
-    ContactDTO update(AuthenticatedUser authenticatedUser,
-                      @PathVariable("email") String email,
-                      @RequestBody ContactDTO contact);
+    ContactDTO updateContact(AuthenticatedUser authenticatedUser,
+                             @PathVariable("email") String email,
+                             @RequestBody ContactDTO contact);
 
 }

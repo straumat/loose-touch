@@ -33,7 +33,7 @@ public enum TestContacts {
             "notes 2",
             "MONTH",
             2,
-            new GregorianCalendar(2019, Calendar.DECEMBER, 31, 13, 24, 56)
+            new GregorianCalendar(2019, Calendar.NOVEMBER, 16, 13, 24, 56)
     ),
 
     /**
@@ -45,7 +45,7 @@ public enum TestContacts {
             "notes 3",
             "YEAR",
             3,
-            new GregorianCalendar(2019, Calendar.DECEMBER, 31, 13, 24, 56)
+            new GregorianCalendar(2019, Calendar.SEPTEMBER, 1, 13, 24, 56)
     ),
 
     /**
@@ -57,7 +57,7 @@ public enum TestContacts {
             "notes 4",
             "DAY",
             4,
-            new GregorianCalendar(2019, Calendar.DECEMBER, 31, 13, 24, 56)
+            null
     ),
 
     /**
@@ -69,7 +69,7 @@ public enum TestContacts {
             "notes 5",
             "MONTH",
             5,
-            new GregorianCalendar(2019, Calendar.DECEMBER, 31, 13, 24, 56)
+            null
     ),
 
     /**
@@ -81,7 +81,7 @@ public enum TestContacts {
             "notes 6",
             "YEAR",
             6,
-            new GregorianCalendar(2019, Calendar.DECEMBER, 31, 13, 24, 56)
+            null
     );
 
     /**

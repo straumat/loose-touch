@@ -20,7 +20,7 @@ import java.util.Optional;
  * Loose touch Jwt token provider.
  * This class creates token for the application and also have a method to validate the token coming from the client.
  *
- * We are using JWT to create the token for our application.
+ * We are using JWT to createContact the token for our application.
  *
  * JWT is RFC 7519 standard for representing and sharing claims securely between communicating parties.
  */
