@@ -75,7 +75,7 @@ public class ContactController implements ContactAPI {
         Calendar dueDate;
         if (contact.getContactDueDate() == null) {
             // If not date is set, we calculate one.
-            dueDate = calculateNextContactDate(Calendar.getInstance(), contact.getContactRecurrenceType(), contact.getContactRecurrenceValue());
+            dueDate = calculateNextContactDueDate(Calendar.getInstance(), contact.getContactRecurrenceType(), contact.getContactRecurrenceValue());
         } else {
             // if it's set, we use it.
             dueDate = contact.getContactDueDate();
@@ -117,22 +117,21 @@ public class ContactController implements ContactAPI {
      * @param contactRecurrenceValue contact recurrence value
      * @return next due date
      */
-    private Calendar calculateNextContactDate(final Calendar startDate, final String contactRecurrenceType, final int contactRecurrenceValue) {
-        Calendar dueDate = startDate;
+    private Calendar calculateNextContactDueDate(final Calendar startDate, final String contactRecurrenceType, final int contactRecurrenceValue) {
         switch (contactRecurrenceType) {
             case "DAY":
-                dueDate.add(Calendar.DATE, contactRecurrenceValue);
+                startDate.add(Calendar.DATE, contactRecurrenceValue);
                 break;
             case "MONTH":
-                dueDate.add(Calendar.MONTH, contactRecurrenceValue);
+                startDate.add(Calendar.MONTH, contactRecurrenceValue);
                 break;
             case "YEAR":
-                dueDate.add(Calendar.YEAR, contactRecurrenceValue);
+                startDate.add(Calendar.YEAR, contactRecurrenceValue);
                 break;
             default:
                 break;
         }
-        return DateUtils.truncate(dueDate, Calendar.HOUR);
+        return DateUtils.truncate(startDate, Calendar.HOUR);
     }
 
     /**
