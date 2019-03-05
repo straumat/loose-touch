@@ -1,6 +1,7 @@
 version: 2 # use CircleCI 2.0
 jobs: # We have jobs key. Each job represents a phase in your Build-Test-Deploy process
 
+  # ====================================================================================================================
   # Build job.
   build:
 
@@ -11,7 +12,7 @@ jobs: # We have jobs key. Each job represents a phase in your Build-Test-Deploy 
     working_directory: ~/loose-touch # directory where steps will run
 
     docker: # run the steps with Docker
-      - image: circleci/openjdk:8-jdk-browsers # ...with this image as the primary container; this is where all `steps` will run
+      - image: circleci/openjdk:8-jdk-browsers
         environment:
           TZ: "Europe/Paris"
 
@@ -32,4 +33,14 @@ jobs: # We have jobs key. Each job represents a phase in your Build-Test-Deploy 
       - run: mvn package # run the actual tests
 
       - store_test_results: # uploads the test metadata from the `target/surefire-reports` directory so that it can show up in the CircleCI dashboard.
-          path: target/surefire-reports
+          path: back-end/target/surefire-reports
+
+  # ====================================================================================================================
+  # Deploy on test.
+  deploy_test:
+
+    working_directory: ~/loose-touch # directory where steps will run
+
+    steps:
+
+      - run: ./deploy.sh test
