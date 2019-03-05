@@ -4,10 +4,16 @@ jobs: # We have jobs key. Each job represents a phase in your Build-Test-Deploy 
   # Build job.
   build:
 
+    # Set the timezone.
+    environment:
+      TZ: "Europe/Paris"
+
     working_directory: ~/loose-touch # directory where steps will run
 
     docker: # run the steps with Docker
       - image: circleci/openjdk:8-jdk-browsers # ...with this image as the primary container; this is where all `steps` will run
+        environment:
+          TZ: "Europe/Paris"
 
     steps: # a collection of executable commands
 

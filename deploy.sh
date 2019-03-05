@@ -8,7 +8,7 @@ REGION="eu-west-3"
 BUCKET="loose-touch-configuration"
 SERVICE="loose-touch"
 SAM_FILENAME="aws-configuration.yml"
-BUCKET_PREFIX=""
+PREFIX=""
 # ======================================================================================================================
 
 # ======================================================================================================================
@@ -24,11 +24,11 @@ fi
 
 # ======================================================================================================================
 # Environment parameter is not valid.
-if [[ "$1" != "test" && "$1" != "stage" && "$1" != "production" ]]
+if [[ "$1" != "test" && "$1" != "production" ]]
     then
     echo ""
     echo "================================================================"
-    echo "[ERROR] Argument '$1' is not valid. It must be either test, stage or production."
+    echo "[ERROR] Argument '$1' is not valid. It must be either test or production."
     exit 1
 fi
 # ======================================================================================================================
@@ -37,7 +37,7 @@ fi
 # Define the website prefix.
 if [[ "$1" == "test" || "$1" == "stage" ]]
     then
-    BUCKET_PREFIX="$1-"
+    PREFIX="$1-"
 fi
 # ======================================================================================================================
 
@@ -71,14 +71,14 @@ aws cloudformation deploy  \
      --template-file output-$1-$SAM_FILENAME \
      --stack-name ${SERVICE}-$1 \
      --capabilities CAPABILITY_NAMED_IAM \
-     --parameter-override Stage=$1 BucketPrefix=$BUCKET_PREFIX
+     --parameter-override Stage=$1 Prefix=$PREFIX
 # ======================================================================================================================
 
 # ======================================================================================================================
 echo ""
 echo "================================================================"
-echo "Deploy website to s3://${BUCKET_PREFIX}loosetouch.com ..."
-aws s3 sync ./clients/website s3://${BUCKET_PREFIX}loosetouch.com --delete --acl public-read
+echo "Deploy website to s3://${PREFIX}loosetouch.com ..."
+aws s3 sync ./clients/website s3://${PREFIX}loosetouch.com --delete --acl public-read
 # ======================================================================================================================
 
 # ======================================================================================================================

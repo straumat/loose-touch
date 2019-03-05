@@ -9,7 +9,7 @@ Description: Loose touch
 Parameters:
   Stage:
     Type: String
-  BucketPrefix:
+  Prefix:
     Type: String
 
 # Specifies the stack resources and their properties, such as an Amazon Elastic Compute Cloud instance or an Amazon Simple Storage Service bucket.
@@ -75,7 +75,7 @@ Resources:
     Properties:
       BucketName: !Join                                                           # A name for the bucket. If you don't specify a name, AWS CloudFormation generates a unique physical ID and uses that ID for the bucket name.
         - ''
-        - - !Ref BucketPrefix
+        - - !Ref Prefix
           - loosetouch.com
       AccessControl: PublicRead                                                   # A canned access control list (ACL) that grants predefined permissions to the bucket.
       WebsiteConfiguration:                                                       # Information used to configure the bucket as a static website. For more information
@@ -87,7 +87,7 @@ Resources:
     Properties:
       BucketName: !Join                                                           # A name for the bucket. If you don't specify a name, AWS CloudFormation generates a unique physical ID and uses that ID for the bucket name.
         - ''
-        - - !Ref BucketPrefix
+        - - !Ref Prefix
           - www.loosetouch.com
       AccessControl: BucketOwnerFullControl                                       # A canned access control list (ACL) that grants predefined permissions to the bucket.
       WebsiteConfiguration:                                                       # Information used to configure the bucket as a static website. For more information
@@ -100,7 +100,7 @@ Outputs:
 
   # ====================================================================================================================
   # URL of API.
-  ApiURL:
+  API_URL:
     Description: URL of API
     Value: !Join
       - ''
@@ -113,7 +113,7 @@ Outputs:
 
   # ====================================================================================================================
   # URL of the S3 bucket.
-  LooseTouchRootBucketURL:
+  WWW_URL:
     Description: URL of S3 bucket holding website content
     Value: !Join
       - ''
