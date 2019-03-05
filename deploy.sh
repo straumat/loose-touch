@@ -54,11 +54,7 @@ mvn -f back-end/pom.xml clean package
 echo ""
 echo "================================================================"
 echo "CloudFormation packaging for $1 ..."
-aws cloudformation package \
-    --region ${REGION} \
-    --s3-bucket ${BUCKET} \
-    --template-file ${SAM_FILENAME} \
-    --output-template-file output-$1-$SAM_FILENAME
+aws cloudformation package --region ${REGION} --s3-bucket ${BUCKET} --template-file ${SAM_FILENAME} --output-template-file output-$1-$SAM_FILENAME
 # ======================================================================================================================
 
 # ======================================================================================================================
