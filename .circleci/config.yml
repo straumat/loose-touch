@@ -1,50 +1,39 @@
-version: 2 # use CircleCI 2.0
-jobs: # We have jobs key. Each job represents a phase in your Build-Test-Deploy process
+version: 2 # use CircleCI 2.0.
+jobs: # We have jobs key. Each job represents a phase in your Build-Test-Deploy process.
 
   # ====================================================================================================================
-  # Build job.
+  # Build & deploy on test.
   build:
 
-    # Set the timezone.
-    environment:
-      TZ: "Europe/Paris"
+    environment: # Environment.
+      TZ: "Europe/Paris" # Set timezone.
 
-    working_directory: ~/loose-touch # directory where steps will run
+    working_directory: ~/loose-touch # directory where steps will run.
 
-    docker: # run the steps with Docker
-      - image: circleci/openjdk:8-jdk-browsers
-        environment:
-          TZ: "Europe/Paris"
+    docker: # run the steps with Docker.
+      - image: circleci/openjdk:8-jdk-browsers # Java 8 docker image.
+        environment: # Environment.
+          TZ: "Europe/Paris" # Set timezone.
 
-    steps: # a collection of executable commands
+    steps: # a collection of executable commands.
 
-      - checkout # check out source code to working directory
+      - run: sudo apt-get update # Ubuntu package update.
 
-      - restore_cache: # restore the saved cache after the first run or if `pom.xml` has changed
+      - run: sudo apt-get install awscli # Install awscli.
+
+      - checkout # check out source code to working directory.
+
+      - restore_cache: # restore the saved cache after the first run or if `pom.xml` has changed.
           key: loose-touch-{{ checksum "pom.xml" }}
 
-      - run: mvn dependency:go-offline # gets the project dependencies
+      - run: mvn dependency:go-offline # gets the project dependencies.
 
-      - save_cache: # saves the project dependencies
+      - save_cache: # saves the project dependencies.
           paths:
             - ~/.m2
           key: loose-touch-{{ checksum "pom.xml" }}
 
-      - run: mvn package # run the actual tests
+      - run: ./deploy.sh test # Maven package and aws deployment.
 
-      - store_test_results: # uploads the test metadata from the `target/surefire-reports` directory so that it can show up in the CircleCI dashboard.
+      - store_test_results: # uploads the test metadata directory so that it can show up in the CircleCI dashboard.
           path: back-end/target/surefire-reports
-
-  # ====================================================================================================================
-  # Deploy on test.
-  deploy_test:
-
-    working_directory: ~/loose-touch # directory where steps will run
-
-    steps:
-
-      - run: sudo apt-get update
-
-      - run: sudo apt-get install awscli
-
-      - run: ./deploy.sh test
