@@ -60,6 +60,28 @@ public class ContactRepository {
     }
 
     /**
+     * Delete all contacts of user.
+     *
+     * @param userId user id
+     */
+    public final void deleteAllContactsOfUser(final String userId) {
+
+        // User id.
+        Contact c = new Contact();
+        c.setUserId(userId);
+
+        // Build the query.
+        DynamoDBQueryExpression<Contact> queryExpression = new DynamoDBQueryExpression<Contact>()
+                .withHashKeyValues(c);
+
+        // Run the query to retrieve all contacts.
+        List<Contact> contactsToDelete = mapper.query(Contact.class, queryExpression);
+
+        // Delete them.
+        mapper.batchDelete(contactsToDelete);
+    }
+
+    /**
      * Returns a contact by its email.
      *
      * @param userId user id

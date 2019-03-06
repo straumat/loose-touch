@@ -56,7 +56,12 @@ public abstract class APITest {
     /**
      * Profile URL.
      */
-    protected static final String PROFILE_URL = "/v1/profile";
+    protected static final String PROFILE_URL = "/v1/user/profile";
+
+    /**
+     * Delete user URL.
+     */
+    protected static final String DELETE_USER_URL = "/v1/user/delete";
 
     /**
      * Contact URL.

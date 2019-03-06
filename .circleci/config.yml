@@ -37,7 +37,8 @@ jobs: # We have jobs key. Each job represents a phase in your Build-Test-Deploy 
             - ~/.m2
           key: loose-touch-{{ checksum "pom.xml" }}
 
-      - run: ./deploy.sh test # Maven package and aws deployment.
+      -run: mvn package
+      #- run: ./deploy.sh test # Maven package and aws deployment.
 
       - store_test_results: # uploads the test metadata directory so that it can show up in the CircleCI dashboard.
           path: back-end/target/surefire-reports

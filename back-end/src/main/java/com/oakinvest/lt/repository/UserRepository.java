@@ -92,6 +92,15 @@ public class UserRepository {
     }
 
     /**
+     * Delete a user.
+     *
+     * @param userId user id
+     */
+    public final void delete(final String userId) {
+        getUser(userId).ifPresent(value -> mapper.delete(value));
+    }
+
+    /**
      * Returns the number of users.
      *
      * @return number of users.

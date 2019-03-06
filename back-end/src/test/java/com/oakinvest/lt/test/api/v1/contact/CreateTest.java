@@ -199,7 +199,7 @@ public class CreateTest extends APITest {
 
     @Override
     public void businessLogicTest() throws Exception {
-        // Configuration
+        // User creation.
         final String looseToucheTokenForUser1 = getLooseToucheToken(GOOGLE_USER_1);
         final String user1Id = getUserRepository().findUserByGoogleUsername(GOOGLE_USER_1.getEmail()).get().getId();
         final String looseToucheTokenForUser2 = getLooseToucheToken(GOOGLE_USER_2);

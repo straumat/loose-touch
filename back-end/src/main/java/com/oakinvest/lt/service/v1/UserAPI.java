@@ -11,6 +11,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -72,7 +73,7 @@ public interface UserAPI extends V1Service {
      * @param authenticatedUser authenticated user
      * @return profile
      */
-    @RequestMapping(value = "/profile",
+    @RequestMapping(value = "/user/profile",
             method = RequestMethod.GET)
     @ApiOperation(value = "Get the user profile and a new refreshed token",
             response = UserDTO.class)
@@ -86,5 +87,23 @@ public interface UserAPI extends V1Service {
             @ApiResponse(code = STATUS_INTERNAL_SERVER_ERROR, message = STATUS_INTERNAL_SERVER_ERROR_MESSAGE, response = LooseTouchError.class)
     })
     UserDTO getProfile(AuthenticatedUser authenticatedUser);
+
+    /**
+     * Delete the user and all its data.
+     *
+     * @param authenticatedUser user.
+     */
+    @DeleteMapping(value = "/user/delete")
+    @ApiOperation(value = "Get the user profile and a new refreshed token")
+    @ApiImplicitParams({})
+    @ApiResponses(value = {
+            @ApiResponse(code = STATUS_OK, message = STATUS_OK_MESSAGE),
+            @ApiResponse(code = STATUS_BAD_REQUEST, message = STATUS_BAD_REQUEST_MESSAGE, response = LooseTouchError.class),
+            @ApiResponse(code = STATUS_UNAUTHORIZED, message = STATUS_UNAUTHORIZED_MESSAGE, response = LooseTouchError.class),
+            @ApiResponse(code = STATUS_NOT_FOUND, message = STATUS_NOT_FOUND_MESSAGE, response = LooseTouchError.class),
+            @ApiResponse(code = STATUS_REQUEST_FAILED, message = STATUS_REQUEST_FAILED_MESSAGE, response = LooseTouchError.class),
+            @ApiResponse(code = STATUS_INTERNAL_SERVER_ERROR, message = STATUS_INTERNAL_SERVER_ERROR_MESSAGE, response = LooseTouchError.class)
+    })
+    void delete(AuthenticatedUser authenticatedUser);
 
 }

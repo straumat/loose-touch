@@ -7,6 +7,7 @@ import com.oakinvest.lt.authentication.loosetouch.LooseTouchTokenProvider;
 import com.oakinvest.lt.domain.User;
 import com.oakinvest.lt.dto.util.GoogleUserInfoDTO;
 import com.oakinvest.lt.dto.v1.UserDTO;
+import com.oakinvest.lt.repository.ContactRepository;
 import com.oakinvest.lt.repository.UserRepository;
 import com.oakinvest.lt.util.error.LooseTouchException;
 import com.oakinvest.lt.util.mapper.LooseTouchMapper;
@@ -70,12 +71,11 @@ public class UserController implements UserAPI {
     private UserRepository userRepository;
 
     /**
-     * Application login for google (if the user doesn't exists, creates it).
-     *
-     * @param googleIdToken     google id token
-     * @param googleAccessToken google access token
-     * @return loose touch token
+     * Contact repository.
      */
+    @Autowired
+    private ContactRepository contactRepository;
+
     @Override
     public final UserDTO googleLogin(final String googleIdToken, final String googleAccessToken) {
 
@@ -140,12 +140,6 @@ public class UserController implements UserAPI {
 
     }
 
-    /**
-     * Get the user profile.
-     *
-     * @param authenticatedUser authenticated user
-     * @return profile
-     */
     @Override
     public final UserDTO getProfile(final AuthenticatedUser authenticatedUser) {
         Optional<User> user = userRepository.getUser(authenticatedUser.getUserId());
@@ -156,6 +150,14 @@ public class UserController implements UserAPI {
         } else {
             throw new LooseTouchException(api_error, "User " + authenticatedUser.getUserId() + " not found");
         }
+    }
+
+    @Override
+    public final void delete(final AuthenticatedUser authenticatedUser) {
+        // Delete all contacts.
+        contactRepository.deleteAllContactsOfUser(authenticatedUser.getUserId());
+        // Delete user.
+        userRepository.delete(authenticatedUser.getUserId());
     }
 
     /**
