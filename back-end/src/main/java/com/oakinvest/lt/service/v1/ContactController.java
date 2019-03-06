@@ -126,7 +126,20 @@ public class ContactController implements ContactAPI {
                 throw new LooseTouchException(invalid_request_error, "Errors in the contact data", errors);
             }
 
+            // Test if the user tries to change the contact email address.
+            if (!email.equalsIgnoreCase(contact.getEmail())) {
+                // Check that the email is not used by another user.
+                Optional<Contact> existingContact = contactRepository.findContactByEmail(authenticatedUser.getUserId(), contact.getEmail());
+                if (existingContact.isPresent()) {
+                    throw new LooseTouchException(invalid_request_error, "Email already used by another contact");
+                } else {
+                    // Impossible to update a key so we have to delete the previous version.
+                    contactRepository.delete(c.get());
+                }
+            }
+
             // Make the update.
+            c.get().setEmail(contact.getEmail());
             c.get().setFirstName(contact.getFirstName());
             c.get().setLastName(contact.getLastName());
             c.get().setNotes(contact.getNotes());

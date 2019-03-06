@@ -311,6 +311,8 @@ public class CreateTest extends APITest {
                 .content(getMapper().writeValueAsString(CONTACT_2.toDTO())))
                 .andExpect(status().isCreated());
         assertEquals(getContactRepository().count(), 8);
+
+        // TODO Test creating two times the contact
     }
 
     /**

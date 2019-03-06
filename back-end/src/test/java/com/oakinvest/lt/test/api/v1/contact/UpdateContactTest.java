@@ -7,6 +7,9 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 
 import static com.oakinvest.lt.test.util.data.TestContacts.CONTACT_1;
+import static com.oakinvest.lt.test.util.data.TestContacts.CONTACT_2;
+import static com.oakinvest.lt.test.util.data.TestContacts.CONTACT_3;
+import static com.oakinvest.lt.test.util.data.TestContacts.CONTACT_4;
 import static com.oakinvest.lt.test.util.data.TestUsers.GOOGLE_USER_1;
 import static com.oakinvest.lt.test.util.data.TestUsers.GOOGLE_USER_2;
 import static com.oakinvest.lt.util.error.LooseTouchErrorCode.contact_recurrence_type_invalid;
@@ -113,7 +116,6 @@ public class UpdateContactTest extends APITest {
                 // Third error.
                 .andExpect(jsonPath("errors[2].code").value(contact_recurrence_value_invalid.toString()))
                 .andExpect(jsonPath("errors[2].message").value("Contact recurrence value is invalid (must be between 1 and 1000)"));
-
 
         // Trying to createContact a contact with invalid data
         contact.setEmail("test@test.fr");
@@ -230,6 +232,93 @@ public class UpdateContactTest extends APITest {
                 .andExpect(jsonPath("contactRecurrenceValue").value(CONTACT_1.getContactRecurrenceValue()))
                 .andExpect(jsonPath("contactDueDate").value("31/12/2019"));
         assertEquals(getContactRepository().count(), 2);
+
+        // =============================================================================================================
+        // Trying to change the email of a CONTACT_1 to test1@test1.com.
+
+        // Check that we have the good email address.
+        getMvc().perform(get(CONTACT_URL + "/" + CONTACT_1.getEmail() + "/")
+                .contentType(APPLICATION_JSON_UTF8)
+                .header("Authorization", "Bearer " + looseToucheTokenForUser1))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("email").value(CONTACT_1.getEmail()));
+        getMvc().perform(get(CONTACT_URL + "/test1@test1.com/")
+                .contentType(APPLICATION_JSON_UTF8)
+                .header("Authorization", "Bearer " + looseToucheTokenForUser1))
+                .andExpect(status().isNotFound());
+
+        // Changing the email address.
+        assertEquals(getContactRepository().count(), 2);
+        ContactDTO c1 = CONTACT_1.toDTO();
+        c1.setEmail("test1@test1.com");
+        getMvc().perform(put(CONTACT_URL + "/" + CONTACT_1.getEmail() + "/")
+                .contentType(APPLICATION_JSON_UTF8)
+                .header("Authorization", "Bearer " + looseToucheTokenForUser1)
+                .content(getMapper().writeValueAsString(c1)))
+                .andExpect(status().isOk());
+        assertEquals(getContactRepository().count(), 2);
+
+        // Check that we have the good email address.
+        getMvc().perform(get(CONTACT_URL + "/" + CONTACT_1.getEmail() + "/")
+                .contentType(APPLICATION_JSON_UTF8)
+                .header("Authorization", "Bearer " + looseToucheTokenForUser1))
+                .andExpect(status().isNotFound());
+        getMvc().perform(get(CONTACT_URL + "/test1@test1.com/")
+                .contentType(APPLICATION_JSON_UTF8)
+                .header("Authorization", "Bearer " + looseToucheTokenForUser1))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("email").value("test1@test1.com"))
+                .andExpect(jsonPath("firstName").value(CONTACT_1.getFirstName()))
+                .andExpect(jsonPath("lastName").value(CONTACT_1.getLastName()))
+                .andExpect(jsonPath("notes").value(CONTACT_1.getNotes()))
+                .andExpect(jsonPath("contactRecurrenceType").value(CONTACT_1.getContactRecurrenceType()))
+                .andExpect(jsonPath("contactRecurrenceValue").value(CONTACT_1.getContactRecurrenceValue()))
+                .andExpect(jsonPath("contactRecurrenceValue").value(CONTACT_1.getContactRecurrenceValue()))
+                .andExpect(jsonPath("contactDueDate").value("31/12/2019"));
+
+        // =============================================================================================================
+        // Trying to change the email of a CONTACT_1 to CONTACT_2 address.
+        // And see if there is no collision with other users.
+
+        // Creates User 1 / contact 2.
+        getMvc().perform(post(CONTACT_URL)
+                .contentType(APPLICATION_JSON_UTF8)
+                .header("Authorization", "Bearer " + looseToucheTokenForUser1)
+                .content(getMapper().writeValueAsString(CONTACT_2.toDTO())))
+                .andExpect(status().isCreated());
+        // Creates User 1 / contact 3.
+        getMvc().perform(post(CONTACT_URL)
+                .contentType(APPLICATION_JSON_UTF8)
+                .header("Authorization", "Bearer " + looseToucheTokenForUser1)
+                .content(getMapper().writeValueAsString(CONTACT_3.toDTO())))
+                .andExpect(status().isCreated());
+        // Creates User 2 / contact 4.
+        getMvc().perform(post(CONTACT_URL)
+                .contentType(APPLICATION_JSON_UTF8)
+                .header("Authorization", "Bearer " + looseToucheTokenForUser2)
+                .content(getMapper().writeValueAsString(CONTACT_4.toDTO())))
+                .andExpect(status().isCreated());
+
+        // Update to an existing email address.
+        c1 = CONTACT_2.toDTO();
+        c1.setEmail(CONTACT_3.getEmail());
+        getMvc().perform(put(CONTACT_URL + "/" + CONTACT_2.getEmail() + "/")
+                .contentType(APPLICATION_JSON_UTF8)
+                .header("Authorization", "Bearer " + looseToucheTokenForUser1)
+                .content(getMapper().writeValueAsString(c1)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("type").value(invalid_request_error.toString()))
+                .andExpect(jsonPath("message").value("Email already used by another contact"))
+                .andExpect(jsonPath("errors", hasSize(0)));
+
+        // Update to an existing email address used by user 2.
+        c1 = CONTACT_2.toDTO();
+        c1.setEmail(CONTACT_4.getEmail());
+        getMvc().perform(put(CONTACT_URL + "/" + CONTACT_2.getEmail() + "/")
+                .contentType(APPLICATION_JSON_UTF8)
+                .header("Authorization", "Bearer " + looseToucheTokenForUser1)
+                .content(getMapper().writeValueAsString(c1)))
+                .andExpect(status().isOk());
     }
 
 }

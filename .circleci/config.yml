@@ -5,6 +5,8 @@ jobs: # We have jobs key. Each job represents a phase in your Build-Test-Deploy 
   # Build & deploy on test.
   build:
 
+    # ==================================================================================================================
+    # Configuration.
     environment: # Environment.
       TZ: "Europe/Paris" # Set timezone.
 
@@ -15,6 +17,8 @@ jobs: # We have jobs key. Each job represents a phase in your Build-Test-Deploy 
         environment: # Environment.
           TZ: "Europe/Paris" # Set timezone.
 
+    # ==================================================================================================================
+    # Steps.
     steps: # a collection of executable commands.
 
       - run: sudo apt-get update # Ubuntu package update.

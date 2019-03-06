@@ -51,6 +51,15 @@ public class ContactRepository {
     }
 
     /**
+     * Delete a contact in database.
+     *
+     * @param contact contact
+     */
+    public final void delete(final Contact contact) {
+        mapper.delete(contact);
+    }
+
+    /**
      * Returns a contact by its email.
      *
      * @param userId user id
