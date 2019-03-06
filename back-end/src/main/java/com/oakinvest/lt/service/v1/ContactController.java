@@ -156,6 +156,11 @@ public class ContactController implements ContactAPI {
     @Override
     public final void delete(final AuthenticatedUser authenticatedUser, final String email) {
         Optional<Contact> contact = contactRepository.findContactByEmail(authenticatedUser.getUserId(), email);
+        if (contact.isPresent()) {
+            contactRepository.delete(contact.get());
+        } else {
+            throw new LooseTouchException(resource_not_found, "The contact doesn't exists");
+        }
 
     }
 
