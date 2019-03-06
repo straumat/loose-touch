@@ -8,6 +8,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Optional;
 
+import static com.oakinvest.lt.dto.v1.ContactDTO.RECURRENCE_TYPE_DAY;
 import static com.oakinvest.lt.test.util.data.TestContacts.CONTACT_1;
 import static com.oakinvest.lt.test.util.data.TestContacts.CONTACT_2;
 import static com.oakinvest.lt.test.util.data.TestContacts.CONTACT_3;
@@ -144,7 +145,7 @@ public class CreateTest extends APITest {
 
         // Trying to createContact a contact with invalid data
         contact.setEmail("test@test.fr");
-        contact.setContactRecurrenceType("DAY");
+        contact.setContactRecurrenceType(RECURRENCE_TYPE_DAY);
         contact.setContactRecurrenceValue(1001);
         getMvc().perform(post(CONTACT_URL)
                 .contentType(APPLICATION_JSON_UTF8)
@@ -161,7 +162,7 @@ public class CreateTest extends APITest {
 
         // Trying to createContact a contact with valid data
         contact.setEmail("test@test.fr");
-        contact.setContactRecurrenceType("DAY");
+        contact.setContactRecurrenceType(RECURRENCE_TYPE_DAY);
         contact.setContactRecurrenceValue(10);
         getMvc().perform(post(CONTACT_URL)
                 .contentType(APPLICATION_JSON_UTF8)

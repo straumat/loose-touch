@@ -17,6 +17,21 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 public class ContactDTO {
 
     /**
+     * Recurrence type : DAY.
+     */
+    public static final String RECURRENCE_TYPE_DAY = "DAY";
+
+    /**
+     * Recurrence type : MONTH.
+     */
+    public static final String RECURRENCE_TYPE_MONTH = "MONTH";
+
+    /**
+     * Recurrence type : YEAR.
+     */
+    public static final String RECURRENCE_TYPE_YEAR = "YEAR";
+
+    /**
      * Email.
      */
     @ApiModelProperty(value = "Email",
@@ -235,6 +250,26 @@ public class ContactDTO {
      */
     public final void setContactDueDate(final Calendar newContactDueDate) {
         contactDueDate = newContactDueDate;
+    }
+
+    /**
+     * Indicates that contact has been contacted, calculates the new contactDueDate and set it.
+     */
+    public final void contacted() {
+        contactDueDate = Calendar.getInstance();
+        switch (contactRecurrenceType) {
+            case RECURRENCE_TYPE_DAY:
+                contactDueDate.add(Calendar.DATE, contactRecurrenceValue);
+                break;
+            case RECURRENCE_TYPE_MONTH:
+                contactDueDate.add(Calendar.MONTH, contactRecurrenceValue);
+                break;
+            case RECURRENCE_TYPE_YEAR:
+                contactDueDate.add(Calendar.YEAR, contactRecurrenceValue);
+                break;
+            default:
+                break;
+        }
     }
 
 }

@@ -128,7 +128,7 @@ public interface ContactAPI extends V1Service {
     /**
      * Delete a contact.
      *
-     * @param authenticatedUser authenticated user.
+     * @param authenticatedUser authenticated user
      * @param email             email of the contact to delete
      */
     @DeleteMapping(value = "/contacts/{email:.+}")
@@ -147,5 +147,31 @@ public interface ContactAPI extends V1Service {
     })
     void delete(AuthenticatedUser authenticatedUser,
                 @PathVariable("email") String email);
+
+    /**
+     * Indicates that the contact has been contacted.
+     *
+     * @param authenticatedUser authenticated user
+     * @param email             email of the contact
+     * @return contact
+     */
+    @RequestMapping(value = "/contacts/{email:.+}/contacted",
+            method = RequestMethod.GET)
+    @ApiOperation(value = "Indicates that the contact has been contacted",
+            response = ContactDTO.class)
+    @ApiImplicitParams({@ApiImplicitParam(name = "email",
+            dataTypeClass = String.class,
+            value = "Email of the contact contacted")
+    })
+    @ApiResponses(value = {
+            @ApiResponse(code = STATUS_OK, message = STATUS_OK_MESSAGE, response = ContactDTO.class),
+            @ApiResponse(code = STATUS_BAD_REQUEST, message = STATUS_BAD_REQUEST_MESSAGE, response = LooseTouchError.class),
+            @ApiResponse(code = STATUS_UNAUTHORIZED, message = STATUS_UNAUTHORIZED_MESSAGE, response = LooseTouchError.class),
+            @ApiResponse(code = STATUS_NOT_FOUND, message = STATUS_NOT_FOUND_MESSAGE, response = LooseTouchError.class),
+            @ApiResponse(code = STATUS_REQUEST_FAILED, message = STATUS_REQUEST_FAILED_MESSAGE, response = LooseTouchError.class),
+            @ApiResponse(code = STATUS_INTERNAL_SERVER_ERROR, message = STATUS_INTERNAL_SERVER_ERROR_MESSAGE, response = LooseTouchError.class)
+    })
+    ContactDTO contacted(AuthenticatedUser authenticatedUser,
+                         @PathVariable("email") String email);
 
 }

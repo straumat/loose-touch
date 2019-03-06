@@ -6,6 +6,8 @@ import com.oakinvest.lt.test.util.api.APITest;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
+import static com.oakinvest.lt.dto.v1.ContactDTO.RECURRENCE_TYPE_DAY;
+import static com.oakinvest.lt.dto.v1.ContactDTO.RECURRENCE_TYPE_YEAR;
 import static com.oakinvest.lt.test.util.data.TestContacts.CONTACT_1;
 import static com.oakinvest.lt.test.util.data.TestContacts.CONTACT_2;
 import static com.oakinvest.lt.test.util.data.TestContacts.CONTACT_3;
@@ -138,7 +140,7 @@ public class UpdateContactTest extends APITest {
 
         // Trying to createContact a contact with invalid data
         contact.setEmail("test@test.fr");
-        contact.setContactRecurrenceType("DAY");
+        contact.setContactRecurrenceType(RECURRENCE_TYPE_DAY);
         contact.setContactRecurrenceValue(1001);
         getMvc().perform(put(CONTACT_URL + "/" + CONTACT_1.getEmail() + "/")
                 .contentType(APPLICATION_JSON_UTF8)
@@ -154,7 +156,7 @@ public class UpdateContactTest extends APITest {
 
         // Trying to createContact a contact with valid data
         contact.setEmail("test@test.fr");
-        contact.setContactRecurrenceType("DAY");
+        contact.setContactRecurrenceType(RECURRENCE_TYPE_DAY);
         contact.setContactRecurrenceValue(10);
         getMvc().perform(put(CONTACT_URL + "/" + CONTACT_1.getEmail() + "/")
                 .contentType(APPLICATION_JSON_UTF8)
@@ -189,7 +191,7 @@ public class UpdateContactTest extends APITest {
         contact.setFirstName("first name test 1 (update user1");
         contact.setLastName("last name test 1 (update user1");
         contact.setNotes("notes 1 (update user1)");
-        contact.setContactRecurrenceType("YEAR");
+        contact.setContactRecurrenceType(RECURRENCE_TYPE_YEAR);
         contact.setContactRecurrenceValue(9);
         getMvc().perform(put(CONTACT_URL + "/" + CONTACT_1.getEmail() + "/")
                 .contentType(APPLICATION_JSON_UTF8)
@@ -200,7 +202,7 @@ public class UpdateContactTest extends APITest {
                 .andExpect(jsonPath("firstName").value("first name test 1 (update user1"))
                 .andExpect(jsonPath("lastName").value("last name test 1 (update user1"))
                 .andExpect(jsonPath("notes").value("notes 1 (update user1)"))
-                .andExpect(jsonPath("contactRecurrenceType").value("YEAR"))
+                .andExpect(jsonPath("contactRecurrenceType").value(RECURRENCE_TYPE_YEAR))
                 .andExpect(jsonPath("contactRecurrenceValue").value(9))
                 .andExpect(jsonPath("contactDueDate").value("31/12/2019"));
         // Updates the contact due date.
@@ -214,7 +216,7 @@ public class UpdateContactTest extends APITest {
                 .andExpect(jsonPath("firstName").value("first name test 1 (update user1"))
                 .andExpect(jsonPath("lastName").value("last name test 1 (update user1"))
                 .andExpect(jsonPath("notes").value("notes 1 (update user1)"))
-                .andExpect(jsonPath("contactRecurrenceType").value("YEAR"))
+                .andExpect(jsonPath("contactRecurrenceType").value(RECURRENCE_TYPE_YEAR))
                 .andExpect(jsonPath("contactRecurrenceValue").value(9))
                 .andExpect(jsonPath("contactDueDate").value("08/08/1978"));
 

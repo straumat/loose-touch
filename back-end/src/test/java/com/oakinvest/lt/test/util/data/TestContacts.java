@@ -5,6 +5,13 @@ import com.oakinvest.lt.dto.v1.ContactDTO;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
+import static com.oakinvest.lt.domain.ContactRecurrenceType.DAY;
+import static com.oakinvest.lt.domain.ContactRecurrenceType.MONTH;
+import static com.oakinvest.lt.domain.ContactRecurrenceType.YEAR;
+import static com.oakinvest.lt.dto.v1.ContactDTO.RECURRENCE_TYPE_DAY;
+import static com.oakinvest.lt.dto.v1.ContactDTO.RECURRENCE_TYPE_MONTH;
+import static com.oakinvest.lt.dto.v1.ContactDTO.RECURRENCE_TYPE_YEAR;
+
 /**
  * Test contacts.
  */
@@ -17,7 +24,7 @@ public enum TestContacts {
             "first name test 1",
             "last name test 1",
             "notes 1",
-            "DAY",
+            RECURRENCE_TYPE_DAY,
             1,
             new GregorianCalendar(2019, Calendar.DECEMBER, 31, 13, 24, 56)
     ),
@@ -29,7 +36,7 @@ public enum TestContacts {
             "first name test 2",
             "last name test 2",
             "notes 2",
-            "MONTH",
+            RECURRENCE_TYPE_MONTH,
             2,
             new GregorianCalendar(2019, Calendar.NOVEMBER, 16, 13, 24, 56)
     ),
@@ -41,7 +48,7 @@ public enum TestContacts {
             "first name test 3",
             "last name test 3",
             "notes 3",
-            "YEAR",
+            RECURRENCE_TYPE_YEAR,
             3,
             new GregorianCalendar(2019, Calendar.SEPTEMBER, 1, 13, 24, 56)
     ),
@@ -53,7 +60,7 @@ public enum TestContacts {
             "first name test 4",
             "last name test 4",
             "notes 4",
-            "DAY",
+            RECURRENCE_TYPE_DAY,
             4,
             null
     ),
@@ -65,7 +72,7 @@ public enum TestContacts {
             "first name test 5",
             "last name test 5",
             "notes 5",
-            "MONTH",
+            RECURRENCE_TYPE_MONTH,
             5,
             null
     ),
@@ -77,7 +84,7 @@ public enum TestContacts {
             "first name test 6",
             "last name test 6",
             "notes 6",
-            "YEAR",
+            RECURRENCE_TYPE_YEAR,
             6,
             null
     );

@@ -12,14 +12,13 @@ import org.apache.commons.validator.routines.EmailValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
-import static com.oakinvest.lt.domain.ContactRecurrenceType.DAY;
-import static com.oakinvest.lt.domain.ContactRecurrenceType.MONTH;
-import static com.oakinvest.lt.domain.ContactRecurrenceType.YEAR;
+import static com.oakinvest.lt.dto.v1.ContactDTO.RECURRENCE_TYPE_DAY;
+import static com.oakinvest.lt.dto.v1.ContactDTO.RECURRENCE_TYPE_MONTH;
+import static com.oakinvest.lt.dto.v1.ContactDTO.RECURRENCE_TYPE_YEAR;
 import static com.oakinvest.lt.util.error.LooseTouchErrorType.invalid_request_error;
 import static com.oakinvest.lt.util.error.LooseTouchErrorType.resource_not_found;
 
@@ -70,14 +69,9 @@ public class ContactController implements ContactAPI {
         // =============================================================================================================
         // Creates the contact and returns it.
 
-        // If date is set, set a new date.
-        Calendar dueDate;
+        // If not date is set, we calculate one.
         if (contact.getContactDueDate() == null) {
-            // If not date is set, we calculate one.
-            dueDate = calculateNextContactDueDate(Calendar.getInstance(), contact.getContactRecurrenceType(), contact.getContactRecurrenceValue());
-        } else {
-            // if it's set, we use it.
-            dueDate = contact.getContactDueDate();
+            contact.contacted();
         }
 
         // Create contact.
@@ -88,7 +82,7 @@ public class ContactController implements ContactAPI {
                 contact.getNotes(),
                 contact.getContactRecurrenceType(),
                 contact.getContactRecurrenceValue(),
-                dueDate);
+                contact.getContactDueDate());
         contactRepository.save(contactToCreate);
         return LooseTouchMapper.INSTANCE.contactToContactDTO(contactToCreate);
     }
@@ -164,30 +158,18 @@ public class ContactController implements ContactAPI {
 
     }
 
-    /**
-     * Calculate next contact due date.
-     *
-     * @param startDate              date to start for calculation.
-     * @param contactRecurrenceType  contact recurrence type
-     * @param contactRecurrenceValue contact recurrence value
-     * @return next due date
-     */
-    private Calendar calculateNextContactDueDate(final Calendar startDate, final String contactRecurrenceType, final int contactRecurrenceValue) {
-        switch (contactRecurrenceType) {
-            case "DAY":
-                startDate.add(Calendar.DATE, contactRecurrenceValue);
-                break;
-            case "MONTH":
-                startDate.add(Calendar.MONTH, contactRecurrenceValue);
-                break;
-            case "YEAR":
-                startDate.add(Calendar.YEAR, contactRecurrenceValue);
-                break;
-            default:
-                break;
+    @Override
+    public final ContactDTO contacted(final AuthenticatedUser authenticatedUser, final String email) {
+        Optional<Contact> contact = contactRepository.findContactByEmail(authenticatedUser.getUserId(), email);
+        if (contact.isPresent()) {
+            final ContactDTO contactDTO = LooseTouchMapper.INSTANCE.contactToContactDTO(contact.get());
+            contactDTO.contacted();
+            contact.get().setContactDueDate(contactDTO.getContactDueDate());
+            contactRepository.save(contact.get());
+            return LooseTouchMapper.INSTANCE.contactToContactDTO(contact.get());
+        } else {
+            throw new LooseTouchException(resource_not_found, "The contact doesn't exists");
         }
-        return startDate;
-        //return DateUtils.truncate(startDate, Calendar.HOUR);
     }
 
     /**
@@ -214,9 +196,9 @@ public class ContactController implements ContactAPI {
             errors.add(new LooseTouchErrorDetail(LooseTouchErrorCode.contact_recurrence_type_required, "Contact recurrence type is required"));
         } else {
             // Check contact recurrence value.
-            if (!contact.getContactRecurrenceType().equals(DAY.getValue())
-                    && !contact.getContactRecurrenceType().equals(MONTH.getValue())
-                    && !contact.getContactRecurrenceType().equals(YEAR.getValue())
+            if (!contact.getContactRecurrenceType().equals(RECURRENCE_TYPE_DAY)
+                    && !contact.getContactRecurrenceType().equals(RECURRENCE_TYPE_MONTH)
+                    && !contact.getContactRecurrenceType().equals(RECURRENCE_TYPE_YEAR)
             ) {
                 errors.add(new LooseTouchErrorDetail(LooseTouchErrorCode.contact_recurrence_type_invalid, "Contact recurrence type is invalid (valid values are DAY, MONTH, YEAR)"));
             }
