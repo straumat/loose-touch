@@ -23,7 +23,7 @@ jobs: # We have jobs key. Each job represents a phase in your Build-Test-Deploy 
 
       # Install required ubuntu packages.
       - run: sudo apt-get -y -qq update # Ubuntu package update.
-      - run: apt-get -y -qq install python3.4-dev jq  # Install required tools.
+      - run: sudo apt-get -y -qq install python3.4-dev jq  # Install required tools.
 
       # Install python and awscli
       - run:
