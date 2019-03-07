@@ -46,6 +46,7 @@ jobs: # We have jobs key. Each job represents a phase in your Build-Test-Deploy 
             sudo curl -O https://bootstrap.pypa.io/get-pip.py
             sudo python get-pip.py --user
             sudo /root/.local/bin/pip install awscli --upgrade --user
+            sudo /root/.local/bin/aws help
 
       # Deploy to aws.
       - run: sudo /root/.local/bin/aws cloudformation package --region ${AWS_REGION} --s3-bucket ${AWS_CONFIGURATION_BUCKET} --template-fileaws-configuration.yml --output-template-file output-test-aws-configuration.yml
