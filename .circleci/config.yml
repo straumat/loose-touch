@@ -27,12 +27,12 @@ jobs: # We have jobs key. Each job represents a phase in your Build-Test-Deploy 
 
       # Install python and awscli
       - run:
-        name: Install python and awscli
-        working_directory: /
-        command: |
-          curl -O https://bootstrap.pypa.io/get-pip.py
-          python3.4 get-pip.py --user
-          pip install awscli --upgrade --user
+          name: Install python and awscli
+          working_directory: /
+          command: |
+            curl -O https://bootstrap.pypa.io/get-pip.py
+            python3.4 get-pip.py --user
+            pip install awscli --upgrade --user
 
       # Get the sources and dependencies.
       - checkout # check out source code to working directory.
