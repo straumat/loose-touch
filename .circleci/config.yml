@@ -41,7 +41,4 @@ jobs: # We have jobs key. Each job represents a phase in your Build-Test-Deploy 
           path: back-end/target/surefire-reports
 
       # Deploy to aws.
-      - run: aws cloudformation package --region ${AWS_REGION} \
-          --s3-bucket ${AWS_CONFIGURATION_BUCKET} \
-          --template-fileaws-configuration.yml \
-          --output-template-file output-test-aws-configuration.yml
+      - run: aws cloudformation package --region ${AWS_REGION} --s3-bucket ${AWS_CONFIGURATION_BUCKET} --template-fileaws-configuration.yml --output-template-file output-test-aws-configuration.yml
