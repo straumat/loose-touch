@@ -2,6 +2,7 @@ package com.oakinvest.lt.domain;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBAttribute;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBHashKey;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBIndexRangeKey;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBRangeKey;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
 
@@ -58,7 +59,7 @@ public class Contact {
     /**
      * Contact due date.
      */
-    @DynamoDBAttribute(attributeName = "CONTACT_DUE_DATE")
+    @DynamoDBIndexRangeKey(attributeName = "CONTACT_DUE_DATE", localSecondaryIndexName = "INDEX_CONTACT_DUE_DATE")
     private Calendar contactDueDate;
 
     /**

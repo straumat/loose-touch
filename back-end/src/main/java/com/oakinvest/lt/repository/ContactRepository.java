@@ -13,8 +13,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.TimeZone;
 
 /**
  * Contact repository.
@@ -89,7 +92,6 @@ public class ContactRepository {
      * @return contact
      */
     public final Optional<Contact> findContactByEmail(final String userId, final String email) {
-
         // User id.
         Contact c = new Contact();
         c.setUserId(userId);
@@ -113,7 +115,33 @@ public class ContactRepository {
         } else {
             return Optional.empty();
         }
+    }
 
+    /**
+     * Returns the list of contacts to reach.
+     *
+     * @param userId user id
+     * @return contact to reach
+     */
+    public final List<Contact> getContactsToReach(final String userId) {
+        // User id.
+        Contact c = new Contact();
+        c.setUserId(userId);
+
+        // Set the date as today.
+        SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+        dateFormatter.setTimeZone(TimeZone.getTimeZone("UTC"));
+        Condition rangeKeyCondition = new Condition();
+        rangeKeyCondition.withComparisonOperator(ComparisonOperator.LE)
+                .withAttributeValueList(new AttributeValue().withS(dateFormatter.format(new Date())));
+
+        // Define the query.
+        DynamoDBQueryExpression<Contact> queryExpression = new DynamoDBQueryExpression<Contact>()
+                .withHashKeyValues(c)
+                .withIndexName("INDEX_CONTACT_DUE_DATE")
+                .withRangeKeyCondition("CONTACT_DUE_DATE", rangeKeyCondition);
+
+        return mapper.query(Contact.class, queryExpression);
     }
 
     /**

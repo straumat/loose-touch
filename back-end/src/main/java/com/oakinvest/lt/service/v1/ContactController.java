@@ -172,6 +172,11 @@ public class ContactController implements ContactAPI {
         }
     }
 
+    @Override
+    public final List<ContactDTO> getContactsToReach(final AuthenticatedUser authenticatedUser) {
+        return LooseTouchMapper.INSTANCE.contactsToContactDTOs(contactRepository.getContactsToReach(authenticatedUser.getUserId()));
+    }
+
     /**
      * Check contactDTO values and returns errors.
      *

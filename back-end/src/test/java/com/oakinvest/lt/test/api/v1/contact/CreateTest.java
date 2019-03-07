@@ -314,6 +314,7 @@ public class CreateTest extends APITest {
         assertEquals(getContactRepository().count(), 8);
 
         // TODO Test creating two times the contact
+        // TODO test valid email address
     }
 
     /**

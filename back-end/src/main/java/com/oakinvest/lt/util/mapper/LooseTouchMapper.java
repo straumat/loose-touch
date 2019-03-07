@@ -9,6 +9,8 @@ import org.mapstruct.Mapping;
 import org.mapstruct.Mappings;
 import org.mapstruct.factory.Mappers;
 
+import java.util.List;
+
 /**
  * Loose touch mapper.
  */
@@ -51,5 +53,13 @@ public interface LooseTouchMapper {
             @Mapping(source = "contactDueDate", target = "contactDueDate")
     })
     ContactDTO contactToContactDTO(Contact contact);
+
+    /**
+     * Maps a list to another one.
+     *
+     * @param contacts contacts
+     * @return contacts dtos
+     */
+    List<ContactDTO> contactsToContactDTOs(List<Contact> contacts);
 
 }
