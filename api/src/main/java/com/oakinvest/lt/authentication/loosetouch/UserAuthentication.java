@@ -1,4 +1,4 @@
-package com.oakinvest.lt.domain;
+package com.oakinvest.lt.authentication.loosetouch;
 
 /**
  * User authentication type.

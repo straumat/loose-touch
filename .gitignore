@@ -110,4 +110,4 @@ Supprimerait loose-touch.iml
 output-*
 
 # Google token backup
-back-end/google-id-token-*
+api/google-id-token-*

@@ -23,7 +23,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-import static com.oakinvest.lt.domain.UserAuthentication.GOOGLE;
+import static com.oakinvest.lt.authentication.loosetouch.UserAuthentication.GOOGLE;
 import static com.oakinvest.lt.util.error.LooseTouchErrorType.api_error;
 import static com.oakinvest.lt.util.error.LooseTouchErrorType.authentication_error;
 import static com.oakinvest.lt.util.error.LooseTouchErrorType.invalid_request_error;

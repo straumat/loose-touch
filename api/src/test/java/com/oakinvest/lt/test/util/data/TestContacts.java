@@ -5,9 +5,6 @@ import com.oakinvest.lt.dto.v1.ContactDTO;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
-import static com.oakinvest.lt.domain.ContactRecurrenceType.DAY;
-import static com.oakinvest.lt.domain.ContactRecurrenceType.MONTH;
-import static com.oakinvest.lt.domain.ContactRecurrenceType.YEAR;
 import static com.oakinvest.lt.dto.v1.ContactDTO.RECURRENCE_TYPE_DAY;
 import static com.oakinvest.lt.dto.v1.ContactDTO.RECURRENCE_TYPE_MONTH;
 import static com.oakinvest.lt.dto.v1.ContactDTO.RECURRENCE_TYPE_YEAR;
