@@ -21,24 +21,27 @@ jobs: # We have jobs key. Each job represents a phase in your Build-Test-Deploy 
     # Steps.
     steps: # a collection of executable commands.
 
+      # Install required packages.
       - run: sudo apt-get update # Ubuntu package update.
+      - run: sudo apt-get install awscli # Install required tools.
 
-      - run: sudo apt-get install awscli # Install awscli.
-
+      # Get the sources and dependencies.
       - checkout # check out source code to working directory.
-
       - restore_cache: # restore the saved cache after the first run or if `pom.xml` has changed.
           key: loose-touch-{{ checksum "pom.xml" }}
-
       - run: mvn dependency:go-offline # gets the project dependencies.
-
       - save_cache: # saves the project dependencies.
           paths:
             - ~/.m2
           key: loose-touch-{{ checksum "pom.xml" }}
 
-      - run: mvn package
-      #- run: ./deploy.sh test # Maven package and aws deployment.
-
+      # Compile, run tests, package and send the results for reporting.
+      - run: mvn clean package
       - store_test_results: # uploads the test metadata directory so that it can show up in the CircleCI dashboard.
           path: back-end/target/surefire-reports
+
+      # Deploy to aws.
+      - run: aws cloudformation package --region ${AWS_REGION} \
+          --s3-bucket ${AWS_CONFIGURATION_BUCKET} \
+          --template-fileaws-configuration.yml \
+          --output-template-file output-test-aws-configuration.yml
