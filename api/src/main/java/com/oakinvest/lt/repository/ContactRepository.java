@@ -138,6 +138,7 @@ public class ContactRepository {
         // Define the query.
         DynamoDBQueryExpression<Contact> queryExpression = new DynamoDBQueryExpression<Contact>()
                 .withHashKeyValues(c)
+                .withConsistentRead(false)
                 .withIndexName("INDEX_CONTACT_DUE_DATE")
                 .withRangeKeyCondition("CONTACT_DUE_DATE", rangeKeyCondition);
 

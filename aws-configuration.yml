@@ -32,9 +32,9 @@ Resources:
     Properties:
       AttributeDefinitions:                                                       # A list of attributes that describe the key schema for the table and indexes. Duplicates are allowed.
         - AttributeName: "ID"                                                     # ID.
-          AttributeType: S
+          AttributeType: S                                                        # String.
         - AttributeName: "GOOGLE_USERNAME"                                        # Google username.
-          AttributeType: S
+          AttributeType: S                                                        # String.
       BillingMode: PAY_PER_REQUEST                                                # Specify how you are charged for read and write throughput and how you manage capacity.
       GlobalSecondaryIndexes:                                                     # Global secondary indexes to be created on the table.
         - IndexName: "INDEX_GOOGLE_USERNAME"
@@ -47,6 +47,33 @@ Resources:
       KeySchema:                                                                  # Specifies the attributes that make up the primary key for the table.
         - AttributeName: "ID"
           KeyType: "HASH"
+
+  CONTACTS:
+    Type: AWS::DynamoDB::Table                                                    # The AWS::DynamoDB::Table resource creates a DynamoDB table.
+    Properties:
+      AttributeDefinitions:                                                       # A list of attributes that describe the key schema for the table and indexes. Duplicates are allowed.
+        - AttributeName: "USER_ID"                                                # ID.
+          AttributeType: S                                                        # String.
+        - AttributeName: "EMAIL"                                                  # Contact email.
+          AttributeType: S                                                        # String.
+        - AttributeName: "CONTACT_DUE_DATE"                                       # Contact due date.
+          AttributeType: S                                                        # String.
+      BillingMode: PAY_PER_REQUEST                                                # Specify how you are charged for read and write throughput and how you manage capacity.
+      LocalSecondaryIndexes:                                                      # Local secondary indexes to be created on the table.
+        - IndexName: "INDEX_CONTACT_DUE_DATE"
+          KeySchema:
+            - AttributeName: "USER_ID"
+              KeyType: "HASH"
+            - AttributeName: "CONTACT_DUE_DATE"
+              KeyType: "RANGE"
+          Projection:                                                             # Attributes that are copied (projected) from the source table into the index.
+            ProjectionType: "ALL"                                                 # The set of attributes that are projected into the index. KEYS_ONLY : Only the index and primary keys are projected into the index.
+      TableName: "CONTACTS"                                                       # A name for the table. If you don't specify a name, AWS CloudFormation generates a unique physical ID and uses that ID for the table name.
+      KeySchema:                                                                  # Specifies the attributes that make up the primary key for the table.
+        - AttributeName: "USER_ID"
+          KeyType: "HASH"
+        - AttributeName: "EMAIL"
+          KeyType: "RANGE"
 
   # ====================================================================================================================
   # Defines available functions.
