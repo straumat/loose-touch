@@ -21,9 +21,18 @@ jobs: # We have jobs key. Each job represents a phase in your Build-Test-Deploy 
     # Steps.
     steps: # a collection of executable commands.
 
-      # Install required packages.
-      - run: sudo apt-get update # Ubuntu package update.
-      - run: sudo apt-get install awscli # Install required tools.
+      # Install required ubuntu packages.
+      - run: sudo apt-get -y -qq update # Ubuntu package update.
+      - run: apt-get -y -qq install python3.4-dev jq  # Install required tools.
+
+      # Install python and awscli
+      - run:
+        name: Install python and awscli
+        working_directory: /
+        command: |
+          curl -O https://bootstrap.pypa.io/get-pip.py
+          python3.4 get-pip.py --user
+          pip install awscli --upgrade --user
 
       # Get the sources and dependencies.
       - checkout # check out source code to working directory.
