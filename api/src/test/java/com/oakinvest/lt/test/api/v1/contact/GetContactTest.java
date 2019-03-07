@@ -4,6 +4,8 @@ import com.oakinvest.lt.test.util.api.APITest;
 import org.junit.Ignore;
 
 import static com.oakinvest.lt.test.util.data.TestContacts.CONTACT_1;
+import static com.oakinvest.lt.test.util.data.TestContacts.CONTACT_2;
+import static com.oakinvest.lt.test.util.data.TestContacts.CONTACT_3;
 import static com.oakinvest.lt.test.util.data.TestUsers.GOOGLE_USER_1;
 import static com.oakinvest.lt.test.util.data.TestUsers.GOOGLE_USER_2;
 import static com.oakinvest.lt.util.error.LooseTouchErrorType.authentication_error;
@@ -51,6 +53,8 @@ public class GetContactTest extends APITest {
         // Configuration.
         final String looseToucheTokenForUser1 = getLooseToucheToken(GOOGLE_USER_1);
         final String looseToucheTokenForUser2 = getLooseToucheToken(GOOGLE_USER_2);
+
+        System.out.println("TOTO " + getMapper().writeValueAsString(CONTACT_3.toDTO()));
 
         // Contact 1 for user 1 should not exists.
         getMvc().perform(get(CONTACT_URL + "/" + CONTACT_1.getEmail() + "/")

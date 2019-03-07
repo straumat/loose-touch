@@ -2,6 +2,7 @@
  * [Git](https://git-scm.com/) : `sudo apt-get -y install git`
  * [Java8](https://openjdk.java.net/install/) : `sudo apt-get -y install openjdk-8-jdk`
  * [Maven](https://maven.apache.org/) : `sudo apt-get -y install maven`
+ * [jq](https://stedolan.github.io/jq/) : `sudo apt-get -y install jq`
  * [AWS CLI](https://aws.amazon.com/cli/) : `sudo apt install awscli`
  * [Node.js](https://nodejs.org/) : `sudo apt -y install nodejs`
  * [Npm](https://www.npmjs.com/) : `sudo apt -y install npm`

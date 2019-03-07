@@ -8,7 +8,7 @@ export LOOSE_TOUCH_SERVER_URL="http://127.0.0.1:8080"
 ```
 ### AWS.
 ```
-export LOOSE_TOUCH_SERVER_URL="https://nb12h4yejg.execute-api.eu-west-3.amazonaws.com/test"
+export LOOSE_TOUCH_SERVER_URL=`aws cloudformation describe-stacks --stack-name loose-touch-test --region eu-west-3 | jq -r '.Stacks[0].Outputs[] | select(.OutputKey == "APIURL") | .OutputValue'`
 ```
 
 ## Define google id token for user 1. 
@@ -28,5 +28,44 @@ export LOOSE_TOUCH_ID_TOKEN_FOR_USER_1=` curl "${LOOSE_TOUCH_SERVER_URL}/v1/logi
 
 ## Get profile information.
 ```
-curl "${LOOSE_TOUCH_SERVER_URL}/v1/profile" -H "Authorization: Bearer ${LOOSE_TOUCH_ID_TOKEN_FOR_USER_1}" -X GET -s | jq
+curl "${LOOSE_TOUCH_SERVER_URL}/v1/user/profile" -H "Authorization: Bearer ${LOOSE_TOUCH_ID_TOKEN_FOR_USER_1}" -X GET -s | jq
+```
+
+## Add 3 contacts.
+
+### User 1 / Contact 1.
+```
+curl    --header "Content-Type: application/json" \
+        --header "Authorization: Bearer ${LOOSE_TOUCH_ID_TOKEN_FOR_USER_1}" \
+        --request POST \
+        --data '{"email":"test1@test.com","firstName":"first name test 1","lastName":"last name test 1","notes":"notes 1","contactRecurrenceType":"DAY","contactRecurrenceValue":1,"contactDueDate":"31/12/2019"}' \
+        ${LOOSE_TOUCH_SERVER_URL}/v1/contacts | jq
+```
+
+### User 1 / Contact 2.
+```
+curl    --header "Content-Type: application/json" \
+        --header "Authorization: Bearer ${LOOSE_TOUCH_ID_TOKEN_FOR_USER_1}" \
+        --request POST \
+        --data '{"email":"test2@test.com","firstName":"first name test 2","lastName":"last name test 2","notes":"notes 2","contactRecurrenceType":"MONTH","contactRecurrenceValue":2,"contactDueDate":"16/11/2019"}' \
+        ${LOOSE_TOUCH_SERVER_URL}/v1/contacts | jq
+```
+
+### User 1 / Contact 3.
+```
+curl    --header "Content-Type: application/json" \
+        --header "Authorization: Bearer ${LOOSE_TOUCH_ID_TOKEN_FOR_USER_1}" \
+        --request POST \
+        --data '{"email":"test3@test.com","firstName":"first name test 3","lastName":"last name test 3","notes":"notes 3","contactRecurrenceType":"YEAR","contactRecurrenceValue":3,"contactDueDate":"01/09/2017"}' \
+        ${LOOSE_TOUCH_SERVER_URL}/v1/contacts | jq
+```
+
+## Get contact to reach.
+```
+curl "${LOOSE_TOUCH_SERVER_URL}/v1/contacts/toReach" -H "Authorization: Bearer ${LOOSE_TOUCH_ID_TOKEN_FOR_USER_1}" -X GET -s | jq
+```
+
+## Get a contact.
+```
+curl "${LOOSE_TOUCH_SERVER_URL}/v1/contacts/test1@test.com/" -H "Authorization: Bearer ${LOOSE_TOUCH_ID_TOKEN_FOR_USER_1}" -X GET -s | jq
 ```

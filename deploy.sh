@@ -42,11 +42,11 @@ fi
 # ======================================================================================================================
 
 # ======================================================================================================================
-# Build the back-end.
+# Build the API.
 echo ""
 echo "================================================================"
-echo "Building the back end ..."
-mvn -f back-end/pom.xml clean package
+echo "Building the API ..."
+mvn -f api/pom.xml clean package
 # ======================================================================================================================
 
 # ======================================================================================================================
@@ -84,5 +84,7 @@ aws s3 sync ./clients/website s3://${PREFIX}loosetouch.com --delete --acl public
 echo ""
 echo "================================================================"
 echo "Details of stack $1 ..."
-aws cloudformation describe-stacks --stack-name loose-touch-$1 --region eu-west-3
+# aws cloudformation describe-stacks --stack-name loose-touch-$1 --region eu-west-3
+echo API URL is `aws cloudformation describe-stacks --stack-name loose-touch-test --region eu-west-3 | jq -r '.Stacks[0].Outputs[] | select(.OutputKey == "APIURL") | .OutputValue'`
+echo WWW URL is `aws cloudformation describe-stacks --stack-name loose-touch-test --region eu-west-3 | jq -r '.Stacks[0].Outputs[] | select(.OutputKey == "WWWURL") | .OutputValue'`
 # ======================================================================================================================

@@ -56,7 +56,7 @@ Resources:
     Properties:
       Handler: com.oakinvest.lt.configuration.StreamLambdaHandler::handleRequest  # Function within your code that is called to begin execution.
       Runtime: java8                                                              # The runtime environment.
-      CodeUri: back-end/target/loose-touch-back-end-lambda-package.zip            # S3 Uri or location to the function code. The S3 object this Uri references MUST be a Lambda deployment package.
+      CodeUri: api/target/api-lambda-package.zip                                  # S3 Uri or location to the function code. The S3 object this Uri references MUST be a Lambda deployment package.
       MemorySize: 512                                                             # Size of the memory allocated per invocation of the function in MB. Defaults to 128.
       Policies: AWSLambdaBasicExecutionRole                                       # Names of AWS managed IAM policies or IAM policy documents or SAM Policy Templates that this function needs, which should be appended to the default role for this function.
       Timeout: 30                                                                 # Maximum time that the function can run before it is killed in seconds. Defaults to 3.
@@ -100,7 +100,7 @@ Outputs:
 
   # ====================================================================================================================
   # URL of API.
-  API_URL:
+  APIURL:
     Description: URL of API
     Value: !Join
       - ''
@@ -113,7 +113,7 @@ Outputs:
 
   # ====================================================================================================================
   # URL of the S3 bucket.
-  WWW_URL:
+  WWWURL:
     Description: URL of S3 bucket holding website content
     Value: !Join
       - ''
