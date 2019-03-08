@@ -38,8 +38,8 @@ jobs: # We have jobs key. Each job represents a phase in your Build-Test-Deploy 
 
       # Persist workspace.
       - persist_to_workspace:
-          root: /root/loose-touch
-          paths: ./
+          root: ~/loose-touch
+          paths: .
 
   # ====================================================================================================================
   # Deploy on amazon (test).
@@ -58,7 +58,7 @@ jobs: # We have jobs key. Each job represents a phase in your Build-Test-Deploy 
 
       # Attach workspace.
       - attach_workspace:
-          at: /root/loose-touch
+          at: ~/loose-touch
 
       # Install aws cli & jq.
       - run:
