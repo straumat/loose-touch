@@ -74,12 +74,12 @@ jobs: # We have jobs key. Each job represents a phase in your Build-Test-Deploy 
           name: Deploy to AWS
           command: |
             aws cloudformation deploy --region ${AWS_REGION} --capabilities CAPABILITY_NAMED_IAM --parameter-override Stage=test Prefix=test --template-file output-test-aws-configuration.yml --stack-name loose-touch-test
-            export API_URL=`aws cloudformation describe-stacks --stack-name loose-touch-test --region ${AWS_REGION} | jq -r '.Stacks[0].Outputs[] | select(.OutputKey == "APIURL") | .OutputValue'`
-            export WWW_URL=`aws cloudformation describe-stacks --stack-name loose-touch-test --region ${AWS_REGION} | jq -r '.Stacks[0].Outputs[] | select(.OutputKey == "WWWURL") | .OutputValue'`
       - run: aws s3 sync ./clients/website s3://testloosetouch.com --delete --acl public-read
       - run:
           name: Display AWS configuration
           command: |
+            export API_URL=`aws cloudformation describe-stacks --stack-name loose-touch-test --region ${AWS_REGION} | jq -r '.Stacks[0].Outputs[] | select(.OutputKey == "APIURL") | .OutputValue'`
+            export WWW_URL=`aws cloudformation describe-stacks --stack-name loose-touch-test --region ${AWS_REGION} | jq -r '.Stacks[0].Outputs[] | select(.OutputKey == "WWWURL") | .OutputValue'`
             echo API URL is ${API_URL}
             echo WWW URL is ${WWW_URL}
 
