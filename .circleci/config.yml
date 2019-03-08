@@ -59,19 +59,11 @@ jobs: # We have jobs key. Each job represents a phase in your Build-Test-Deploy 
             sudo pip install awscli
 
       # Deploy to aws (test).
-      - run: aws cloudformation package \
-          --region ${AWS_REGION} \
-          --s3-bucket ${AWS_CONFIGURATION_BUCKET} \
-          --template-file aws-configuration.yml \
-          --output-template-file output-test-aws-configuration.yml
-      - run: aws cloudformation deploy \
-          --region ${AWS_REGION} \
-          --capabilities CAPABILITY_NAMED_IAM \
-          --parameter-override Stage=test Prefix=test \
-          --template-file output-test-aws-configuration.yml
-          --stack-name loose-touch-test \
+      - run: aws cloudformation package --region ${AWS_REGION} --s3-bucket ${AWS_CONFIGURATION_BUCKET} --template-file aws-configuration.yml --output-template-file output-test-aws-configuration.yml
+      - run: aws cloudformation deploy --region ${AWS_REGION} --capabilities CAPABILITY_NAMED_IAM --parameter-override Stage=test Prefix=test --template-file output-test-aws-configuration.yml --stack-name loose-touch-test \
       - run: aws s3 sync ./clients/website s3://testloosetouch.com --delete --acl public-read
       - run:
+          name: Retrieve aws configuration
           command: |
             export API_URL = `aws cloudformation describe-stacks --stack-name loose-touch-test --region ${AWS_REGION} | jq -r '.Stacks[0].Outputs[] | select(.OutputKey == "APIURL") | .OutputValue'`
             export WWW_URL = `aws cloudformation describe-stacks --stack-name loose-touch-test --region ${AWS_REGION} | jq -r '.Stacks[0].Outputs[] | select(.OutputKey == "WWWURL") | .OutputValue'`
