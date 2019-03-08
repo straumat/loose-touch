@@ -128,10 +128,10 @@ Outputs:
   # ====================================================================================================================
   # URL of API.
   APIURL:
-    Description: URL of API
+    Description: API URL
     Value: !Join
       - ''
-      - - https://
+      - - 'https://'
         - !Ref LooseTouchAPI
         - '.execute-api.'
         - !Ref 'AWS::Region'
@@ -141,7 +141,7 @@ Outputs:
   # ====================================================================================================================
   # URL of the S3 bucket.
   WWWURL:
-    Description: URL of S3 bucket holding website content
+    Description: S3 bucket holding website content URL
     Value: !Join
       - ''
       - - 'http://'

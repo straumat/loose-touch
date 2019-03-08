@@ -142,14 +142,13 @@ public class UserController implements UserAPI {
 
     @Override
     public final UserDTO getProfile(final AuthenticatedUser authenticatedUser) {
-        Optional<User> user = userRepository.getUser(authenticatedUser.getUserId());
-        if (user.isPresent()) {
-            UserDTO u = LooseTouchMapper.INSTANCE.userToUserDTO(user.get());
-            u.setIdToken(looseTouchTokenProvider.createToken(user.get().getId()));
-            return u;
-        } else {
-            throw new LooseTouchException(api_error, "User " + authenticatedUser.getUserId() + " not found");
-        }
+        return userRepository.getUser(authenticatedUser.getUserId())
+                .map(user -> {
+                    UserDTO u = LooseTouchMapper.INSTANCE.userToUserDTO(user);
+                    u.setIdToken(looseTouchTokenProvider.createToken(user.getId()));
+                    return u;
+                })
+                .orElseThrow(() -> new LooseTouchException(api_error, "User " + authenticatedUser.getUserId() + " not found"));
     }
 
     @Override

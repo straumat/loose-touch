@@ -34,18 +34,34 @@ jobs: # We have jobs key. Each job represents a phase in your Build-Test-Deploy 
       # Compile, run tests, package and send the results for reporting.
       - run: mvn clean package
       - store_test_results: # uploads the test metadata directory so that it can show up in the CircleCI dashboard.
-          path: back-end/target/surefire-reports
+          path: api/target/surefire-reports
 
       # Install aws cli & jq.
       - run:
           name: Install aws cli & jq
           command: |
-            sudo apt-get -y -qq update
-            sudo apt-get -y -qq install python3 groff jq
-            sudo curl -O https://bootstrap.pypa.io/get-pip.py
-            sudo python get-pip.py --user
-            sudo /root/.local/bin/pip install awscli --upgrade --user
-            sudo /root/.local/bin/aws help
+            sudo apt-get -yqq update
+            sudo apt-get -yqq install python-pip groff jq
+            pip install awscli --upgrade --user
+            export PATH=~/.local/bin:$PATH
+            source ~/.profile
 
-      # Deploy to aws.
-      - run: sudo /root/.local/bin/aws cloudformation package --region ${AWS_REGION} --s3-bucket ${AWS_CONFIGURATION_BUCKET} --template-file aws-configuration.yml --output-template-file output-test-aws-configuration.yml
+      # Deploy to aws (test).
+      - run: aws cloudformation package \
+          --region ${AWS_REGION} \
+          --s3-bucket ${AWS_CONFIGURATION_BUCKET} \
+          --template-file aws-configuration.yml \
+          --output-template-file output-test-aws-configuration.yml
+      - run: aws cloudformation deploy \
+          --region ${AWS_REGION} \
+          --capabilities CAPABILITY_NAMED_IAM \
+          --parameter-override Stage=test Prefix=test \
+          --template-file output-test-aws-configuration.yml
+          --stack-name loose-touch-test \
+      - run: aws s3 sync ./clients/website s3://testloosetouch.com --delete --acl public-read
+      - run:
+          command: |
+            export API_URL = `aws cloudformation describe-stacks --stack-name loose-touch-test --region ${AWS_REGION} | jq -r '.Stacks[0].Outputs[] | select(.OutputKey == "APIURL") | .OutputValue'`
+            export WWW_URL = `aws cloudformation describe-stacks --stack-name loose-touch-test --region ${AWS_REGION} | jq -r '.Stacks[0].Outputs[] | select(.OutputKey == "WWWURL") | .OutputValue'`
+            echo API URL is ${API_URL}
+            echo WWW URL is ${WWW_URL}
