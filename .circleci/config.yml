@@ -39,7 +39,6 @@ jobs: # We have jobs key. Each job represents a phase in your Build-Test-Deploy 
       # Install aws cli & jq.
       - run:
           name: Install aws cli & jq
-          working_directory: /
           command: |
             sudo apt-get -y -qq update
             sudo apt-get -y -qq install python3 groff jq
