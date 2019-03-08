@@ -49,4 +49,4 @@ jobs: # We have jobs key. Each job represents a phase in your Build-Test-Deploy 
             sudo /root/.local/bin/aws help
 
       # Deploy to aws.
-      - run: sudo /root/.local/bin/aws cloudformation package --region ${AWS_REGION} --s3-bucket ${AWS_CONFIGURATION_BUCKET} --template-fileaws-configuration.yml --output-template-file output-test-aws-configuration.yml
+      - run: sudo /root/.local/bin/aws cloudformation package --region ${AWS_REGION} --s3-bucket ${AWS_CONFIGURATION_BUCKET} --template-file aws-configuration.yml --output-template-file output-test-aws-configuration.yml
