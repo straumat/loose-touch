@@ -36,15 +36,27 @@ jobs: # We have jobs key. Each job represents a phase in your Build-Test-Deploy 
       - store_test_results: # uploads the test metadata directory so that it can show up in the CircleCI dashboard.
           path: api/target/surefire-reports
 
+  # ====================================================================================================================
+  # Deploy on amazon (test).
+  deploy_test:
+
+    # ==================================================================================================================
+    # Configuration.
+    working_directory: ~/loose-touch # directory where steps will run.
+
+    docker: # run the steps with Docker.
+      - image: circleci/python:2.7-jessie # Python.
+
+    # ==================================================================================================================
+    # Steps.
+    steps: # a collection of executable commands.
       # Install aws cli & jq.
       - run:
-          name: Install aws cli & jq
+          name: Install awscli & jq
           command: |
             sudo apt-get -yqq update
-            sudo apt-get -yqq install python-pip groff jq
-            pip install awscli --upgrade --user
-            export PATH=~/.local/bin:$PATH
-            source ~/.profile
+            sudo apt-get -yqq install jq
+            sudo pip install awscli
 
       # Deploy to aws (test).
       - run: aws cloudformation package \
@@ -65,3 +77,17 @@ jobs: # We have jobs key. Each job represents a phase in your Build-Test-Deploy 
             export WWW_URL = `aws cloudformation describe-stacks --stack-name loose-touch-test --region ${AWS_REGION} | jq -r '.Stacks[0].Outputs[] | select(.OutputKey == "WWWURL") | .OutputValue'`
             echo API URL is ${API_URL}
             echo WWW URL is ${WWW_URL}
+
+# ====================================================================================================================
+# Loose touch workflow.
+workflows:
+  version: 2
+  build_and_deploy_to_test:
+    jobs:
+      - build
+      - deploy_test:
+          requires:
+            - build
+#          filters:
+#            branches:
+#              only: development
