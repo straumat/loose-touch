@@ -36,6 +36,11 @@ jobs: # We have jobs key. Each job represents a phase in your Build-Test-Deploy 
       - store_test_results: # uploads the test metadata directory so that it can show up in the CircleCI dashboard.
           path: api/target/surefire-reports
 
+      # Persist workspace.
+      - persist_to_workspace:
+          root: /root/loose-touch
+          paths: ./
+
   # ====================================================================================================================
   # Deploy on amazon (test).
   deploy_test:
@@ -50,6 +55,11 @@ jobs: # We have jobs key. Each job represents a phase in your Build-Test-Deploy 
     # ==================================================================================================================
     # Steps.
     steps: # a collection of executable commands.
+
+      # Attach workspace.
+      - attach_workspace:
+          at: /root/loose-touch
+
       # Install aws cli & jq.
       - run:
           name: Install awscli & jq
