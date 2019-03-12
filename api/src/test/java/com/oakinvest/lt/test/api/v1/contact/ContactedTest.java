@@ -50,7 +50,7 @@ public class ContactedTest extends APITest {
 
     @Ignore("Email parameter is required")
     @Override
-    public void validDataTest() throws Exception {
+    public void validDataTest() {
 
     }
 

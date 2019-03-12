@@ -4,7 +4,6 @@ import com.oakinvest.lt.test.util.api.APITest;
 import org.junit.Ignore;
 
 import static com.oakinvest.lt.test.util.data.TestContacts.CONTACT_1;
-import static com.oakinvest.lt.test.util.data.TestContacts.CONTACT_2;
 import static com.oakinvest.lt.test.util.data.TestContacts.CONTACT_3;
 import static com.oakinvest.lt.test.util.data.TestUsers.GOOGLE_USER_1;
 import static com.oakinvest.lt.test.util.data.TestUsers.GOOGLE_USER_2;
@@ -44,7 +43,7 @@ public class GetContactTest extends APITest {
 
     @Ignore("If email is null, we have Request method 'GET' not supported")
     @Override
-    public void validDataTest() throws Exception {
+    public void validDataTest() {
 
     }
 

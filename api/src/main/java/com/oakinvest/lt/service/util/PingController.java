@@ -9,6 +9,7 @@ import java.time.format.DateTimeFormatter;
 /**
  * Ping controller.
  */
+@SuppressWarnings("unused")
 @RestController
 public class PingController implements PingAPI {
 

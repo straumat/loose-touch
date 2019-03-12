@@ -223,7 +223,7 @@ public enum TestContacts {
      *
      * @return contactDueDate
      */
-    public final Calendar getContactDueDate() {
+    private Calendar getContactDueDate() {
         return contactDueDate;
     }
 

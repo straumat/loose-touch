@@ -9,7 +9,6 @@ import com.oakinvest.lt.util.error.LooseTouchErrorDetail;
 import com.oakinvest.lt.util.error.LooseTouchException;
 import com.oakinvest.lt.util.mapper.LooseTouchMapper;
 import org.apache.commons.validator.routines.EmailValidator;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.LinkedList;
@@ -25,6 +24,7 @@ import static com.oakinvest.lt.util.error.LooseTouchErrorType.resource_not_found
 /**
  * Contact controller.
  */
+@SuppressWarnings("unused")
 @RestController
 public class ContactController implements ContactAPI {
 
@@ -41,8 +41,16 @@ public class ContactController implements ContactAPI {
     /**
      * Contact repository.
      */
-    @Autowired
-    private ContactRepository contactRepository;
+    private final ContactRepository contactRepository;
+
+    /**
+     * Constructor.
+     *
+     * @param newContactRepository contact repository.
+     */
+    public ContactController(final ContactRepository newContactRepository) {
+        this.contactRepository = newContactRepository;
+    }
 
     @Override
     public final ContactDTO createContact(final AuthenticatedUser authenticatedUser, final ContactDTO contact) {

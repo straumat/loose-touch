@@ -11,16 +11,10 @@ import com.oakinvest.lt.repository.ContactRepository;
 import com.oakinvest.lt.repository.UserRepository;
 import com.oakinvest.lt.util.error.LooseTouchException;
 import com.oakinvest.lt.util.mapper.LooseTouchMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
 
 import static com.oakinvest.lt.authentication.loosetouch.UserAuthentication.GOOGLE;
@@ -31,6 +25,7 @@ import static com.oakinvest.lt.util.error.LooseTouchErrorType.invalid_request_er
 /**
  * User controller.
  */
+@SuppressWarnings("unused")
 @RestController
 public class UserController implements UserAPI {
 
@@ -55,26 +50,40 @@ public class UserController implements UserAPI {
     /**
      * Google token verifier.
      */
-    @Autowired
-    private GoogleTokenVerifier googleTokenVerifier;
+    private final GoogleTokenVerifier googleTokenVerifier;
 
     /**
      * JWT Token provider.
      */
-    @Autowired
-    private LooseTouchTokenProvider looseTouchTokenProvider;
+    private final LooseTouchTokenProvider looseTouchTokenProvider;
 
     /**
      * User repository.
      */
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
     /**
      * Contact repository.
      */
-    @Autowired
-    private ContactRepository contactRepository;
+    private final ContactRepository contactRepository;
+
+    /**
+     * Constructor.
+     *
+     * @param newGoogleTokenVerifier     google token retriever
+     * @param newLooseTouchTokenProvider loose touch token provider
+     * @param newUserRepository          user repository
+     * @param newContactRepository       contact repository
+     */
+    public UserController(final GoogleTokenVerifier newGoogleTokenVerifier,
+                          final LooseTouchTokenProvider newLooseTouchTokenProvider,
+                          final UserRepository newUserRepository,
+                          final ContactRepository newContactRepository) {
+        this.googleTokenVerifier = newGoogleTokenVerifier;
+        this.looseTouchTokenProvider = newLooseTouchTokenProvider;
+        this.userRepository = newUserRepository;
+        this.contactRepository = newContactRepository;
+    }
 
     @Override
     public final UserDTO googleLogin(final String googleIdToken, final String googleAccessToken) {
@@ -167,18 +176,7 @@ public class UserController implements UserAPI {
      */
     @SuppressWarnings("WhitespaceAround")
     private GoogleUserInfoDTO getGoogleUserInfo(final String googleAccessToken) {
-        // Headers.
-        MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
-        Map<String, String> map = new HashMap<>();
-        map.put("Content-Type", "application/json");
-        headers.setAll(map);
-
-        // Parameters.
-        Map<String, String> payload = new HashMap<>();
-        payload.put("access_token", googleAccessToken);
-
         // Calling google.
-        HttpEntity<?> request = new HttpEntity<>(payload, headers);
         return new RestTemplate().getForObject("https://www.googleapis.com/oauth2/v2/userinfo?access_token={access_token}", GoogleUserInfoDTO.class, googleAccessToken);
     }
 

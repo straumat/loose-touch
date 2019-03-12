@@ -5,6 +5,7 @@ Transform: AWS::Serverless-2016-10-31
 # A text string that describes the template. This section must always follow the template format version section.
 Description: Loose touch
 
+# ======================================================================================================================
 # Parameters.
 Parameters:
   Stage:
@@ -12,6 +13,7 @@ Parameters:
   Prefix:
     Type: String
 
+# ======================================================================================================================
 # Specifies the stack resources and their properties, such as an Amazon Elastic Compute Cloud instance or an Amazon Simple Storage Service bucket.
 # You can refer to resources in the Resources and Outputs sections of the template.
 Resources:
@@ -121,6 +123,7 @@ Resources:
         RedirectAllRequestsTo:                                                    # The RedirectAllRequestsTo code is an embedded property of the Amazon S3 Website Configuration Property property that describes the redirect behavior of all requests to a website endpoint of an Amazon S3 bucket.
           HostName: !Ref LooseTouchRootBucket                                     # Name of the host where requests are redirected.
 
+# ======================================================================================================================
 # Describes the values that are returned whenever you view your stack's properties.
 # For example, you can declare an output for an S3 bucket name and then call the aws cloudformation describe-stacks AWS CLI command to view the name.
 Outputs:

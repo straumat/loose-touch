@@ -58,7 +58,7 @@ public interface LooseTouchMapper {
      * Maps a list to another one.
      *
      * @param contacts contacts
-     * @return contacts dtos
+     * @return contacts
      */
     List<ContactDTO> contactsToContactDTOs(List<Contact> contacts);
 

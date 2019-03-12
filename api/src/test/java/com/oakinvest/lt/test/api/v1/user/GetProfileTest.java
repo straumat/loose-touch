@@ -46,7 +46,7 @@ public class GetProfileTest extends APITest {
 
     @Ignore("No data to validate")
     @Override
-    public void validDataTest() throws Exception {
+    public void validDataTest() {
 
     }
 

@@ -13,6 +13,7 @@ import static com.oakinvest.lt.configuration.Application.USER_ID_PARAMETER;
 /**
  * Authentication user resolver.
  */
+@SuppressWarnings("RedundantThrows")
 public class AuthenticationUserResolver implements HandlerMethodArgumentResolver {
 
     @Override

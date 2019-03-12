@@ -69,13 +69,7 @@ public class Application extends SpringBootServletInitializer {
             // Creates the table CONTACTS.
             CreateTableRequest createContactsTableRequest = mapper.generateCreateTableRequest(Contact.class)
                     .withProvisionedThroughput(provisionedThroughput);
-/*            createContactsTableRequest.getGlobalSecondaryIndexes().forEach(v -> {
-                v.withProjection(new Projection().withProjectionType(ProjectionType.ALL));
-                v.setProvisionedThroughput(provisionedThroughput);
-            });*/
-            createContactsTableRequest.getLocalSecondaryIndexes().forEach(v -> {
-                v.withProjection(new Projection().withProjectionType(ProjectionType.ALL));
-            });
+            createContactsTableRequest.getLocalSecondaryIndexes().forEach(v -> v.withProjection(new Projection().withProjectionType(ProjectionType.ALL)));
             dynamoDB.createTable(createContactsTableRequest);
         }
 

@@ -8,6 +8,7 @@ import java.io.Serializable;
 /**
  * Google Token Response.
  */
+@SuppressWarnings("unused")
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class GoogleRefreshToken implements Serializable {
 

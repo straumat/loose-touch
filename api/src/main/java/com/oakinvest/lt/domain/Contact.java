@@ -11,6 +11,7 @@ import java.util.Calendar;
 /**
  * Contact.
  */
+@SuppressWarnings("unused")
 @DynamoDBTable(tableName = "CONTACTS")
 public class Contact {
 

@@ -8,6 +8,7 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 /**
  * Google user info dto.
  */
+@SuppressWarnings("unused")
 @JsonInclude(NON_NULL)
 public class GoogleUserInfoDTO {
 
@@ -63,15 +64,6 @@ public class GoogleUserInfoDTO {
     }
 
     /**
-     * Set givenName.
-     *
-     * @param newGivenName the givenName to set
-     */
-    public final void setGivenName(final String newGivenName) {
-        givenName = newGivenName;
-    }
-
-    /**
      * Get familyName.
      *
      * @return familyName
@@ -81,30 +73,12 @@ public class GoogleUserInfoDTO {
     }
 
     /**
-     * Set familyName.
-     *
-     * @param newFamilyName the familyName to set
-     */
-    public final void setFamilyName(final String newFamilyName) {
-        familyName = newFamilyName;
-    }
-
-    /**
      * Get picture.
      *
      * @return picture
      */
     public final String getPicture() {
         return picture;
-    }
-
-    /**
-     * Set picture.
-     *
-     * @param newPicture the picture to set
-     */
-    public final void setPicture(final String newPicture) {
-        picture = newPicture;
     }
 
 }

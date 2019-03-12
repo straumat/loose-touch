@@ -3,6 +3,7 @@ package com.oakinvest.lt.test.util.data;
 /**
  * Google test users.
  */
+@SuppressWarnings("unused")
 public enum TestUsers {
 
     /**

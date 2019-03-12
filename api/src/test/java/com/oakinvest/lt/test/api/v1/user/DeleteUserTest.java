@@ -3,7 +3,6 @@ package com.oakinvest.lt.test.api.v1.user;
 import com.oakinvest.lt.test.util.api.APITest;
 import org.junit.Ignore;
 
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 import static com.oakinvest.lt.test.util.data.TestContacts.CONTACT_1;
@@ -21,7 +20,6 @@ import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.junit.Assert.assertEquals;
 import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -53,7 +51,7 @@ public class DeleteUserTest extends APITest {
 
     @Ignore("Impossible that user id is not set")
     @Override
-    public void validDataTest() throws Exception {
+    public void validDataTest() {
 
     }
 

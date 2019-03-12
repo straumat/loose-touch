@@ -204,7 +204,6 @@ public class CreateTest extends APITest {
         final String looseToucheTokenForUser1 = getLooseToucheToken(GOOGLE_USER_1);
         final String user1Id = getUserRepository().findUserByGoogleUsername(GOOGLE_USER_1.getEmail()).get().getId();
         final String looseToucheTokenForUser2 = getLooseToucheToken(GOOGLE_USER_2);
-        final String user2Id = getUserRepository().findUserByGoogleUsername(GOOGLE_USER_2.getEmail()).get().getId();
         assertEquals(getContactRepository().count(), 0);
 
         // Creates contact 1 for user 1.

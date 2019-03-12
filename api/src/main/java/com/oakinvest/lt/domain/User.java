@@ -12,6 +12,7 @@ import static com.oakinvest.lt.authentication.loosetouch.UserAuthentication.GOOG
 /**
  * User.
  */
+@SuppressWarnings("unused")
 @DynamoDBTable(tableName = "USERS")
 public class User {
 

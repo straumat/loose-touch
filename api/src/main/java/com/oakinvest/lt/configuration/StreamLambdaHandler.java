@@ -16,7 +16,8 @@ import java.io.OutputStream;
 /**
  * Stream lambda HANDLER.
  */
-public class StreamLambdaHandler implements RequestStreamHandler {
+@SuppressWarnings("unused")
+class StreamLambdaHandler implements RequestStreamHandler {
 
     /**
      * Handler.

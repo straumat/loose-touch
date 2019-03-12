@@ -26,6 +26,7 @@ public class AuthenticationInterceptor extends HandlerInterceptorAdapter {
     @Autowired
     private LooseTouchTokenProvider looseTouchTokenProvider;
 
+    @SuppressWarnings("RedundantThrows")
     @Override
     public final boolean preHandle(final HttpServletRequest request, final HttpServletResponse response, final Object handler) throws Exception {
         Optional<String> idToken = extractHeaderToken(request);

@@ -3,6 +3,7 @@ package com.oakinvest.lt.authentication.loosetouch;
 /**
  * User authentication type.
  */
+@SuppressWarnings("unused")
 public enum UserAuthentication {
 
     /**

@@ -192,7 +192,7 @@ public class GoogleTokensRetriever {
      * @param user   user (GOOGLE_USER_1 or GOOGLE_USER_2).
      * @param tokens tokens to save
      */
-    private void saveTokenInCache(final TestUsers user, final GoogleRefreshToken tokens) throws IOException {
+    private void saveTokenInCache(final TestUsers user, final GoogleRefreshToken tokens) {
         log.info("Saving google tokens in cache for user " + user);
 
         // File containing the token.

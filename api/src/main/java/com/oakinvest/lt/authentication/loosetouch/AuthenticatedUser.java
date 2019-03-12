@@ -3,6 +3,7 @@ package com.oakinvest.lt.authentication.loosetouch;
 /**
  * Authenticated user.
  */
+@SuppressWarnings("unused")
 public class AuthenticatedUser {
 
     /**
@@ -17,8 +18,9 @@ public class AuthenticatedUser {
 
     /**
      * Constructor.
+     *
      * @param newLooseTouchToken loose touch token.
-     * @param newUserId user id.
+     * @param newUserId          user id.
      */
     AuthenticatedUser(final String newLooseTouchToken, final String newUserId) {
         this.looseTouchToken = newLooseTouchToken;
