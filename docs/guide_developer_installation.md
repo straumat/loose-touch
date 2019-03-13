@@ -7,9 +7,12 @@
  * [Node.js](https://nodejs.org/) : `sudo apt -y install nodejs`
  * [Npm](https://www.npmjs.com/) : `sudo apt -y install npm`
  * [AWS Sam local](https://github.com/awslabs/aws-sam-cli) : `sudo npm install -g aws-sam-local`
+ * [Angular cli](https://cli.angular.io/) : `npm install -g @angular/cli`
  
 Some things to finish the configuration : 
  * `echo 'export PATH=~/.npm-global/bin:$PATH' >> ~/.profile` (restart your shell after)
  * Configure your aws credentials with the command `aws configure`.
+ 
+_note : on fresh install, run a `npm install` on angular project folder._
  
 _note : if you have permissions issues with aws-sam-local, try this : `npm config set unsafe-perm=true`._

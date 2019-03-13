@@ -1,6 +1,6 @@
 {
-  "name": "Loose touch extension",
-  "description": "Base Level Extension",
+  "name": "Loose touch",
+  "description": "Loose touch reminds you to keep in touch with your key contact",
   "version": "1.0",
   "manifest_version": 2,
   "browser_action": {

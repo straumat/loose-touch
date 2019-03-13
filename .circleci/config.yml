@@ -1,8 +1,10 @@
 version: 2 # use CircleCI 2.0.
+
+# ======================================================================================================================
 jobs: # We have jobs key. Each job represents a phase in your Build-Test-Deploy process.
 
   # ====================================================================================================================
-  # Build & deploy on test.
+  # Build & test.
   build:
 
     # ==================================================================================================================
@@ -71,10 +73,10 @@ jobs: # We have jobs key. Each job represents a phase in your Build-Test-Deploy 
       # Deploy to aws (test).
       - run: aws cloudformation package --region ${AWS_REGION} --s3-bucket ${AWS_CONFIGURATION_BUCKET} --template-file aws-configuration.yml --output-template-file output-test-aws-configuration.yml
       - run:
-          name: Deploy to AWS
+          name: Deploy API to AWS
           command: |
             aws cloudformation deploy --region ${AWS_REGION} --capabilities CAPABILITY_NAMED_IAM --parameter-override Stage=test Prefix=test --template-file output-test-aws-configuration.yml --stack-name loose-touch-test
-      - run: aws s3 sync ./clients/website s3://testloosetouch.com --delete --acl public-read
+      - run: aws s3 sync ./clients/website/public s3://testloosetouch.com --delete --acl public-read
       - run:
           name: Display AWS configuration
           command: |
@@ -83,7 +85,7 @@ jobs: # We have jobs key. Each job represents a phase in your Build-Test-Deploy 
             echo API URL is ${API_URL}
             echo WWW URL is ${WWW_URL}
 
-# ====================================================================================================================
+# ======================================================================================================================
 # Loose touch workflow.
 workflows:
   version: 2

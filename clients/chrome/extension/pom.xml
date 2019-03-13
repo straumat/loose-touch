@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <!-- =========================================================================================================== -->
+    <!-- Project information -->
+    <artifactId>chrome-extension</artifactId>
+    <packaging>pom</packaging>
+    <name>Loose touch clients - Chrome - Extension</name>
+    <!-- =========================================================================================================== -->
+
+    <!-- =========================================================================================================== -->
+    <build>
+        <!-- Project final name -->
+        <finalName>loose-touch-chrome</finalName>
+        <!-- Zip packaging -->
+        <plugins>
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>3.1.1</version>
+                <configuration>
+                    <descriptors>
+                        <descriptor>zip-packaging-configuration.xml</descriptor>
+                    </descriptors>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>make-assembly</id> <!-- this is used for inheritance merges -->
+                        <phase>package</phase> <!-- append to the packaging phase. -->
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+    <!-- =========================================================================================================== -->
+
+    <!-- =========================================================================================================== -->
+    <!-- Parent -->
+    <parent>
+        <groupId>com.oakinvest.lt</groupId>
+        <artifactId>chrome</artifactId>
+        <version>0.2-SNAPSHOT</version>
+    </parent>
+    <!-- =========================================================================================================== -->
+
+</project>
