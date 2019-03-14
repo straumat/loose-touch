@@ -31,6 +31,9 @@ jobs: # We have jobs key. Each job represents a phase in your Build-Test-Deploy 
       - save_cache: # saves the project dependencies.
           paths:
             - ~/.m2
+            - ~/.npm
+            - ~/.npm-global
+            - ~/loose-touch/clients/web/application/node_modules
           key: loose-touch-{{ checksum "pom.xml" }}
 
       # Compile, run tests, package and send the results for reporting.
