@@ -38,3 +38,16 @@ _note : Yarn manipulates package.json files exactly like npm. You can use both._
   * app/app.component.css : Defines the base CSS stylesheet for the root AppComponent.
   * app/app.component.spec.ts : Defines a unit test for the root AppComponent.
   * app/app.module.ts : Defines the root module, named AppModule, that tells Angular how to assemble the application. Initially declares only the AppComponent. As you add more components to the app, they must be declared here.
+  
+## Project structure.
+A good guideline to follow is to split our application into at least three different modules — Core, Shared and Feature :
+  * app/shared - This is the module where I keep small stuff that every other module will need.
+  * app/core - Services that app needs (and cannot work without) go here. Examples: ui.service,  auth.service, auth.guard, data.service, workers.service...
+  * app/features - This is the module where app functionalities are. They are organized in several submodules. If you app plays music, this is where player, playlist, favorites submodules would go.
+
+
+links
+  * [Application Structure Using Modules](https://www.intertech.com/Blog/angular-module-tutorial-application-structure-using-modules/)
+  * [Angular Router Tutorial: Setting Up Routing in Your Application](https://www.intertech.com/Blog/angular-router-tutorial-setting-up-routing-in-your-application/)
+  * [6 Best Practices & Pro Tips when using Angular CLI](https://medium.com/@tomastrajan/6-best-practices-pro-tips-for-angular-cli-better-developer-experience-7b328bc9db81)
+  

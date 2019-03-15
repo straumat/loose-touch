@@ -1,32 +1,17 @@
 import {NgModule} from '@angular/core';
-import {RouterModule, Routes} from '@angular/router';
+import {Routes, RouterModule} from '@angular/router';
+import {CoreComponent} from "./core/core.component";
 
-import {FullLayoutComponent} from "./layouts/full/full-layout.component";
-
-import {Full_ROUTES} from "./shared/routes/full-layout.routes";
-
-import {AuthGuard} from './shared/auth/auth-guard.service';
-
-const appRoutes: Routes = [
+const routes: Routes = [
   {
     path: '',
-    redirectTo: 'dashboard',
-    pathMatch: 'full',
-  },
-  {
-    path: '',
-    component: FullLayoutComponent,
-    data: {title: 'full Views'},
-    children: Full_ROUTES,
-    canActivate: [AuthGuard]
-  },
+    component: CoreComponent
+  }
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(appRoutes)],
+  imports: [RouterModule.forRoot(routes)],
   exports: [RouterModule]
 })
-
 export class AppRoutingModule {
-
 }
