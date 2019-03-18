@@ -104,25 +104,27 @@ Resources:
 
   # ====================================================================================================================
   # Defines buckets for public website.
-  LooseTouchRootBucket:                                                           # The AWS::S3::Bucket resource creates an Amazon Simple Storage Service (Amazon S3) bucket in the same AWS Region where you create the AWS CloudFormation stack.
+  LooseTouchWWWBucket:                                                           # The AWS::S3::Bucket resource creates an Amazon Simple Storage Service (Amazon S3) bucket in the same AWS Region where you create the AWS CloudFormation stack.
     Type: AWS::S3::Bucket
     Properties:
       BucketName: !Join                                                           # A name for the bucket. If you don't specify a name, AWS CloudFormation generates a unique physical ID and uses that ID for the bucket name.
         - ''
         - - !Ref Prefix
-          - loosetouch.com
+          - www.
+          - !Ref RootDomainName
       AccessControl: PublicRead                                                   # A canned access control list (ACL) that grants predefined permissions to the bucket.
       WebsiteConfiguration:                                                       # Information used to configure the bucket as a static website. For more information
         IndexDocument: index.html                                                 # The name of the index document for the website.
         ErrorDocument: 404.html                                                   # The name of the error document for the website.
 
-  LooseTouchWWWBucket:
+  LooseTouchRootBucket:
     Type: AWS::S3::Bucket                                                         # The AWS::S3::Bucket resource creates an Amazon Simple Storage Service (Amazon S3) bucket in the same AWS Region where you create the AWS CloudFormation stack.
     Properties:
       BucketName: !Join                                                           # A name for the bucket. If you don't specify a name, AWS CloudFormation generates a unique physical ID and uses that ID for the bucket name.
         - ''
         - - !Ref Prefix
-          - www.loosetouch.com
+          - .
+          - !Ref RootDomainName
       AccessControl: BucketOwnerFullControl                                       # A canned access control list (ACL) that grants predefined permissions to the bucket.
       WebsiteConfiguration:                                                       # Information used to configure the bucket as a static website. For more information
         RedirectAllRequestsTo:                                                    # The RedirectAllRequestsTo code is an embedded property of the Amazon S3 Website Configuration Property property that describes the redirect behavior of all requests to a website endpoint of an Amazon S3 bucket.
@@ -151,7 +153,7 @@ Resources:
           Type: CNAME
           TTL: 900
           ResourceRecords:
-            - !GetAtt WWWBucket.DomainName
+            - !GetAtt LooseTouchWWWBucket.DomainName
 
 # ======================================================================================================================
 # Describes the values that are returned whenever you view your stack's properties.
