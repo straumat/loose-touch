@@ -78,8 +78,8 @@ jobs: # We have jobs key. Each job represents a phase in your Build-Test-Deploy 
       - run:
           name: Deploy API to AWS
           command: |
-            aws cloudformation deploy --region ${AWS_REGION} --capabilities CAPABILITY_NAMED_IAM --parameter-override Prefix=test RootDomainName=dumbtest.pw --template-file output-test-aws-configuration.yml --stack-name loose-touch-test
-      - run: aws s3 sync ./clients/website/public s3://wwwdumbtest.pw --delete --acl public-read
+            aws cloudformation deploy --region ${AWS_REGION} --capabilities CAPABILITY_NAMED_IAM --parameter-override Prefix=test RootDomainName=dumbtest.pw Stage= --template-file output-test-aws-configuration.yml --stack-name loose-touch-test
+      - run: aws s3 sync ./clients/website/public s3://www.dumbtest.pw --delete --acl public-read
       - run:
           name: Display AWS configuration
           command: |
