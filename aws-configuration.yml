@@ -140,14 +140,12 @@ Resources:
         - Domain: !Ref RootDomainName
       Comment: Zone apex alias.
       RecordSets:
-        -
-          Name: !Ref RootDomainName
+        - Name: !Ref RootDomainName
           Type: A
           AliasTarget:
             HostedZoneId: Z3KY65QIEKYHQQ
             DNSName: s3-website-us-west-3.amazonaws.com
-        -
-          Name: !Sub
+        - Name: !Sub
             - www.${Domain}
             - Domain: !Ref RootDomainName
           Type: CNAME
