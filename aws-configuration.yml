@@ -12,7 +12,7 @@ Parameters:
     Description: Stage name (test, production...)
     Type: String
   Prefix:
-    Description: Set a prefix for S3.
+    Description: Set a prefix for S3 buckets
     Type: String
   RootDomainName:
     Description: Domain name (example.com)
@@ -132,24 +132,26 @@ Resources:
   # Defines DNS.
   LooseTouchDNS:
     Type: AWS::Route53::RecordSetGroup
-      Properties:
-        HostedZoneName: !Sub
-                          - ${Domain}.
-                          - Domain: !Ref RootDomainName
-        Comment: Zone apex alias.
-        RecordSets:
-          - Name: !Ref RootDomainName
-            Type: A
-            AliasTarget:
-              HostedZoneId: Z3KY65QIEKYHQQ
-              DNSName: s3-website-us-west-3.amazonaws.com
-          - Name: !Sub
-              - www.${Domain}
-              - Domain: !Ref RootDomainName
-            Type: CNAME
-            TTL: 900
-            ResourceRecords:
-              - !GetAtt WWWBucket.DomainName
+    Properties:
+      HostedZoneName: !Sub
+        - ${Domain}.
+        - Domain: !Ref RootDomainName
+      Comment: Zone apex alias.
+      RecordSets:
+        -
+          Name: !Ref RootDomainName
+          Type: A
+          AliasTarget:
+            HostedZoneId: Z3KY65QIEKYHQQ
+            DNSName: s3-website-us-west-3.amazonaws.com
+        -
+          Name: !Sub
+            - www.${Domain}
+            - Domain: !Ref RootDomainName
+          Type: CNAME
+          TTL: 900
+          ResourceRecords:
+            - !GetAtt WWWBucket.DomainName
 
 # ======================================================================================================================
 # Describes the values that are returned whenever you view your stack's properties.
