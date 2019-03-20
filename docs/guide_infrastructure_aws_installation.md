@@ -7,3 +7,6 @@
  * Type `./deploy environement` where `environment` is `test`, `stage` or `production`.
  
 _note : you can delete a whole stack with the command ̀`aws cloudformation delete-stack --stack-name STACK_NAME --region eu-west-3` (where STACK_NAME is `loose-touch-test`, `loose-touch-stage` or `loose-touch-production`)._
+
+# DNS Configuration.
+In google domains, set the nameserver of the aws hosted zone.

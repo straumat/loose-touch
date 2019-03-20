@@ -120,34 +120,39 @@ Resources:
   LooseTouchRootBucket:
     Type: AWS::S3::Bucket                                                         # The AWS::S3::Bucket resource creates an Amazon Simple Storage Service (Amazon S3) bucket in the same AWS Region where you create the AWS CloudFormation stack.
     Properties:
-      BucketName: !Join                                                           # A name for the bucket. If you don't specify a name, AWS CloudFormation generates a unique physical ID and uses that ID for the bucket name.
-        - ''
-        - - !Ref Prefix
-          - .
-          - !Ref RootDomainName
+      BucketName: !Ref RootDomainName                                             # A name for the bucket. If you don't specify a name, AWS CloudFormation generates a unique physical ID and uses that ID for the bucket name.
       AccessControl: BucketOwnerFullControl                                       # A canned access control list (ACL) that grants predefined permissions to the bucket.
       WebsiteConfiguration:                                                       # Information used to configure the bucket as a static website. For more information
         RedirectAllRequestsTo:                                                    # The RedirectAllRequestsTo code is an embedded property of the Amazon S3 Website Configuration Property property that describes the redirect behavior of all requests to a website endpoint of an Amazon S3 bucket.
           HostName: !Ref LooseTouchWWWBucket                                      # Name of the host where requests are redirected.
 
+  LooseTouchAppWBucket:                                                           # The AWS::S3::Bucket resource creates an Amazon Simple Storage Service (Amazon S3) bucket in the same AWS Region where you create the AWS CloudFormation stack.
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Join                                                           # A name for the bucket. If you don't specify a name, AWS CloudFormation generates a unique physical ID and uses that ID for the bucket name.
+        - ''
+        - - !Ref Prefix
+          - app.
+          - !Ref RootDomainName
+      AccessControl: PublicRead                                                   # A canned access control list (ACL) that grants predefined permissions to the bucket.
+      WebsiteConfiguration:                                                       # Information used to configure the bucket as a static website. For more information
+        IndexDocument: index.html                                                 # The name of the index document for the website.
+        ErrorDocument: 404.html                                                   # The name of the error document for the website.
+
   # ====================================================================================================================
   # Defines DNS.
+  DNS:
+    Type: "AWS::Route53::HostedZone"
+    Properties:
+      Name: "dumbtest.pw"
+
   LooseTouchDNS:
     Type: AWS::Route53::RecordSetGroup
     Properties:
-      HostedZoneName: !Sub
-        - ${Domain}.
-        - Domain: !Ref RootDomainName
+      HostedZoneName: dumbtest.pw.
       Comment: Zone apex alias.
       RecordSets:
-        - Name: !Ref RootDomainName
-          Type: A
-          AliasTarget:
-            HostedZoneId: Z3KY65QIEKYHQQ
-            DNSName: s3-website-us-west-3.amazonaws.com
-        - Name: !Sub
-            - www.${Domain}
-            - Domain: !Ref RootDomainName
+        - Name: www.dumbtest.pw
           Type: CNAME
           TTL: 900
           ResourceRecords:
