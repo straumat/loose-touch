@@ -47,16 +47,16 @@ Resources:
           KeyType: "HASH"
 
   LooseTouchTableContacts:
-    Type: AWS::DynamoDB::Table                                                    # The AWS::DynamoDB::Table resource creates a DynamoDB table.
+    Type: AWS::DynamoDB::Table
     Properties:
-      AttributeDefinitions:                                                       # A list of attributes that describe the key schema for the table and indexes. Duplicates are allowed.
+      AttributeDefinitions:
         - AttributeName: "USER_ID"                                                # ID.
           AttributeType: S                                                        # String.
         - AttributeName: "EMAIL"                                                  # Contact email.
           AttributeType: S                                                        # String.
         - AttributeName: "CONTACT_DUE_DATE"                                       # Contact due date.
           AttributeType: S                                                        # String.
-      BillingMode: PAY_PER_REQUEST                                                # Specify how you are charged for read and write throughput and how you manage capacity.
+      BillingMode: PAY_PER_REQUEST
       LocalSecondaryIndexes:                                                      # Local secondary indexes to be created on the table.
         - IndexName: "INDEX_CONTACT_DUE_DATE"
           KeySchema:
@@ -64,10 +64,10 @@ Resources:
               KeyType: "HASH"
             - AttributeName: "CONTACT_DUE_DATE"
               KeyType: "RANGE"
-          Projection:                                                             # Attributes that are copied (projected) from the source table into the index.
-            ProjectionType: "ALL"                                                 # The set of attributes that are projected into the index. KEYS_ONLY : Only the index and primary keys are projected into the index.
-      TableName: "CONTACTS"                                                       # A name for the table. If you don't specify a name, AWS CloudFormation generates a unique physical ID and uses that ID for the table name.
-      KeySchema:                                                                  # Specifies the attributes that make up the primary key for the table.
+          Projection:
+            ProjectionType: "ALL"
+      TableName: "CONTACTS"
+      KeySchema:
         - AttributeName: "USER_ID"
           KeyType: "HASH"
         - AttributeName: "EMAIL"
@@ -116,24 +116,24 @@ Resources:
         ErrorDocument: 404.html                                                   # The name of the error document for the website.
 
   LooseTouchRootBucket:
-    Type: AWS::S3::Bucket                                                         # The AWS::S3::Bucket resource creates an Amazon Simple Storage Service (Amazon S3) bucket in the same AWS Region where you create the AWS CloudFormation stack.
+    Type: AWS::S3::Bucket
     Properties:
-      BucketName: !Ref RootDomainName                                             # A name for the bucket. If you don't specify a name, AWS CloudFormation generates a unique physical ID and uses that ID for the bucket name.
-      AccessControl: BucketOwnerFullControl                                       # A canned access control list (ACL) that grants predefined permissions to the bucket.
-      WebsiteConfiguration:                                                       # Information used to configure the bucket as a static website. For more information
+      BucketName: !Ref RootDomainName
+      AccessControl: BucketOwnerFullControl
+      WebsiteConfiguration:
         RedirectAllRequestsTo:                                                    # The RedirectAllRequestsTo code is an embedded property of the Amazon S3 Website Configuration Property property that describes the redirect behavior of all requests to a website endpoint of an Amazon S3 bucket.
           HostName: !Ref LooseTouchWWWBucket                                      # Name of the host where requests are redirected.
 
-  LooseTouchAppWBucket:                                                           # The AWS::S3::Bucket resource creates an Amazon Simple Storage Service (Amazon S3) bucket in the same AWS Region where you create the AWS CloudFormation stack.
+  LooseTouchAppWBucket:
     Type: AWS::S3::Bucket
     Properties:
-      BucketName: !Sub                                                           # A name for the bucket. If you don't specify a name, AWS CloudFormation generates a unique physical ID and uses that ID for the bucket name.
+      BucketName: !Sub
         - app.${Domain}
         - Domain: !Ref RootDomainName
-      AccessControl: PublicRead                                                   # A canned access control list (ACL) that grants predefined permissions to the bucket.
-      WebsiteConfiguration:                                                       # Information used to configure the bucket as a static website. For more information
-        IndexDocument: index.html                                                 # The name of the index document for the website.
-        ErrorDocument: 404.html                                                   # The name of the error document for the website.
+      AccessControl: PublicRead
+      WebsiteConfiguration:
+        IndexDocument: index.html
+        ErrorDocument: 404.html
 
   # ====================================================================================================================
   # Defines DNS.
@@ -142,6 +142,7 @@ Resources:
     Properties:
       HostedZoneName: dumbtest.pw.                                                # The name of the domain for the hosted zone where you want to add the record set.
       RecordSets:                                                                 # List of resource record sets to add. The maximum number of records is 1,000.
+        # www.loosetouch.com
         - Name: !Sub                                                              # The name of the domain. You must specify a fully qualified domain name that ends with a period as the last label indication. If you omit the final period, Route 53 adds it.
             - www.${Domain}
             - Domain: !Ref RootDomainName
@@ -149,6 +150,7 @@ Resources:
           TTL: 900                                                                # The resource record cache time to live (TTL), in seconds. If you specify this property, do not specify the AliasTarget property. For alias target records, the alias uses a TTL value from the targ
           ResourceRecords:                                                        # List of resource records to add. Each record should be in the format appropriate for the record type specified by the Type property.
             - !GetAtt LooseTouchWWWBucket.DomainName
+        # app.loosetouch.com
         - Name: !Sub
             - app.${Domain}
             - Domain: !Ref RootDomainName
@@ -157,9 +159,49 @@ Resources:
           ResourceRecords:
             - !GetAtt LooseTouchAppWBucket.DomainName
 
+  # ====================================================================================================================
+  # Cloudfront distribution.
+  #  LooseTouchCloudFrontDistribution:
+  #    Type: AWS::CloudFront::Distribution
+  #    Properties:
+  #      DistributionConfig:
+  #        Aliases:
+  #          - !Sub
+  #            - api.${Domain}
+  #            - Domain: !Ref RootDomainName
+  #        DefaultCacheBehavior:
+  #          AllowedMethods:
+  #            - HEAD
+  #            - GET
+  #          CachedMethods:
+  #            - HEAD
+  #            - GET
+  #          TargetOriginId: api-origin
+  #          ViewerProtocolPolicy: 'redirect-to-https'
+  #          DefaultTTL: 1314000
+  #          Compress: true
+  #          ForwardedValues:
+  #            # Headers:
+  #            # - "*"
+  #            QueryString: true
+  #        Enabled: true
+  #        PriceClass: PriceClass_100
+  #        Origins:
+  #          - Id: api-origin
+  #            DomainName: !Join
+  #              - ''
+  #              - - 'https://'
+  #                - !Ref LooseTouchAPI
+  #                - '.execute-api.'
+  #                - !Ref 'AWS::Region'
+  #                - '.amazonaws.com/'
+  #                - !Ref Stage
+  #            CustomOriginConfig:
+  #              HTTPPort: 80
+  #              HTTPSPort: 443
+  #              OriginProtocolPolicy: https-only
 
-
-# ======================================================================================================================
+  # ======================================================================================================================
 # Describes the values that are returned whenever you view your stack's properties.
 # For example, you can declare an output for an S3 bucket name and then call the aws cloudformation describe-stacks AWS CLI command to view the name.
 Outputs:
@@ -167,7 +209,7 @@ Outputs:
   # ====================================================================================================================
   # URL of API.
   APIURL:
-    Description: API URL
+    Description: API URL.
     Value: !Join
       - ''
       - - 'https://'
@@ -178,13 +220,25 @@ Outputs:
         - !Ref Stage
 
   # ====================================================================================================================
-  # URL of the S3 bucket.
-  WWWURL:
-    Description: S3 bucket holding website content URL
+  # URL of APP.
+  APPURL:
+    Description: S3 bucket holding app.
     Value: !Join
       - ''
       - - 'http://'
-        - !Ref LooseTouchRootBucket
+        - !Ref LooseTouchAppWBucket
+        - '.s3-website.'
+        - !Ref 'AWS::Region'
+        - '.amazonaws.com'
+
+  # ====================================================================================================================
+  # URL of WWW.
+  WWWURL:
+    Description: S3 bucket holding website.
+    Value: !Join
+      - ''
+      - - 'http://'
+        - !Ref LooseTouchWWWBucket
         - '.s3-website.'
         - !Ref 'AWS::Region'
         - '.amazonaws.com'
