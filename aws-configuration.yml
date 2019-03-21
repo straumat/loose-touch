@@ -107,11 +107,9 @@ Resources:
   LooseTouchWWWBucket:                                                           # The AWS::S3::Bucket resource creates an Amazon Simple Storage Service (Amazon S3) bucket in the same AWS Region where you create the AWS CloudFormation stack.
     Type: AWS::S3::Bucket
     Properties:
-      BucketName: !Join                                                           # A name for the bucket. If you don't specify a name, AWS CloudFormation generates a unique physical ID and uses that ID for the bucket name.
-        - ''
-        - - !Ref Prefix
-          - www.
-          - !Ref RootDomainName
+      BucketName: !Sub                                                           # A name for the bucket. If you don't specify a name, AWS CloudFormation generates a unique physical ID and uses that ID for the bucket name.
+        - www.${Domain}
+        - Domain: !Ref RootDomainName
       AccessControl: PublicRead                                                   # A canned access control list (ACL) that grants predefined permissions to the bucket.
       WebsiteConfiguration:                                                       # Information used to configure the bucket as a static website. For more information
         IndexDocument: index.html                                                 # The name of the index document for the website.
@@ -129,11 +127,9 @@ Resources:
   LooseTouchAppWBucket:                                                           # The AWS::S3::Bucket resource creates an Amazon Simple Storage Service (Amazon S3) bucket in the same AWS Region where you create the AWS CloudFormation stack.
     Type: AWS::S3::Bucket
     Properties:
-      BucketName: !Join                                                           # A name for the bucket. If you don't specify a name, AWS CloudFormation generates a unique physical ID and uses that ID for the bucket name.
-        - ''
-        - - !Ref Prefix
-          - app.
-          - !Ref RootDomainName
+      BucketName: !Sub                                                           # A name for the bucket. If you don't specify a name, AWS CloudFormation generates a unique physical ID and uses that ID for the bucket name.
+        - app.${Domain}
+        - Domain: !Ref RootDomainName
       AccessControl: PublicRead                                                   # A canned access control list (ACL) that grants predefined permissions to the bucket.
       WebsiteConfiguration:                                                       # Information used to configure the bucket as a static website. For more information
         IndexDocument: index.html                                                 # The name of the index document for the website.
@@ -141,22 +137,25 @@ Resources:
 
   # ====================================================================================================================
   # Defines DNS.
-  DNS:
-    Type: "AWS::Route53::HostedZone"
-    Properties:
-      Name: "dumbtest.pw"
-
   LooseTouchDNS:
-    Type: AWS::Route53::RecordSetGroup
+    Type: AWS::Route53::RecordSetGroup                                            # The AWS::Route53::RecordSetGroup resource creates record sets for a hosted zone.
     Properties:
-      HostedZoneName: dumbtest.pw.
-      Comment: Zone apex alias.
-      RecordSets:
-        - Name: www.dumbtest.pw
-          Type: CNAME
-          TTL: 900
-          ResourceRecords:
+      HostedZoneName: dumbtest.pw.                                                # The name of the domain for the hosted zone where you want to add the record set.
+      RecordSets:                                                                 # List of resource record sets to add. The maximum number of records is 1,000.
+        - Name: !Sub                                                              # The name of the domain. You must specify a fully qualified domain name that ends with a period as the last label indication. If you omit the final period, Route 53 adds it.
+            - www.${Domain}
+            - Domain: !Ref RootDomainName
+          Type: CNAME                                                             # The type of records to add.
+          TTL: 900                                                                # The resource record cache time to live (TTL), in seconds. If you specify this property, do not specify the AliasTarget property. For alias target records, the alias uses a TTL value from the targ
+          ResourceRecords:                                                        # List of resource records to add. Each record should be in the format appropriate for the record type specified by the Type property.
             - !GetAtt LooseTouchWWWBucket.DomainName
+#        - Name: !Sub
+#            - app.${Domain}
+#            - Domain: !Ref RootDomainName
+#          Type: CNAME
+#          TTL: 900
+#          ResourceRecords:
+#            - !GetAtt LooseTouchAppWBucket.DomainName
 
 # ======================================================================================================================
 # Describes the values that are returned whenever you view your stack's properties.

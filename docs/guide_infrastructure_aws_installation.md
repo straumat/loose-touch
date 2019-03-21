@@ -9,4 +9,5 @@
 _note : you can delete a whole stack with the command ̀`aws cloudformation delete-stack --stack-name STACK_NAME --region eu-west-3` (where STACK_NAME is `loose-touch-test`, `loose-touch-stage` or `loose-touch-production`)._
 
 # DNS Configuration.
-In google domains, set the nameserver of the aws hosted zone.
+In [AWS Route 53](https://console.aws.amazon.com/route53/home), create an hosted zone and retrieve the name servers list. In google domains, set the name ervers as personalized sever names.
+
