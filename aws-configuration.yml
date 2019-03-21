@@ -149,13 +149,15 @@ Resources:
           TTL: 900                                                                # The resource record cache time to live (TTL), in seconds. If you specify this property, do not specify the AliasTarget property. For alias target records, the alias uses a TTL value from the targ
           ResourceRecords:                                                        # List of resource records to add. Each record should be in the format appropriate for the record type specified by the Type property.
             - !GetAtt LooseTouchWWWBucket.DomainName
-#        - Name: !Sub
-#            - app.${Domain}
-#            - Domain: !Ref RootDomainName
-#          Type: CNAME
-#          TTL: 900
-#          ResourceRecords:
-#            - !GetAtt LooseTouchAppWBucket.DomainName
+        - Name: !Sub
+            - app.${Domain}
+            - Domain: !Ref RootDomainName
+          Type: CNAME
+          TTL: 900
+          ResourceRecords:
+            - !GetAtt LooseTouchAppWBucket.DomainName
+
+
 
 # ======================================================================================================================
 # Describes the values that are returned whenever you view your stack's properties.
