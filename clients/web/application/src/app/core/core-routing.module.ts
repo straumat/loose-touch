@@ -7,6 +7,11 @@ import {DummyComponent} from '../features/dummy/dummy.component';
 const coreRoutes: Routes = [
   {
     path: '',
+    redirectTo: '/dashboard',
+    pathMatch: 'full',
+  },
+  {
+    path: '',
     component: CoreComponent,
     children: [
       {
