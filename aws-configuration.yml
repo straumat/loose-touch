@@ -8,15 +8,38 @@ Description: Loose touch
 # ======================================================================================================================
 # Parameters.
 Parameters:
+  # Application stage.
   Stage:
-    Description: Stage name (test, production...)
+    Description: Stage name (staging or production)
+    AllowedValues:
+      - staging
+      - production
+    Default: staging
     Type: String
-  Prefix:
-    Description: Set a prefix for S3 buckets
-    Type: String
+  # Domain name.
   RootDomainName:
-    Description: Domain name (example.com)
+    Description: Domain name (dumbtest.pw or loosetouch.com)
+    AllowedValues:
+      - dumbtest.pw
+      - loosetouch.com
+    Default: dumbtest.pw
     Type: String
+
+# ======================================================================================================================
+# Mappings.
+Mappings:
+  # Domains.
+  domainMap:
+    staging:
+      domain: dumbtest.pw
+    production:
+      domain: loosetouch.com
+  # SSL Certificates.
+  CertificateMap:
+    staging:
+      arn: arn:aws:acm:us-east-1:092616724146:certificate/d135bc97-e389-47b8-9d7a-fb7c1293daeb
+    production:
+      arn: not_defined
 
 # ======================================================================================================================
 # Specifies the stack resources and their properties, such as an Amazon Elastic Compute Cloud instance or an Amazon Simple Storage Service bucket.
@@ -78,6 +101,9 @@ Resources:
   LooseTouchFunction:
     # The resource type identifies the type of resource that you are declaring. https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-template-resource-type-ref.html
     Type: AWS::Serverless::Function                                               # Creates a Lambda function, IAM execution role, and event source mappings which trigger the function.
+    DependsOn:
+      - LooseTouchTableUsers
+      - LooseTouchTableContacts
     Properties:
       Handler: com.oakinvest.lt.configuration.StreamLambdaHandler::handleRequest  # Function within your code that is called to begin execution.
       Runtime: java8                                                              # The runtime environment.
@@ -97,6 +123,8 @@ Resources:
   # Defines API.
   LooseTouchAPI:
     Type: AWS::Serverless::Api                                                    # Creates a collection of Amazon API Gateway resources and methods that can be invoked through HTTPS endpoints.
+    DependsOn:
+      - LooseTouchFunction
     Properties:
       StageName: !Ref Stage                                                       # The name of the stage, which API Gateway uses as the first path segment in the invoke Uniform Resource Identifier (URI).
       Variables:
@@ -124,7 +152,7 @@ Resources:
         RedirectAllRequestsTo:                                                    # The RedirectAllRequestsTo code is an embedded property of the Amazon S3 Website Configuration Property property that describes the redirect behavior of all requests to a website endpoint of an Amazon S3 bucket.
           HostName: !Ref LooseTouchWWWBucket                                      # Name of the host where requests are redirected.
 
-  LooseTouchAppWBucket:
+  LooseTouchAppBucket:
     Type: AWS::S3::Bucket
     Properties:
       BucketName: !Sub
@@ -139,6 +167,11 @@ Resources:
   # Defines DNS.
   LooseTouchDNS:
     Type: AWS::Route53::RecordSetGroup                                            # The AWS::Route53::RecordSetGroup resource creates record sets for a hosted zone.
+    DependsOn:
+      - LooseTouchWWWBucket
+      - LooseTouchRootBucket
+      - LooseTouchAppBucket
+      - CloudFrontDistribution
     Properties:
       HostedZoneName: dumbtest.pw.                                                # The name of the domain for the hosted zone where you want to add the record set.
       RecordSets:                                                                 # List of resource record sets to add. The maximum number of records is 1,000.
@@ -146,62 +179,58 @@ Resources:
         - Name: !Sub                                                              # The name of the domain. You must specify a fully qualified domain name that ends with a period as the last label indication. If you omit the final period, Route 53 adds it.
             - www.${Domain}
             - Domain: !Ref RootDomainName
-          Type: CNAME                                                             # The type of records to add.
-          TTL: 900                                                                # The resource record cache time to live (TTL), in seconds. If you specify this property, do not specify the AliasTarget property. For alias target records, the alias uses a TTL value from the targ
-          ResourceRecords:                                                        # List of resource records to add. Each record should be in the format appropriate for the record type specified by the Type property.
-            - !GetAtt LooseTouchWWWBucket.DomainName
-        # app.loosetouch.com
-        - Name: !Sub
-            - app.${Domain}
-            - Domain: !Ref RootDomainName
-          Type: CNAME
-          TTL: 900
-          ResourceRecords:
-            - !GetAtt LooseTouchAppWBucket.DomainName
+          Type: A
+          AliasTarget:
+            HostedZoneId: "Z2FDTNDATAQYW2"
+            DNSName: !GetAtt CloudFrontDistribution.DomainName
 
   # ====================================================================================================================
   # Cloudfront distribution.
-  #  LooseTouchCloudFrontDistribution:
-  #    Type: AWS::CloudFront::Distribution
-  #    Properties:
-  #      DistributionConfig:
-  #        Aliases:
-  #          - !Sub
-  #            - api.${Domain}
-  #            - Domain: !Ref RootDomainName
-  #        DefaultCacheBehavior:
-  #          AllowedMethods:
-  #            - HEAD
-  #            - GET
-  #          CachedMethods:
-  #            - HEAD
-  #            - GET
-  #          TargetOriginId: api-origin
-  #          ViewerProtocolPolicy: 'redirect-to-https'
-  #          DefaultTTL: 1314000
-  #          Compress: true
-  #          ForwardedValues:
-  #            # Headers:
-  #            # - "*"
-  #            QueryString: true
-  #        Enabled: true
-  #        PriceClass: PriceClass_100
-  #        Origins:
-  #          - Id: api-origin
-  #            DomainName: !Join
-  #              - ''
-  #              - - 'https://'
-  #                - !Ref LooseTouchAPI
-  #                - '.execute-api.'
-  #                - !Ref 'AWS::Region'
-  #                - '.amazonaws.com/'
-  #                - !Ref Stage
-  #            CustomOriginConfig:
-  #              HTTPPort: 80
-  #              HTTPSPort: 443
-  #              OriginProtocolPolicy: https-only
+  CloudFrontDistribution:
+    Type: AWS::CloudFront::Distribution
+    Properties:
+      DistributionConfig:
+        Origins:
+          - DomainName: !GetAtt LooseTouchWWWBucket.DomainName
+            Id: www                                                               # An identifier for the origin which must be unique within the distribution
+            CustomOriginConfig:
+              HTTPPort: 80
+              HTTPSPort: 443
+              OriginProtocolPolicy: http-only
+        Enabled: 'true'
+        Aliases:
+          - www.dumbtest.pw
+        DefaultRootObject: index.html
+        ## Since the Single Page App is taking care of the routing we need to make sure ever path is served with index.html
+        ## The only exception are files that actually exist e.h. app.js, reset.css
+        CustomErrorResponses:
+          - ErrorCode: 404
+            ResponseCode: 200
+            ResponsePagePath: /index.html
+        DefaultCacheBehavior:
+          AllowedMethods:
+            - DELETE
+            - GET
+            - HEAD
+            - OPTIONS
+            - PATCH
+            - POST
+            - PUT
+          ## The origin id defined above
+          TargetOriginId: www
+          ## Defining if and how the QueryString and Cookies are forwarded to the origin which in this case is S3
+          ForwardedValues:
+            QueryString: 'false'
+            Cookies:
+              Forward: none
+          ## The protocol that users can use to access the files in the origin. To allow HTTP use `allow-all`
+          ViewerProtocolPolicy: redirect-to-https
+        ## The certificate to use when viewers use HTTPS to request objects.
+        ViewerCertificate:
+          AcmCertificateArn: arn:aws:acm:us-east-1:092616724146:certificate/d135bc97-e389-47b8-9d7a-fb7c1293daeb
+          SslSupportMethod: sni-only
 
-  # ======================================================================================================================
+# ======================================================================================================================
 # Describes the values that are returned whenever you view your stack's properties.
 # For example, you can declare an output for an S3 bucket name and then call the aws cloudformation describe-stacks AWS CLI command to view the name.
 Outputs:
@@ -226,7 +255,7 @@ Outputs:
     Value: !Join
       - ''
       - - 'http://'
-        - !Ref LooseTouchAppWBucket
+        - !Ref LooseTouchAppBucket
         - '.s3-website.'
         - !Ref 'AWS::Region'
         - '.amazonaws.com'

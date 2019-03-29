@@ -45,9 +45,11 @@ A good guideline to follow is to split our application into at least three diffe
   * app/core - Services that app needs (and cannot work without) go here. Examples: ui.service,  auth.service, auth.guard, data.service, workers.service...
   * app/features - This is the module where app functionalities are. They are organized in several submodules. If you app plays music, this is where player, playlist, favorites submodules would go.
 
-
 links
   * [Application Structure Using Modules](https://www.intertech.com/Blog/angular-module-tutorial-application-structure-using-modules/)
   * [Angular Router Tutorial: Setting Up Routing in Your Application](https://www.intertech.com/Blog/angular-router-tutorial-setting-up-routing-in-your-application/)
   * [6 Best Practices & Pro Tips when using Angular CLI](https://medium.com/@tomastrajan/6-best-practices-pro-tips-for-angular-cli-better-developer-experience-7b328bc9db81)
   
+# Notes
+  * Added ng-bootstrap
+  * Added https://material.angular.io/ 
