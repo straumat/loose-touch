@@ -6,7 +6,7 @@ Transform: AWS::Serverless-2016-10-31
 Description: Loose touch
 
 # ======================================================================================================================
-# Parameters.
+# Command line parameters.
 Parameters:
   # Application stage.
   Stage:
@@ -16,28 +16,36 @@ Parameters:
       - production
     Default: staging
     Type: String
-  # Domain name.
-  RootDomainName:
-    Description: Domain name (dumbtest.pw or loosetouch.com)
-    AllowedValues:
-      - dumbtest.pw
-      - loosetouch.com
-    Default: dumbtest.pw
-    Type: String
 
 # ======================================================================================================================
-# Mappings.
+# Deployment parameters.
 Mappings:
+  # Tables.
+  TableNameMap:
+    staging:
+      users: STAGING_USERS
+      contacts: STAGING_CONTACTS
+    production:
+      users: PRODUCTION_USERS
+      contacts: PRODUCTION_CONTACTS
+  # Buckets.
+  bucketMap:
+    staging:
+      app: loose-touch-app-staging
+      www: loose-touch-www-staging
+    production:
+      app: loose-touch-app
+      www: loose-touch-www
   # Domains.
-  domainMap:
+  DomainMap:
     staging:
       domain: dumbtest.pw
     production:
       domain: loosetouch.com
-  # SSL Certificates.
+  # SSL Certificates (must be created in us-east-1 zone for Cloudfront).
   CertificateMap:
     staging:
-      arn: arn:aws:acm:us-east-1:092616724146:certificate/d135bc97-e389-47b8-9d7a-fb7c1293daeb
+      arn: arn:aws:acm:us-east-1:092616724146:certificate/8541fe15-d1e3-452d-aba8-a62a6d6aaf87
     production:
       arn: not_defined
 
@@ -64,7 +72,7 @@ Resources:
               KeyType: "HASH"
           Projection:                                                             # Attributes that are copied (projected) from the source table into the index.
             ProjectionType: "ALL"                                                 # The set of attributes that are projected into the index. KEYS_ONLY : Only the index and primary keys are projected into the index.
-      TableName: "USERS"                                                          # A name for the table. If you don't specify a name, AWS CloudFormation generates a unique physical ID and uses that ID for the table name.
+      TableName: !FindInMap [TableNameMap, !Ref Stage, users]                     # A name for the table. If you don't specify a name, AWS CloudFormation generates a unique physical ID and uses that ID for the table name.
       KeySchema:                                                                  # Specifies the attributes that make up the primary key for the table.
         - AttributeName: "ID"
           KeyType: "HASH"
@@ -89,7 +97,7 @@ Resources:
               KeyType: "RANGE"
           Projection:
             ProjectionType: "ALL"
-      TableName: "CONTACTS"
+      TableName: !FindInMap [TableNameMap, !Ref Stage, contacts]
       KeySchema:
         - AttributeName: "USER_ID"
           KeyType: "HASH"
@@ -99,7 +107,6 @@ Resources:
   # ====================================================================================================================
   # Defines available functions.
   LooseTouchFunction:
-    # The resource type identifies the type of resource that you are declaring. https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-template-resource-type-ref.html
     Type: AWS::Serverless::Function                                               # Creates a Lambda function, IAM execution role, and event source mappings which trigger the function.
     DependsOn:
       - LooseTouchTableUsers
@@ -118,6 +125,10 @@ Resources:
             RestApiId: !Ref LooseTouchAPI                                         # Identifier of a RestApi resource which MUST contain an operation with the given path and method.
             Path: /{proxy+}                                                       # Configuring your resource as a proxy resource or {proxy+} is a greedy path wherein the entire sub-resource chain is passed to your backend as path variables.
             Method: any                                                           # HTTP method for which this function is invoked (POST, GET, DELETE, PUT...).
+      Environment:
+        Variables:
+          stage: !Ref Stage
+    # TODO Add a scheduled call to ping method.
 
   # ====================================================================================================================
   # Defines API.
@@ -135,80 +146,42 @@ Resources:
   LooseTouchWWWBucket:                                                           # The AWS::S3::Bucket resource creates an Amazon Simple Storage Service (Amazon S3) bucket in the same AWS Region where you create the AWS CloudFormation stack.
     Type: AWS::S3::Bucket
     Properties:
-      BucketName: !Sub                                                           # A name for the bucket. If you don't specify a name, AWS CloudFormation generates a unique physical ID and uses that ID for the bucket name.
-        - www.${Domain}
-        - Domain: !Ref RootDomainName
+      BucketName: !FindInMap [bucketMap, !Ref Stage, www]                        # A name for the bucket. If you don't specify a name, AWS CloudFormation generates a unique physical ID and uses that ID for the bucket name.
       AccessControl: PublicRead                                                   # A canned access control list (ACL) that grants predefined permissions to the bucket.
-      WebsiteConfiguration:                                                       # Information used to configure the bucket as a static website. For more information
-        IndexDocument: index.html                                                 # The name of the index document for the website.
-        ErrorDocument: 404.html                                                   # The name of the error document for the website.
-
-  LooseTouchRootBucket:
-    Type: AWS::S3::Bucket
-    Properties:
-      BucketName: !Ref RootDomainName
-      AccessControl: BucketOwnerFullControl
-      WebsiteConfiguration:
-        RedirectAllRequestsTo:                                                    # The RedirectAllRequestsTo code is an embedded property of the Amazon S3 Website Configuration Property property that describes the redirect behavior of all requests to a website endpoint of an Amazon S3 bucket.
-          HostName: !Ref LooseTouchWWWBucket                                      # Name of the host where requests are redirected.
 
   LooseTouchAppBucket:
     Type: AWS::S3::Bucket
     Properties:
-      BucketName: !Sub
-        - app.${Domain}
-        - Domain: !Ref RootDomainName
+      BucketName: !FindInMap [bucketMap, !Ref Stage, app]
       AccessControl: PublicRead
-      WebsiteConfiguration:
-        IndexDocument: index.html
-        ErrorDocument: 404.html
 
-  # ====================================================================================================================
-  # Defines DNS.
-  LooseTouchDNS:
-    Type: AWS::Route53::RecordSetGroup                                            # The AWS::Route53::RecordSetGroup resource creates record sets for a hosted zone.
-    DependsOn:
-      - LooseTouchWWWBucket
-      - LooseTouchRootBucket
-      - LooseTouchAppBucket
-      - CloudFrontDistribution
-    Properties:
-      HostedZoneName: dumbtest.pw.                                                # The name of the domain for the hosted zone where you want to add the record set.
-      RecordSets:                                                                 # List of resource record sets to add. The maximum number of records is 1,000.
-        # www.loosetouch.com
-        - Name: !Sub                                                              # The name of the domain. You must specify a fully qualified domain name that ends with a period as the last label indication. If you omit the final period, Route 53 adds it.
-            - www.${Domain}
-            - Domain: !Ref RootDomainName
-          Type: A
-          AliasTarget:
-            HostedZoneId: "Z2FDTNDATAQYW2"
-            DNSName: !GetAtt CloudFrontDistribution.DomainName
+  # TODO See for root domain redirect.
 
   # ====================================================================================================================
   # Cloudfront distribution.
-  CloudFrontDistribution:
-    Type: AWS::CloudFront::Distribution
+  LooseTouchWWWFrontDistribution:
+    Type: AWS::CloudFront::Distribution                                           # Creates an Amazon CloudFront web distribution.
     Properties:
-      DistributionConfig:
-        Origins:
-          - DomainName: !GetAtt LooseTouchWWWBucket.DomainName
+      DistributionConfig:                                                         # The distribution's configuration information.
+        Origins:                                                                  # A list of origins for this CloudFront distribution. For each origin, you can specify whether it is an Amazon S3 or custom origin.
+          - DomainName: !Sub                                                      # The DNS name of the Amazon Simple Storage Service (S3) bucket or the HTTP server from which you want CloudFront to get objects for this origin.
+              - ${Bucket}.s3-external-1.amazonaws.com
+              - Bucket: !FindInMap [bucketMap, !Ref Stage, www]
             Id: www                                                               # An identifier for the origin which must be unique within the distribution
-            CustomOriginConfig:
-              HTTPPort: 80
-              HTTPSPort: 443
-              OriginProtocolPolicy: http-only
-        Enabled: 'true'
-        Aliases:
+            CustomOriginConfig:                                                   # Origin information to specify a custom origin.
+              HTTPPort: 80                                                        # The HTTP port the custom origin listens on.
+              HTTPSPort: 443                                                      # The HTTPS port the custom origin listens on.
+              OriginProtocolPolicy: https-only                                    # The origin protocol policy to apply to your origin.
+        Enabled: 'true'                                                           # Controls whether the distribution is enabled to accept end user requests for content.
+        Aliases:                                                                  # CNAMEs (alternate domain names), if any, for the distribution.
           - www.dumbtest.pw
-        DefaultRootObject: index.html
-        ## Since the Single Page App is taking care of the routing we need to make sure ever path is served with index.html
-        ## The only exception are files that actually exist e.h. app.js, reset.css
-        CustomErrorResponses:
-          - ErrorCode: 404
+        DefaultRootObject: index.html                                             # The object (such as index.html) that you want CloudFront to request from your origin when the root URL for your distribution (such as http://example.com/) is requested.
+        CustomErrorResponses:                                                     # Whether CloudFront replaces HTTP status codes in the 4xx and 5xx range with custom error messages before returning the response to the viewer.
+          - ErrorCode: 404                                                        # TODO Is it usefull ?
             ResponseCode: 200
             ResponsePagePath: /index.html
-        DefaultCacheBehavior:
-          AllowedMethods:
+        DefaultCacheBehavior:                                                     # The default cache behavior that is triggered if you do not specify the CacheBehavior property or if files don't match any of the values of PathPattern in the CacheBehavior property.
+          AllowedMethods:                                                         # HTTP methods that CloudFront processes and forwards to your Amazon S3 bucket or your custom origin.
             - DELETE
             - GET
             - HEAD
@@ -216,19 +189,36 @@ Resources:
             - PATCH
             - POST
             - PUT
-          ## The origin id defined above
-          TargetOriginId: www
-          ## Defining if and how the QueryString and Cookies are forwarded to the origin which in this case is S3
-          ForwardedValues:
+          TargetOriginId: www                                                     # The value of ID for the origin that CloudFront routes requests to when the default cache behavior is applied to a request.
+          ForwardedValues:                                                        # ForwardedValues is a property of the DefaultCacheBehavior and CacheBehavior properties that indicates whether Amazon CloudFront forwards query strings or cookies.
             QueryString: 'false'
             Cookies:
               Forward: none
-          ## The protocol that users can use to access the files in the origin. To allow HTTP use `allow-all`
-          ViewerProtocolPolicy: redirect-to-https
-        ## The certificate to use when viewers use HTTPS to request objects.
-        ViewerCertificate:
-          AcmCertificateArn: arn:aws:acm:us-east-1:092616724146:certificate/d135bc97-e389-47b8-9d7a-fb7c1293daeb
+          ViewerProtocolPolicy: redirect-to-https                                 # The protocol that users can use to access the files in the origin that you specified in the TargetOriginId property when the default cache behavior is applied to a request.
+        ViewerCertificate:                                                        # ViewerCertificate is a property of the CloudFront Distribution DistributionConfig property that specifies which certificate to use when viewers use HTTPS to request objects.
+          AcmCertificateArn: arn:aws:acm:us-east-1:092616724146:certificate/8541fe15-d1e3-452d-aba8-a62a6d6aaf87
           SslSupportMethod: sni-only
+        # TODO change certificate
+
+  # ====================================================================================================================
+  # Defines DNS.
+  LooseTouchDNS:
+    Type: AWS::Route53::RecordSetGroup                                            # The AWS::Route53::RecordSetGroup resource creates record sets for a hosted zone.
+    DependsOn:
+      - LooseTouchWWWBucket
+      - LooseTouchWWWFrontDistribution
+    Properties:
+      HostedZoneName: dumbtest.pw.                                                # The name of the domain for the hosted zone where you want to add the record set.
+      RecordSets:                                                                 # List of resource record sets to add. The maximum number of records is 1,000.
+        # www
+        - Name: !Sub                                                              # The name of the domain. You must specify a fully qualified domain name that ends with a period as the last label indication. If you omit the final period, Route 53 adds it.
+            - www.${Domain}
+            - Domain: !FindInMap [DomainMap, !Ref Stage, domain]
+          Type: A
+          AliasTarget:
+            HostedZoneId: "Z2FDTNDATAQYW2"
+            DNSName: !GetAtt LooseTouchWWWFrontDistribution.DomainName
+    # TODO Move to simple recordSet.
 
 # ======================================================================================================================
 # Describes the values that are returned whenever you view your stack's properties.
@@ -249,7 +239,7 @@ Outputs:
         - !Ref Stage
 
   # ====================================================================================================================
-  # URL of APP.
+  # URL of APP. TODO : fix
   APPURL:
     Description: S3 bucket holding app.
     Value: !Join
@@ -261,7 +251,7 @@ Outputs:
         - '.amazonaws.com'
 
   # ====================================================================================================================
-  # URL of WWW.
+  # URL of WWW. TODO : fix
   WWWURL:
     Description: S3 bucket holding website.
     Value: !Join
