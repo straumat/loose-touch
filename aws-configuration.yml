@@ -34,8 +34,8 @@ Mappings:
       app: loose-touch-app-staging
       www: loose-touch-www-staging
     production:
-      app: loose-touch-app
-      www: loose-touch-www
+      app: loose-touch-app-production
+      www: loose-touch-www-production
   # Domains.
   DomainMap:
     staging:
@@ -155,12 +155,14 @@ Resources:
       BucketName: !FindInMap [bucketMap, !Ref Stage, app]
       AccessControl: PublicRead
 
-  # TODO See for root domain redirect.
+  # TODO Fix redirect.
 
   # ====================================================================================================================
   # Cloudfront distribution.
-  LooseTouchWWWFrontDistribution:
+  LooseTouchWWWDistribution:
     Type: AWS::CloudFront::Distribution                                           # Creates an Amazon CloudFront web distribution.
+    DependsOn:
+      - LooseTouchWWWBucket
     Properties:
       DistributionConfig:                                                         # The distribution's configuration information.
         Origins:                                                                  # A list of origins for this CloudFront distribution. For each origin, you can specify whether it is an Amazon S3 or custom origin.
@@ -174,7 +176,9 @@ Resources:
               OriginProtocolPolicy: https-only                                    # The origin protocol policy to apply to your origin.
         Enabled: 'true'                                                           # Controls whether the distribution is enabled to accept end user requests for content.
         Aliases:                                                                  # CNAMEs (alternate domain names), if any, for the distribution.
-          - www.dumbtest.pw
+          - !Sub
+            - www.${Domain}
+            - Domain: !FindInMap [DomainMap, !Ref Stage, domain]
         DefaultRootObject: index.html                                             # The object (such as index.html) that you want CloudFront to request from your origin when the root URL for your distribution (such as http://example.com/) is requested.
         CustomErrorResponses:                                                     # Whether CloudFront replaces HTTP status codes in the 4xx and 5xx range with custom error messages before returning the response to the viewer.
           - ErrorCode: 404                                                        # TODO Is it usefull ?
@@ -196,68 +200,134 @@ Resources:
               Forward: none
           ViewerProtocolPolicy: redirect-to-https                                 # The protocol that users can use to access the files in the origin that you specified in the TargetOriginId property when the default cache behavior is applied to a request.
         ViewerCertificate:                                                        # ViewerCertificate is a property of the CloudFront Distribution DistributionConfig property that specifies which certificate to use when viewers use HTTPS to request objects.
-          AcmCertificateArn: arn:aws:acm:us-east-1:092616724146:certificate/8541fe15-d1e3-452d-aba8-a62a6d6aaf87
+          AcmCertificateArn: !FindInMap [CertificateMap, !Ref Stage, arn]
           SslSupportMethod: sni-only
-        # TODO change certificate
+
+  LooseTouchAPIDistribution:
+    Type: AWS::CloudFront::Distribution
+    DependsOn:
+      - LooseTouchAPI
+    Properties:
+      DistributionConfig:
+        Origins:
+          - DomainName: !Join
+              - ''
+              - - !Ref LooseTouchAPI
+                - '.execute-api.'
+                - !Ref 'AWS::Region'
+                - '.amazonaws.com'
+            Id: api
+            CustomOriginConfig:
+              HTTPPort: 80
+              HTTPSPort: 443
+              OriginProtocolPolicy: https-only
+        Enabled: 'true'
+        Aliases:
+          - !Sub
+            - api.${Domain}
+            - Domain: !FindInMap [DomainMap, !Ref Stage, domain]
+        DefaultRootObject: index.html
+        CustomErrorResponses:
+          - ErrorCode: 404                                                        # TODO Is it usefull ?
+            ResponseCode: 200
+            ResponsePagePath: /index.html
+        DefaultCacheBehavior:
+          AllowedMethods:
+            - DELETE
+            - GET
+            - HEAD
+            - OPTIONS
+            - PATCH
+            - POST
+            - PUT
+          TargetOriginId: api
+          ForwardedValues:
+            QueryString: 'true'
+            Cookies:
+              Forward: none
+          ViewerProtocolPolicy: redirect-to-https
+        ViewerCertificate:
+          AcmCertificateArn: !FindInMap [CertificateMap, !Ref Stage, arn]
+          SslSupportMethod: sni-only
+
+  LooseTouchAppDistribution:
+    Type: AWS::CloudFront::Distribution
+    DependsOn:
+      - LooseTouchAppBucket
+    Properties:
+      DistributionConfig:
+        Origins:
+          - DomainName: !Sub
+              - ${Bucket}.s3-external-1.amazonaws.com
+              - Bucket: !FindInMap [bucketMap, !Ref Stage, app]
+            Id: app
+            CustomOriginConfig:
+              HTTPPort: 80
+              HTTPSPort: 443
+              OriginProtocolPolicy: https-only
+        Enabled: 'true'
+        Aliases:
+          - !Sub
+            - app.${Domain}
+            - Domain: !FindInMap [DomainMap, !Ref Stage, domain]
+        DefaultRootObject: index.html
+        CustomErrorResponses:
+          - ErrorCode: 404                                                        # TODO Is it usefull ?
+            ResponseCode: 200
+            ResponsePagePath: /index.html
+        DefaultCacheBehavior:
+          AllowedMethods:
+            - DELETE
+            - GET
+            - HEAD
+            - OPTIONS
+            - PATCH
+            - POST
+            - PUT
+          TargetOriginId: app
+          ForwardedValues:
+            QueryString: 'false'
+            Cookies:
+              Forward: none
+          ViewerProtocolPolicy: redirect-to-https
+        ViewerCertificate:
+          AcmCertificateArn: !FindInMap [CertificateMap, !Ref Stage, arn]
+          SslSupportMethod: sni-only
 
   # ====================================================================================================================
   # Defines DNS.
   LooseTouchDNS:
     Type: AWS::Route53::RecordSetGroup                                            # The AWS::Route53::RecordSetGroup resource creates record sets for a hosted zone.
     DependsOn:
-      - LooseTouchWWWBucket
-      - LooseTouchWWWFrontDistribution
+      - LooseTouchWWWDistribution
+      - LooseTouchAPIDistribution
+      - LooseTouchAppDistribution
     Properties:
-      HostedZoneName: dumbtest.pw.                                                # The name of the domain for the hosted zone where you want to add the record set.
+      HostedZoneName: !Sub                                                        # The name of the domain for the hosted zone where you want to add the record set.
+        - ${Domain}.
+        - Domain: !FindInMap [DomainMap, !Ref Stage, domain]
       RecordSets:                                                                 # List of resource record sets to add. The maximum number of records is 1,000.
-        # www
+        # WWWW.
         - Name: !Sub                                                              # The name of the domain. You must specify a fully qualified domain name that ends with a period as the last label indication. If you omit the final period, Route 53 adds it.
             - www.${Domain}
             - Domain: !FindInMap [DomainMap, !Ref Stage, domain]
           Type: A
           AliasTarget:
             HostedZoneId: "Z2FDTNDATAQYW2"
-            DNSName: !GetAtt LooseTouchWWWFrontDistribution.DomainName
-    # TODO Move to simple recordSet.
-
-# ======================================================================================================================
-# Describes the values that are returned whenever you view your stack's properties.
-# For example, you can declare an output for an S3 bucket name and then call the aws cloudformation describe-stacks AWS CLI command to view the name.
-Outputs:
-
-  # ====================================================================================================================
-  # URL of API.
-  APIURL:
-    Description: API URL.
-    Value: !Join
-      - ''
-      - - 'https://'
-        - !Ref LooseTouchAPI
-        - '.execute-api.'
-        - !Ref 'AWS::Region'
-        - '.amazonaws.com/'
-        - !Ref Stage
-
-  # ====================================================================================================================
-  # URL of APP. TODO : fix
-  APPURL:
-    Description: S3 bucket holding app.
-    Value: !Join
-      - ''
-      - - 'http://'
-        - !Ref LooseTouchAppBucket
-        - '.s3-website.'
-        - !Ref 'AWS::Region'
-        - '.amazonaws.com'
-
-  # ====================================================================================================================
-  # URL of WWW. TODO : fix
-  WWWURL:
-    Description: S3 bucket holding website.
-    Value: !Join
-      - ''
-      - - 'http://'
-        - !Ref LooseTouchWWWBucket
-        - '.s3-website.'
-        - !Ref 'AWS::Region'
-        - '.amazonaws.com'
+            DNSName: !GetAtt LooseTouchWWWDistribution.DomainName
+        # APP.
+        - Name: !Sub
+            - app.${Domain}
+            - Domain: !FindInMap [DomainMap, !Ref Stage, domain]
+          Type: A
+          AliasTarget:
+            HostedZoneId: "Z2FDTNDATAQYW2"
+            DNSName: !GetAtt LooseTouchAppDistribution.DomainName
+        # API.
+        - Name: !Sub
+            - api.${Domain}
+            - Domain: !FindInMap [DomainMap, !Ref Stage, domain]
+          Type: A
+          AliasTarget:
+            HostedZoneId: "Z2FDTNDATAQYW2"
+            DNSName: !GetAtt LooseTouchAPIDistribution.DomainName

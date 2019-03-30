@@ -10,7 +10,6 @@ import com.oakinvest.lt.domain.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,15 +30,8 @@ public class UserRepository {
     /**
      * DynamoDB mapper.
      */
+    @Autowired
     private DynamoDBMapper mapper;
-
-    /**
-     * Constructor.
-     */
-    @PostConstruct
-    public final void init() {
-        mapper = new DynamoDBMapper(dynamoDB);
-    }
 
     /**
      * Save a user in database.

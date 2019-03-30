@@ -65,28 +65,24 @@ jobs: # We have jobs key. Each job represents a phase in your Build-Test-Deploy 
       - attach_workspace:
           at: ~/loose-touch
 
-      # Install aws cli & jq.
+      # Install aws cli.
       - run:
-          name: Install awscli & jq
+          name: Install awscli
           command: |
             sudo apt-get -yqq update
-            sudo apt-get -yqq install jq
             sudo pip install awscli
 
       # Deploy to aws (test).
-      - run: aws cloudformation package --region ${AWS_REGION} --s3-bucket ${AWS_CONFIGURATION_BUCKET} --template-file aws-configuration.yml --output-template-file output-test-aws-configuration.yml
       - run:
-          name: Deploy API to AWS
+          name: Configure AWS and deploy API
           command: |
-            aws cloudformation deploy --region ${AWS_REGION} --capabilities CAPABILITY_NAMED_IAM --parameter-override Prefix= RootDomainName=dumbtest.pw Stage=test --template-file output-test-aws-configuration.yml --stack-name loose-touch-test
-      - run: aws s3 sync ./clients/website/public s3://www.dumbtest.pw --delete --acl public-read
+            aws cloudformation package --region ${AWS_REGION} --s3-bucket ${AWS_CONFIGURATION_BUCKET} --template-file aws-configuration.yml --output-template-file output-test-aws-configuration.yml
+            aws cloudformation deploy --region ${AWS_REGION} --capabilities CAPABILITY_NAMED_IAM --parameter-override Stage=staging --template-file output-test-aws-configuration.yml --stack-name loose-touch-staging
       - run:
-          name: Display AWS configuration
+          name: Deploy sources (www & app)
           command: |
-            export API_URL=`aws cloudformation describe-stacks --stack-name loose-touch-test --region ${AWS_REGION} | jq -r '.Stacks[0].Outputs[] | select(.OutputKey == "APIURL") | .OutputValue'`
-            export WWW_URL=`aws cloudformation describe-stacks --stack-name loose-touch-test --region ${AWS_REGION} | jq -r '.Stacks[0].Outputs[] | select(.OutputKey == "WWWURL") | .OutputValue'`
-            echo API URL is ${API_URL}
-            echo WWW URL is ${WWW_URL}
+            aws s3 sync ./clients/web/application/dist/application s3://loose-touch-app-staging --delete --acl public-read
+            aws s3 sync ./clients/web/public s3://loose-touch-www-staging --delete --acl public-read
 
 # ======================================================================================================================
 # Loose touch workflow.

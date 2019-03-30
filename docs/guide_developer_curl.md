@@ -6,9 +6,9 @@
 ```
 export LOOSE_TOUCH_SERVER_URL="http://127.0.0.1:8080"
 ```
-### AWS.
+### AWS - staging.
 ```
-export LOOSE_TOUCH_SERVER_URL=`aws cloudformation describe-stacks --stack-name loose-touch-test --region eu-west-3 | jq -r '.Stacks[0].Outputs[] | select(.OutputKey == "APIURL") | .OutputValue'`
+export LOOSE_TOUCH_SERVER_URL="https://api.dumbtest.pw/staging"
 ```
 
 ## Define google id token for user 1. 

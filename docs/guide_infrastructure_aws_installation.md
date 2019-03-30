@@ -9,4 +9,5 @@
 In [AWS Route 53](https://console.aws.amazon.com/route53/home), create an hosted zone and retrieve the name servers list. In google domains, set the name ervers as personalized sever names.
 
 # SSL Certificate creation.
-You can create a free certificate in [AWS Certificate Manager](https://console.aws.amazon.com/acm/home?region=us-east-1#/), make sure to ask a certificate for `*.loosetouch.com` in the region `us-east-1` (required by cloudfront).
+You can create a free certificate in [AWS Certificate Manager](https://console.aws.amazon.com/acm/home?region=us-east-1#/), make sure to ask a certificate for `*.loosetouch.com` and `loosetouch.com` in the region `us-east-1` (required by cloudfront).
+

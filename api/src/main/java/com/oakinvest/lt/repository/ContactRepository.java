@@ -34,6 +34,7 @@ public class ContactRepository {
     /**
      * DynamoDB mapper.
      */
+    @Autowired
     private DynamoDBMapper mapper;
 
     /**
