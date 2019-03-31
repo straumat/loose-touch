@@ -8,9 +8,9 @@ Description: Loose touch
 # ======================================================================================================================
 # Command line parameters.
 Parameters:
-  # Application stage.
-  Stage:
-    Description: Stage name (staging or production)
+  # Environment.
+  Environment:
+    Description: Environment name (staging or production)
     AllowedValues:
       - staging
       - production
@@ -42,6 +42,16 @@ Mappings:
       domain: dumbtest.pw
     production:
       domain: loosetouch.com
+  # Subdomain map.
+  SubdomainMap:
+    staging:
+      api: api
+      app: app
+      www: www
+    production:
+      api: api
+      app: app
+      www: www
   # SSL Certificates (must be created in us-east-1 zone for Cloudfront).
   CertificateMap:
     staging:
@@ -72,7 +82,7 @@ Resources:
               KeyType: "HASH"
           Projection:                                                             # Attributes that are copied (projected) from the source table into the index.
             ProjectionType: "ALL"                                                 # The set of attributes that are projected into the index. KEYS_ONLY : Only the index and primary keys are projected into the index.
-      TableName: !FindInMap [TableNameMap, !Ref Stage, users]                     # A name for the table. If you don't specify a name, AWS CloudFormation generates a unique physical ID and uses that ID for the table name.
+      TableName: !FindInMap [TableNameMap, !Ref Environment, users]               # A name for the table. If you don't specify a name, AWS CloudFormation generates a unique physical ID and uses that ID for the table name.
       KeySchema:                                                                  # Specifies the attributes that make up the primary key for the table.
         - AttributeName: "ID"
           KeyType: "HASH"
@@ -97,7 +107,7 @@ Resources:
               KeyType: "RANGE"
           Projection:
             ProjectionType: "ALL"
-      TableName: !FindInMap [TableNameMap, !Ref Stage, contacts]
+      TableName: !FindInMap [TableNameMap, !Ref Environment, contacts]
       KeySchema:
         - AttributeName: "USER_ID"
           KeyType: "HASH"
@@ -127,8 +137,7 @@ Resources:
             Method: any                                                           # HTTP method for which this function is invoked (POST, GET, DELETE, PUT...).
       Environment:
         Variables:
-          stage: !Ref Stage
-    # TODO Add a scheduled call to ping method.
+          environment: !Ref Environment
 
   # ====================================================================================================================
   # Defines API.
@@ -137,25 +146,21 @@ Resources:
     DependsOn:
       - LooseTouchFunction
     Properties:
-      StageName: !Ref Stage                                                       # The name of the stage, which API Gateway uses as the first path segment in the invoke Uniform Resource Identifier (URI).
-      Variables:
-        Stage: !Ref Stage
+      StageName: !Ref Environment                                                 # The name of the stage, which API Gateway uses as the first path segment in the invoke Uniform Resource Identifier (URI).
 
   # ====================================================================================================================
   # Defines buckets for public website.
   LooseTouchWWWBucket:                                                           # The AWS::S3::Bucket resource creates an Amazon Simple Storage Service (Amazon S3) bucket in the same AWS Region where you create the AWS CloudFormation stack.
     Type: AWS::S3::Bucket
     Properties:
-      BucketName: !FindInMap [bucketMap, !Ref Stage, www]                        # A name for the bucket. If you don't specify a name, AWS CloudFormation generates a unique physical ID and uses that ID for the bucket name.
-      AccessControl: PublicRead                                                   # A canned access control list (ACL) that grants predefined permissions to the bucket.
+      BucketName: !FindInMap [bucketMap, !Ref Environment, www]                  # A name for the bucket. If you don't specify a name, AWS CloudFormation generates a unique physical ID and uses that ID for the bucket name.
+      AccessControl: PublicRead                                                  # A canned access control list (ACL) that grants predefined permissions to the bucket.
 
   LooseTouchAppBucket:
     Type: AWS::S3::Bucket
     Properties:
-      BucketName: !FindInMap [bucketMap, !Ref Stage, app]
+      BucketName: !FindInMap [bucketMap, !Ref Environment, app]
       AccessControl: PublicRead
-
-  # TODO Fix redirect.
 
   # ====================================================================================================================
   # Cloudfront distribution.
@@ -168,7 +173,7 @@ Resources:
         Origins:                                                                  # A list of origins for this CloudFront distribution. For each origin, you can specify whether it is an Amazon S3 or custom origin.
           - DomainName: !Sub                                                      # The DNS name of the Amazon Simple Storage Service (S3) bucket or the HTTP server from which you want CloudFront to get objects for this origin.
               - ${Bucket}.s3-external-1.amazonaws.com
-              - Bucket: !FindInMap [bucketMap, !Ref Stage, www]
+              - Bucket: !FindInMap [bucketMap, !Ref Environment, www]
             Id: www                                                               # An identifier for the origin which must be unique within the distribution
             CustomOriginConfig:                                                   # Origin information to specify a custom origin.
               HTTPPort: 80                                                        # The HTTP port the custom origin listens on.
@@ -177,11 +182,14 @@ Resources:
         Enabled: 'true'                                                           # Controls whether the distribution is enabled to accept end user requests for content.
         Aliases:                                                                  # CNAMEs (alternate domain names), if any, for the distribution.
           - !Sub
-            - www.${Domain}
-            - Domain: !FindInMap [DomainMap, !Ref Stage, domain]
+            - ${Subdomain}.${Domain}
+            - { Subdomain: !FindInMap [SubdomainMap, !Ref Environment, www], Domain: !FindInMap [DomainMap, !Ref Environment, domain] }
+          - !Sub
+            - ${Domain}
+            - Domain: !FindInMap [DomainMap, !Ref Environment, domain]
         DefaultRootObject: index.html                                             # The object (such as index.html) that you want CloudFront to request from your origin when the root URL for your distribution (such as http://example.com/) is requested.
         CustomErrorResponses:                                                     # Whether CloudFront replaces HTTP status codes in the 4xx and 5xx range with custom error messages before returning the response to the viewer.
-          - ErrorCode: 404                                                        # TODO Is it usefull ?
+          - ErrorCode: 404
             ResponseCode: 200
             ResponsePagePath: /index.html
         DefaultCacheBehavior:                                                     # The default cache behavior that is triggered if you do not specify the CacheBehavior property or if files don't match any of the values of PathPattern in the CacheBehavior property.
@@ -200,7 +208,7 @@ Resources:
               Forward: none
           ViewerProtocolPolicy: redirect-to-https                                 # The protocol that users can use to access the files in the origin that you specified in the TargetOriginId property when the default cache behavior is applied to a request.
         ViewerCertificate:                                                        # ViewerCertificate is a property of the CloudFront Distribution DistributionConfig property that specifies which certificate to use when viewers use HTTPS to request objects.
-          AcmCertificateArn: !FindInMap [CertificateMap, !Ref Stage, arn]
+          AcmCertificateArn: !FindInMap [CertificateMap, !Ref Environment, arn]
           SslSupportMethod: sni-only
 
   LooseTouchAPIDistribution:
@@ -224,11 +232,11 @@ Resources:
         Enabled: 'true'
         Aliases:
           - !Sub
-            - api.${Domain}
-            - Domain: !FindInMap [DomainMap, !Ref Stage, domain]
+            - ${Subdomain}.${Domain}
+            - { Subdomain: !FindInMap [SubdomainMap, !Ref Environment, api], Domain: !FindInMap [DomainMap, !Ref Environment, domain] }
         DefaultRootObject: index.html
         CustomErrorResponses:
-          - ErrorCode: 404                                                        # TODO Is it usefull ?
+          - ErrorCode: 404
             ResponseCode: 200
             ResponsePagePath: /index.html
         DefaultCacheBehavior:
@@ -242,12 +250,14 @@ Resources:
             - PUT
           TargetOriginId: api
           ForwardedValues:
+            Headers:
+              - "Authorization"
             QueryString: 'true'
             Cookies:
               Forward: none
           ViewerProtocolPolicy: redirect-to-https
         ViewerCertificate:
-          AcmCertificateArn: !FindInMap [CertificateMap, !Ref Stage, arn]
+          AcmCertificateArn: !FindInMap [CertificateMap, !Ref Environment, arn]
           SslSupportMethod: sni-only
 
   LooseTouchAppDistribution:
@@ -259,7 +269,7 @@ Resources:
         Origins:
           - DomainName: !Sub
               - ${Bucket}.s3-external-1.amazonaws.com
-              - Bucket: !FindInMap [bucketMap, !Ref Stage, app]
+              - Bucket: !FindInMap [bucketMap, !Ref Environment, app]
             Id: app
             CustomOriginConfig:
               HTTPPort: 80
@@ -268,11 +278,11 @@ Resources:
         Enabled: 'true'
         Aliases:
           - !Sub
-            - app.${Domain}
-            - Domain: !FindInMap [DomainMap, !Ref Stage, domain]
+            - ${Subdomain}.${Domain}
+            - { Subdomain: !FindInMap [SubdomainMap, !Ref Environment, app], Domain: !FindInMap [DomainMap, !Ref Environment, domain] }
         DefaultRootObject: index.html
         CustomErrorResponses:
-          - ErrorCode: 404                                                        # TODO Is it usefull ?
+          - ErrorCode: 404
             ResponseCode: 200
             ResponsePagePath: /index.html
         DefaultCacheBehavior:
@@ -291,7 +301,7 @@ Resources:
               Forward: none
           ViewerProtocolPolicy: redirect-to-https
         ViewerCertificate:
-          AcmCertificateArn: !FindInMap [CertificateMap, !Ref Stage, arn]
+          AcmCertificateArn: !FindInMap [CertificateMap, !Ref Environment, arn]
           SslSupportMethod: sni-only
 
   # ====================================================================================================================
@@ -305,12 +315,20 @@ Resources:
     Properties:
       HostedZoneName: !Sub                                                        # The name of the domain for the hosted zone where you want to add the record set.
         - ${Domain}.
-        - Domain: !FindInMap [DomainMap, !Ref Stage, domain]
+        - Domain: !FindInMap [DomainMap, !Ref Environment, domain]
       RecordSets:                                                                 # List of resource record sets to add. The maximum number of records is 1,000.
         # WWWW.
         - Name: !Sub                                                              # The name of the domain. You must specify a fully qualified domain name that ends with a period as the last label indication. If you omit the final period, Route 53 adds it.
             - www.${Domain}
-            - Domain: !FindInMap [DomainMap, !Ref Stage, domain]
+            - Domain: !FindInMap [DomainMap, !Ref Environment, domain]
+          Type: A
+          AliasTarget:
+            HostedZoneId: "Z2FDTNDATAQYW2"
+            DNSName: !GetAtt LooseTouchWWWDistribution.DomainName
+        # Root.
+        - Name: !Sub
+            - ${Domain}
+            - Domain: !FindInMap [DomainMap, !Ref Environment, domain]
           Type: A
           AliasTarget:
             HostedZoneId: "Z2FDTNDATAQYW2"
@@ -318,7 +336,7 @@ Resources:
         # APP.
         - Name: !Sub
             - app.${Domain}
-            - Domain: !FindInMap [DomainMap, !Ref Stage, domain]
+            - Domain: !FindInMap [DomainMap, !Ref Environment, domain]
           Type: A
           AliasTarget:
             HostedZoneId: "Z2FDTNDATAQYW2"
@@ -326,7 +344,7 @@ Resources:
         # API.
         - Name: !Sub
             - api.${Domain}
-            - Domain: !FindInMap [DomainMap, !Ref Stage, domain]
+            - Domain: !FindInMap [DomainMap, !Ref Environment, domain]
           Type: A
           AliasTarget:
             HostedZoneId: "Z2FDTNDATAQYW2"

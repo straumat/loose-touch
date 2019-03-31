@@ -58,8 +58,8 @@ public class DeleteUserTest extends APITest {
     @Override
     public void businessLogicTest() throws Exception {
         // User creation.
-        assertEquals(0, getUserRepository().count());
-        assertEquals(0, getContactRepository().count());
+        assertEquals(0, usersCount());
+        assertEquals(0, contactsCount());
         final String looseToucheTokenForUser1 = getLooseToucheToken(GOOGLE_USER_1);
         final String looseToucheTokenForUser2 = getLooseToucheToken(GOOGLE_USER_2);
 
@@ -110,24 +110,24 @@ public class DeleteUserTest extends APITest {
                 .header("Authorization", "Bearer " + looseToucheTokenForUser2)
                 .content(getMapper().writeValueAsString(CONTACT_2.toDTO())))
                 .andExpect(status().isCreated());
-        assertEquals(2, getUserRepository().count());
-        assertEquals(7, getContactRepository().count());
+        assertEquals(2, usersCount());
+        assertEquals(7, contactsCount());
 
         // Delete user 1.
         getMvc().perform(delete(DELETE_USER_URL)
                 .contentType(APPLICATION_JSON_UTF8)
                 .header("Authorization", "Bearer " + looseToucheTokenForUser1))
                 .andExpect(status().isOk());
-        assertEquals(1, getUserRepository().count());
-        assertEquals(2, getContactRepository().count());
+        assertEquals(1, usersCount());
+        assertEquals(2, contactsCount());
 
         // Delete user 2.
         getMvc().perform(delete(DELETE_USER_URL)
                 .contentType(APPLICATION_JSON_UTF8)
                 .header("Authorization", "Bearer " + looseToucheTokenForUser2))
                 .andExpect(status().isOk());
-        assertEquals(0, getUserRepository().count());
-        assertEquals(0, getContactRepository().count());
+        assertEquals(0, usersCount());
+        assertEquals(0, contactsCount());
     }
 
 }

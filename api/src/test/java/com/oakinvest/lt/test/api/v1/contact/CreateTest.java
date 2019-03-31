@@ -75,7 +75,7 @@ public class CreateTest extends APITest {
                 .andExpect(jsonPath("type").value(invalid_request_error.toString()))
                 .andExpect(jsonPath("message").value("Contact data missing"))
                 .andExpect(jsonPath("errors", hasSize(0)));
-        assertEquals(getContactRepository().count(), 0);
+        assertEquals(contactsCount(), 0);
 
         // Creating a ContactDTO.
         ContactDTO contact = new ContactDTO();
@@ -98,7 +98,7 @@ public class CreateTest extends APITest {
                 // Third error.
                 .andExpect(jsonPath("errors[2].code").value(contact_recurrence_value_required.toString()))
                 .andExpect(jsonPath("errors[2].message").value("Contact recurrence value is required"));
-        assertEquals(getContactRepository().count(), 0);
+        assertEquals(contactsCount(), 0);
 
         // Trying to createContact a contact with invalid data
         contact.setEmail("invalid");
@@ -121,7 +121,7 @@ public class CreateTest extends APITest {
                 // Third error.
                 .andExpect(jsonPath("errors[2].code").value(contact_recurrence_value_invalid.toString()))
                 .andExpect(jsonPath("errors[2].message").value("Contact recurrence value is invalid (must be between 1 and 1000)"));
-        assertEquals(getContactRepository().count(), 0);
+        assertEquals(contactsCount(), 0);
 
         // Trying to createContact a contact with invalid data
         contact.setEmail("test@test.fr");
@@ -141,7 +141,7 @@ public class CreateTest extends APITest {
                 // Second error.
                 .andExpect(jsonPath("errors[1].code").value(contact_recurrence_value_invalid.toString()))
                 .andExpect(jsonPath("errors[1].message").value("Contact recurrence value is invalid (must be between 1 and 1000)"));
-        assertEquals(getContactRepository().count(), 0);
+        assertEquals(contactsCount(), 0);
 
         // Trying to createContact a contact with invalid data
         contact.setEmail("test@test.fr");
@@ -158,7 +158,7 @@ public class CreateTest extends APITest {
                 // First error.
                 .andExpect(jsonPath("errors[0].code").value(contact_recurrence_value_invalid.toString()))
                 .andExpect(jsonPath("errors[0].message").value("Contact recurrence value is invalid (must be between 1 and 1000)"));
-        assertEquals(getContactRepository().count(), 0);
+        assertEquals(contactsCount(), 0);
 
         // Trying to createContact a contact with valid data
         contact.setEmail("test@test.fr");
@@ -169,7 +169,7 @@ public class CreateTest extends APITest {
                 .header("Authorization", "Bearer " + looseToucheTokenForUser1)
                 .content(getMapper().writeValueAsString(contact)))
                 .andExpect(status().isCreated());
-        assertEquals(getContactRepository().count(), 1);
+        assertEquals(contactsCount(), 1);
 
         // Creates contact number 1 for user 1 (date set).
         getMvc().perform(post(CONTACT_URL)
@@ -177,7 +177,7 @@ public class CreateTest extends APITest {
                 .header("Authorization", "Bearer " + looseToucheTokenForUser1)
                 .content(getMapper().writeValueAsString(CONTACT_1.toDTO())))
                 .andExpect(status().isCreated());
-        assertEquals(getContactRepository().count(), 2);
+        assertEquals(contactsCount(), 2);
 
         // Creates contact number 4 for user 1 (date not set).
         getMvc().perform(post(CONTACT_URL)
@@ -185,7 +185,7 @@ public class CreateTest extends APITest {
                 .header("Authorization", "Bearer " + looseToucheTokenForUser1)
                 .content(getMapper().writeValueAsString(CONTACT_4.toDTO())))
                 .andExpect(status().isCreated());
-        assertEquals(getContactRepository().count(), 3);
+        assertEquals(contactsCount(), 3);
 
         // Try to createContact a duplicate contact.
         getMvc().perform(post(CONTACT_URL)
@@ -195,7 +195,7 @@ public class CreateTest extends APITest {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("type").value(invalid_request_error.toString()))
                 .andExpect(jsonPath("message").value("Contact already exists"));
-        assertEquals(getContactRepository().count(), 3);
+        assertEquals(contactsCount(), 3);
     }
 
     @Override
@@ -204,7 +204,7 @@ public class CreateTest extends APITest {
         final String looseToucheTokenForUser1 = getLooseToucheToken(GOOGLE_USER_1);
         final String user1Id = getUserRepository().findUserByGoogleUsername(GOOGLE_USER_1.getEmail()).get().getId();
         final String looseToucheTokenForUser2 = getLooseToucheToken(GOOGLE_USER_2);
-        assertEquals(getContactRepository().count(), 0);
+        assertEquals(contactsCount(), 0);
 
         // Creates contact 1 for user 1.
         getMvc().perform(post(CONTACT_URL)
@@ -212,7 +212,7 @@ public class CreateTest extends APITest {
                 .header("Authorization", "Bearer " + looseToucheTokenForUser1)
                 .content(getMapper().writeValueAsString(CONTACT_1.toDTO())))
                 .andExpect(status().isCreated());
-        assertEquals(getContactRepository().count(), 1);
+        assertEquals(contactsCount(), 1);
 
         // Test the contact 1 created in database.
         Optional<Contact> contactCreated = getContactRepository().findContactByEmail(user1Id, CONTACT_1.getEmail());
@@ -229,7 +229,7 @@ public class CreateTest extends APITest {
         Optional<Contact> contactNotCreated = getContactRepository().findContactByEmail(user1Id, CONTACT_2.getEmail());
         assertFalse("Contact 2 found", contactNotCreated.isPresent());
         // Creates contact number 2 for user 1.
-        assertEquals(getContactRepository().count(), 1);
+        assertEquals(contactsCount(), 1);
         getMvc().perform(post(CONTACT_URL)
                 .contentType(APPLICATION_JSON_UTF8)
                 .header("Authorization", "Bearer " + looseToucheTokenForUser1)
@@ -243,7 +243,7 @@ public class CreateTest extends APITest {
                 .andExpect(jsonPath("contactRecurrenceValue").value(CONTACT_2.getContactRecurrenceValue()))
                 .andExpect(jsonPath("contactRecurrenceValue").value(CONTACT_2.getContactRecurrenceValue()))
                 .andExpect(jsonPath("contactDueDate").value("16/11/2019"));
-        assertEquals(getContactRepository().count(), 2);
+        assertEquals(contactsCount(), 2);
 
         // Creating contacts for user1 & user 2 and check next due contact calculation algorithm.
         // User 1 / contact 1.
@@ -310,7 +310,7 @@ public class CreateTest extends APITest {
                 .header("Authorization", "Bearer " + looseToucheTokenForUser2)
                 .content(getMapper().writeValueAsString(CONTACT_2.toDTO())))
                 .andExpect(status().isCreated());
-        assertEquals(getContactRepository().count(), 8);
+        assertEquals(contactsCount(), 8);
 
         // TODO Test creating two times the contact
         // TODO test valid email address

@@ -1,18 +1,14 @@
 package com.oakinvest.lt.repository;
 
-import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBQueryExpression;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.amazonaws.services.dynamodbv2.model.ComparisonOperator;
 import com.amazonaws.services.dynamodbv2.model.Condition;
-import com.amazonaws.services.dynamodbv2.model.ScanRequest;
-import com.amazonaws.services.dynamodbv2.model.ScanResult;
 import com.oakinvest.lt.domain.Contact;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -26,24 +22,10 @@ import java.util.TimeZone;
 public class ContactRepository {
 
     /**
-     * DynamoDB connection.
-     */
-    @Autowired
-    private AmazonDynamoDB dynamoDB;
-
-    /**
      * DynamoDB mapper.
      */
     @Autowired
     private DynamoDBMapper mapper;
-
-    /**
-     * Constructor.
-     */
-    @PostConstruct
-    public final void init() {
-        mapper = new DynamoDBMapper(dynamoDB);
-    }
 
     /**
      * Save a contact in database.
@@ -69,7 +51,6 @@ public class ContactRepository {
      * @param userId user id
      */
     public final void deleteAllContactsOfUser(final String userId) {
-
         // User id.
         Contact c = new Contact();
         c.setUserId(userId);
@@ -144,17 +125,6 @@ public class ContactRepository {
                 .withRangeKeyCondition("CONTACT_DUE_DATE", rangeKeyCondition);
 
         return mapper.query(Contact.class, queryExpression);
-    }
-
-    /**
-     * Returns the number of users.
-     *
-     * @return number of users.
-     */
-    public final long count() {
-        ScanRequest scanRequest = new ScanRequest().withTableName("CONTACTS");
-        ScanResult result = dynamoDB.scan(scanRequest);
-        return result.getCount();
     }
 
 }

@@ -117,8 +117,8 @@ public class ContactsToReachTest extends APITest {
                 .header("Authorization", "Bearer " + looseToucheTokenForUser2)
                 .content(getMapper().writeValueAsString(c)))
                 .andExpect(status().isCreated());
-        assertEquals(2, getUserRepository().count());
-        assertEquals(6, getContactRepository().count());
+        assertEquals(2, usersCount());
+        assertEquals(6, contactsCount());
 
         // =============================================================================================================
         // Getting the list of contacts to reach.

@@ -8,6 +8,8 @@ import com.amazonaws.services.dynamodbv2.model.CreateTableRequest;
 import com.amazonaws.services.dynamodbv2.model.Projection;
 import com.amazonaws.services.dynamodbv2.model.ProjectionType;
 import com.amazonaws.services.dynamodbv2.model.ProvisionedThroughput;
+import com.amazonaws.services.dynamodbv2.model.ScanRequest;
+import com.amazonaws.services.dynamodbv2.model.ScanResult;
 import com.amazonaws.services.dynamodbv2.util.TableUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
@@ -211,6 +213,29 @@ public abstract class APITest {
         } else {
             return null;
         }
+    }
+
+    /**
+     * Returns the number of contacts.
+     *
+     * @return number of contacts.
+     */
+    public final long contactsCount() {
+        ScanRequest scanRequest = new ScanRequest().withTableName("CONTACTS");
+        ScanResult result = dynamoDB.scan(scanRequest);
+        return result.getCount();
+    }
+
+
+    /**
+     * Returns the number of users.
+     *
+     * @return number of users.
+     */
+    public final long usersCount() {
+        ScanRequest scanRequest = new ScanRequest().withTableName("USERS");
+        ScanResult result = dynamoDB.scan(scanRequest);
+        return result.getCount();
     }
 
     /**

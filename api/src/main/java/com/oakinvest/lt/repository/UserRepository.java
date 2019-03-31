@@ -1,11 +1,8 @@
 package com.oakinvest.lt.repository;
 
-import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBQueryExpression;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
-import com.amazonaws.services.dynamodbv2.model.ScanRequest;
-import com.amazonaws.services.dynamodbv2.model.ScanResult;
 import com.oakinvest.lt.domain.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -20,12 +17,6 @@ import java.util.Optional;
  */
 @Component
 public class UserRepository {
-
-    /**
-     * DynamoDB connection.
-     */
-    @Autowired
-    private AmazonDynamoDB dynamoDB;
 
     /**
      * DynamoDB mapper.
@@ -90,17 +81,6 @@ public class UserRepository {
      */
     public final void delete(final String userId) {
         getUser(userId).ifPresent(value -> mapper.delete(value));
-    }
-
-    /**
-     * Returns the number of users.
-     *
-     * @return number of users.
-     */
-    public final long count() {
-        ScanRequest scanRequest = new ScanRequest().withTableName("USERS");
-        ScanResult result = dynamoDB.scan(scanRequest);
-        return result.getCount();
     }
 
 }

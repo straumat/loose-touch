@@ -163,7 +163,7 @@ public class UpdateContactTest extends APITest {
                 .header("Authorization", "Bearer " + looseToucheTokenForUser1)
                 .content(getMapper().writeValueAsString(contact)))
                 .andExpect(status().isOk());
-        assertEquals(getContactRepository().count(), 1);
+        assertEquals(contactsCount(), 1);
     }
 
     @Override
@@ -233,7 +233,7 @@ public class UpdateContactTest extends APITest {
                 .andExpect(jsonPath("contactRecurrenceValue").value(CONTACT_1.getContactRecurrenceValue()))
                 .andExpect(jsonPath("contactRecurrenceValue").value(CONTACT_1.getContactRecurrenceValue()))
                 .andExpect(jsonPath("contactDueDate").value("31/12/2019"));
-        assertEquals(getContactRepository().count(), 2);
+        assertEquals(contactsCount(), 2);
 
         // =============================================================================================================
         // Trying to change the email of a CONTACT_1 to test1@test1.com.
@@ -250,7 +250,7 @@ public class UpdateContactTest extends APITest {
                 .andExpect(status().isNotFound());
 
         // Changing the email address.
-        assertEquals(getContactRepository().count(), 2);
+        assertEquals(contactsCount(), 2);
         ContactDTO c1 = CONTACT_1.toDTO();
         c1.setEmail("test1@test1.com");
         getMvc().perform(put(CONTACT_URL + "/" + CONTACT_1.getEmail() + "/")
@@ -258,7 +258,7 @@ public class UpdateContactTest extends APITest {
                 .header("Authorization", "Bearer " + looseToucheTokenForUser1)
                 .content(getMapper().writeValueAsString(c1)))
                 .andExpect(status().isOk());
-        assertEquals(getContactRepository().count(), 2);
+        assertEquals(contactsCount(), 2);
 
         // Check that we have the good email address.
         getMvc().perform(get(CONTACT_URL + "/" + CONTACT_1.getEmail() + "/")

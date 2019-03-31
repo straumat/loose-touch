@@ -75,7 +75,7 @@ public class GoogleLoginTest extends APITest {
         Optional<GoogleRefreshToken> user1GoogleToken = getGoogleTokenRetriever().getIdToken(GOOGLE_USER_1);
         if (user1GoogleToken.isPresent()) {
             // Check that there is no user in the database.
-            assertEquals("There are users in the database", 0, getUserRepository().count());
+            assertEquals("There are users in the database", 0, usersCount());
 
             // Check that the user doesn't exists yet.
             assertFalse("User 1 already exists", getUserRepository().findUserByGoogleUsername(GOOGLE_USER_1.getEmail()).isPresent());
@@ -97,7 +97,7 @@ public class GoogleLoginTest extends APITest {
             // Check that the user now exists and that the token is correct.
             Optional<User> u1 = getUserRepository().findUserByGoogleUsername(GOOGLE_USER_1.getEmail());
             Assert.assertTrue("User 1 doesn't exists", u1.isPresent());
-            assertEquals("There are too many users in the database", 1, getUserRepository().count());
+            assertEquals("There are too many users in the database", 1, usersCount());
             Assert.assertTrue("Token for user 1 is not valid", getLooseTouchTokenProvider().getUserId(looseTouchUser1Token1).isPresent());
             assertEquals("Token for user 1 doesn't have the good ID", u1.get().getId(), getLooseTouchTokenProvider().getUserId(looseTouchUser1Token1).get());
 
@@ -121,7 +121,7 @@ public class GoogleLoginTest extends APITest {
             assertNotEquals("Token are not different", looseTouchUser1Token1, looseTouchUser1Token2);
             u1 = getUserRepository().findUserByGoogleUsername(GOOGLE_USER_1.getEmail());
             Assert.assertTrue("User 1 doesn't exists", u1.isPresent());
-            assertEquals("There are too many users in the database", 1, getUserRepository().count());
+            assertEquals("There are too many users in the database", 1, usersCount());
             Assert.assertTrue("Token for user 1 is not valid", getLooseTouchTokenProvider().getUserId(looseTouchUser1Token2).isPresent());
             assertEquals("Token for user 1 doesn't have the good ID", u1.get().getId(), getLooseTouchTokenProvider().getUserId(looseTouchUser1Token2).get());
         } else {
@@ -132,7 +132,7 @@ public class GoogleLoginTest extends APITest {
         Optional<GoogleRefreshToken> user2GoogleToken = getGoogleTokenRetriever().getIdToken(GOOGLE_USER_2);
         if (user2GoogleToken.isPresent()) {
             // Check that there is one user in the database.
-            assertEquals("There are two users in the database", 1, getUserRepository().count());
+            assertEquals("There are two users in the database", 1, usersCount());
 
             // Check that the user doesn't exists yet.
             assertFalse("User 2 already exists", getUserRepository().findUserByGoogleUsername(GOOGLE_USER_2.getEmail()).isPresent());
@@ -155,7 +155,7 @@ public class GoogleLoginTest extends APITest {
             // Check that the user now exists and that the token is correct.
             Optional<User> u2 = getUserRepository().findUserByGoogleUsername(GOOGLE_USER_2.getEmail());
             Assert.assertTrue("User 2 doesn't exists", u2.isPresent());
-            assertEquals("There are too many users in the database", 2, getUserRepository().count());
+            assertEquals("There are too many users in the database", 2, usersCount());
             Assert.assertTrue("Token for user 2 is not valid", getLooseTouchTokenProvider().getUserId(looseTouchUser2Token1).isPresent());
             assertEquals("Token for user 2 doesn't have the good ID", u2.get().getId(), getLooseTouchTokenProvider().getUserId(looseTouchUser2Token1).get());
 
@@ -179,7 +179,7 @@ public class GoogleLoginTest extends APITest {
             assertNotEquals("Token are not different", looseTouchUser2Token1, looseTouchUser2Token2);
             u2 = getUserRepository().findUserByGoogleUsername(GOOGLE_USER_2.getEmail());
             Assert.assertTrue("User 2 doesn't exists", u2.isPresent());
-            assertEquals("There are too many users in the database", 2, getUserRepository().count());
+            assertEquals("There are too many users in the database", 2, usersCount());
             Assert.assertTrue("Token for user 2 is not valid", getLooseTouchTokenProvider().getUserId(looseTouchUser2Token2).isPresent());
             assertEquals("Token for user 2 doesn't have the good ID", u2.get().getId(), getLooseTouchTokenProvider().getUserId(looseTouchUser2Token2).get());
         } else {

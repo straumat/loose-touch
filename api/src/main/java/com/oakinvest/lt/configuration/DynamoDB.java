@@ -25,10 +25,30 @@ import static com.oakinvest.lt.configuration.Application.LOCAL_DYNAMODB_ENVIRONM
 public class DynamoDB {
 
     /**
+     * Environment name : staging.
+     */
+    private static final String STAGING_ENVIRONMENT_NAME = "staging";
+
+    /**
+     * Environment name : production.
+     */
+    private static final String PRODUCTION_ENVIRONMENT_NAME = "staging";
+
+    /**
+     * Table prefix for staging environment.
+     */
+    private static final String STAGING_ENVIRONMENT_PREFIX = "STAGING_";
+
+    /**
+     * Table prefix for production environment.
+     */
+    private static final String PRODUCTION_ENVIRONMENT_PREFIX = "PRODUCTION_";
+
+    /**
      * Environment.
      */
     @Autowired
-    private Environment environment;
+    private Environment springEnvironment;
 
     /**
      * DynamoDB Endpoint.
@@ -55,10 +75,10 @@ public class DynamoDB {
     private String amazonAWSSecretKey;
 
     /**
-     * Get the stage from environment.
+     * Get the stage from springEnvironment.
      */
-    @Value("#{environment.stage}")
-    private String stage;
+    @Value("#{environment.environment}")
+    private String environment;
 
     /**
      * Returns an amazonDynamoDB instance.
@@ -68,7 +88,7 @@ public class DynamoDB {
     @Bean
     @SuppressWarnings("checkstyle:DesignForExtension")
     public AmazonDynamoDB amazonDynamoDB() {
-        if (Arrays.asList(environment.getActiveProfiles()).contains(LOCAL_DYNAMODB_ENVIRONMENT)) {
+        if (Arrays.asList(springEnvironment.getActiveProfiles()).contains(LOCAL_DYNAMODB_ENVIRONMENT)) {
             // Running on local DynamoDB.
             return AmazonDynamoDBClientBuilder.standard()
                     .withEndpointConfiguration(
@@ -91,10 +111,17 @@ public class DynamoDB {
     @Bean
     @SuppressWarnings("checkstyle:DesignForExtension")
     public DynamoDBMapper dynamoDBMapper() {
-        if ("staging".equalsIgnoreCase(stage)) {
+        // Staging environment.
+        if (STAGING_ENVIRONMENT_NAME.equalsIgnoreCase(environment)) {
             DynamoDBMapperConfig config = new DynamoDBMapperConfig.Builder()
                     .withTableNameOverride(DynamoDBMapperConfig
-                            .TableNameOverride.withTableNamePrefix("STAGING_"))
+                            .TableNameOverride.withTableNamePrefix(STAGING_ENVIRONMENT_PREFIX))
+                    .build();
+            return new DynamoDBMapper(amazonDynamoDB(), config);
+        } else if (PRODUCTION_ENVIRONMENT_NAME.equalsIgnoreCase(environment)) {
+            DynamoDBMapperConfig config = new DynamoDBMapperConfig.Builder()
+                    .withTableNameOverride(DynamoDBMapperConfig
+                            .TableNameOverride.withTableNamePrefix(PRODUCTION_ENVIRONMENT_PREFIX))
                     .build();
             return new DynamoDBMapper(amazonDynamoDB(), config);
         } else {

@@ -88,8 +88,8 @@ public class DeleteContactTest extends APITest {
                 .header("Authorization", "Bearer " + looseToucheTokenForUser2)
                 .content(getMapper().writeValueAsString(CONTACT_2.toDTO())))
                 .andExpect(status().isCreated());
-        assertEquals(2, getUserRepository().count());
-        assertEquals(5, getContactRepository().count());
+        assertEquals(2, usersCount());
+        assertEquals(5, contactsCount());
 
         // Delete User 1 / Contact 1.
         getMvc().perform(delete(CONTACT_URL + "/" + CONTACT_1.getEmail() + "/")
@@ -101,8 +101,8 @@ public class DeleteContactTest extends APITest {
                 .contentType(APPLICATION_JSON_UTF8)
                 .header("Authorization", "Bearer " + looseToucheTokenForUser1))
                 .andExpect(status().isNotFound());
-        assertEquals(2, getUserRepository().count());
-        assertEquals(4, getContactRepository().count());
+        assertEquals(2, usersCount());
+        assertEquals(4, contactsCount());
     }
 
 }
