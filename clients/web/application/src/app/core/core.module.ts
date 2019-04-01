@@ -5,6 +5,7 @@ import {HeaderComponent} from './header/header.component';
 import {AppRoutingModule} from '../app-routing.module';
 import {CoreRoutingModule} from './core-routing.module';
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
+import {CustomMaterialModule} from "./material.module";
 
 @NgModule({
   declarations: [CoreComponent, HeaderComponent],
@@ -12,7 +13,8 @@ import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
     AppRoutingModule,
     CoreRoutingModule,
     CommonModule,
-    NgbModule
+    NgbModule,
+    CustomMaterialModule
   ]
 })
 export class CoreModule {

@@ -5,6 +5,7 @@ import {AppRoutingModule} from './app-routing.module';
 import {AppComponent} from './app.component';
 import {CoreModule} from './core/core.module';
 import {FeaturesModule} from './features/features.module';
+import {CustomMaterialModule} from './core/material.module'
 
 @NgModule({
   declarations: [
@@ -13,6 +14,7 @@ import {FeaturesModule} from './features/features.module';
   imports: [
     BrowserModule,
     AppRoutingModule,
+    CustomMaterialModule,
     CoreModule,
     FeaturesModule,
   ],

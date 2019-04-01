@@ -53,3 +53,7 @@ links
 # Notes
   * Added ng-bootstrap
   * Added https://material.angular.io/ 
+    * npm install --save @angular/material @angular/cdk @angular/animations
+    * In style.css : @import '~@angular/material/prebuilt-themes/indigo-pink.css';
+    * In index.html : <link href="//fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+

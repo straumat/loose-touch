@@ -1,6 +1,8 @@
-/* You can add global styles to this file, and also import other style files */
+/* Bootstrap & bootstrap material. */
 @import "~bootstrap/dist/css/bootstrap.css";
+@import '~@angular/material/prebuilt-themes/deeppurple-amber.css';
 
+/* Global font */
 body {
   font-family: 'Montserrat', sans-serif;
 }
