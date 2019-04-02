@@ -3,12 +3,22 @@ import {Routes, RouterModule} from '@angular/router';
 import {CoreComponent} from './core.component';
 import {DashboardComponent} from '../features/dashboard/dashboard.component';
 import {DummyComponent} from '../features/dummy/dummy.component';
+import {LoginComponent} from '../features/login/login.component';
+import {PageNotFoundComponent} from '../features/page-not-found/page-not-found.component';
+import {AuthenticationGuardService} from './guards/authentication-guard.service';
 
 const coreRoutes: Routes = [
   {
+    // Login.
+    path: 'login',
+    component: LoginComponent
+  },
+  {
+    // Dashboard.
     path: '',
     redirectTo: '/dashboard',
     pathMatch: 'full',
+    canActivate: [AuthenticationGuardService]
   },
   {
     path: '',
@@ -16,18 +26,25 @@ const coreRoutes: Routes = [
     children: [
       {
         path: '',
-        component: DashboardComponent
+        component: DashboardComponent,
+        canActivate: [AuthenticationGuardService]
       },
       {
         path: 'dashboard',
-        component: DashboardComponent
+        component: DashboardComponent,
+        canActivate: [AuthenticationGuardService]
       }
       ,
       {
         path: 'dummy',
-        component: DummyComponent
+        component: DummyComponent,
+        canActivate: [AuthenticationGuardService]
       }
     ]
+  },
+  {
+    path: '**',
+    component: PageNotFoundComponent
   }
 ];
 
