@@ -1,8 +1,8 @@
 import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
 import {HeaderComponent} from './header.component';
-import {CUSTOM_ELEMENTS_SCHEMA} from "@angular/core";
-import {CustomMaterialModule} from "../material.module";
+import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
+import {CustomMaterialModule} from '../material.module';
 
 describe('HeaderComponent', () => {
   let component: HeaderComponent;

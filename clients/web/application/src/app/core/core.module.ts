@@ -7,7 +7,7 @@ import {CoreRoutingModule} from './core-routing.module';
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {CustomMaterialModule} from './material.module';
 import {JwtHelperService, JwtModule} from '@auth0/angular-jwt';
-import {RouterModule} from "@angular/router";
+import {RouterModule} from '@angular/router';
 
 @NgModule({
   declarations: [CoreComponent, HeaderComponent],

@@ -1,8 +1,8 @@
 import {TestBed} from '@angular/core/testing';
 
 import {AuthenticationGuardService} from './authentication-guard.service';
-import {RouterModule} from "@angular/router";
-import {JwtHelperService, JwtModule} from "@auth0/angular-jwt";
+import {RouterModule} from '@angular/router';
+import {JwtHelperService, JwtModule} from '@auth0/angular-jwt';
 
 describe('AuthenticationGuardService', () => {
 
