@@ -6,6 +6,7 @@ import io.swagger.annotations.ApiModelProperty;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Calendar;
+import java.util.Date;
 
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 
@@ -94,7 +95,7 @@ public class ContactDTO {
             example = "21/12/2019",
             required = true,
             position = 7)
-    private Calendar contactDueDate;
+    private Date contactDueDate;
 
     /**
      * Constructor.
@@ -239,7 +240,7 @@ public class ContactDTO {
      *
      * @return contactDueDate
      */
-    public final Calendar getContactDueDate() {
+    public final Date getContactDueDate() {
         return contactDueDate;
     }
 
@@ -248,7 +249,7 @@ public class ContactDTO {
      *
      * @param newContactDueDate the contactDueDate to set
      */
-    public final void setContactDueDate(final Calendar newContactDueDate) {
+    public final void setContactDueDate(final Date newContactDueDate) {
         contactDueDate = newContactDueDate;
     }
 
@@ -256,16 +257,19 @@ public class ContactDTO {
      * Indicates that contact has been contacted, calculates the new contactDueDate and set it.
      */
     public final void contacted() {
-        contactDueDate = Calendar.getInstance();
+        Calendar now = Calendar.getInstance();
         switch (contactRecurrenceType) {
             case RECURRENCE_TYPE_DAY:
-                contactDueDate.add(Calendar.DATE, contactRecurrenceValue);
+                now.add(Calendar.DATE, contactRecurrenceValue);
+                contactDueDate = now.getTime();
                 break;
             case RECURRENCE_TYPE_MONTH:
-                contactDueDate.add(Calendar.MONTH, contactRecurrenceValue);
+                now.add(Calendar.MONTH, contactRecurrenceValue);
+                contactDueDate = now.getTime();
                 break;
             case RECURRENCE_TYPE_YEAR:
-                contactDueDate.add(Calendar.YEAR, contactRecurrenceValue);
+                now.add(Calendar.YEAR, contactRecurrenceValue);
+                contactDueDate = now.getTime();
                 break;
             default:
                 break;

@@ -206,7 +206,7 @@ public class UpdateContactTest extends APITest {
                 .andExpect(jsonPath("contactRecurrenceValue").value(9))
                 .andExpect(jsonPath("contactDueDate").value("31/12/2019"));
         // Updates the contact due date.
-        contact.setContactDueDate(new GregorianCalendar(1978, Calendar.AUGUST, 8, 0, 0, 1));
+        contact.setContactDueDate(new GregorianCalendar(1978, Calendar.AUGUST, 8, 0, 0, 1).getTime());
         getMvc().perform(put(CONTACT_URL + "/" + CONTACT_1.getEmail() + "/")
                 .contentType(APPLICATION_JSON_UTF8)
                 .header("Authorization", "Bearer " + looseToucheTokenForUser1)

@@ -7,6 +7,7 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBRangeKey;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
 
 import java.util.Calendar;
+import java.util.Date;
 
 /**
  * Contact.
@@ -99,6 +100,38 @@ public class Contact {
         this.contactRecurrenceType = newContactRecurrenceType;
         this.contactRecurrenceValue = newContactRecurrenceValue;
         this.contactDueDate = newContactDueDate;
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param newUserId                 user id
+     * @param newEmail                  email
+     * @param newFirstName              first name
+     * @param newLastName               last name
+     * @param newNotes                  notes
+     * @param newContactRecurrenceType  recurrence type
+     * @param newContactRecurrenceValue recurrence value
+     * @param newContactDueDate         contact due date
+     */
+    @SuppressWarnings("checkstyle:parameternumber")
+    public Contact(final String newUserId,
+                   final String newEmail,
+                   final String newFirstName,
+                   final String newLastName,
+                   final String newNotes,
+                   final String newContactRecurrenceType,
+                   final int newContactRecurrenceValue,
+                   final Date newContactDueDate) {
+        this.userId = newUserId;
+        this.email = newEmail;
+        this.firstName = newFirstName;
+        this.lastName = newLastName;
+        this.notes = newNotes;
+        this.contactRecurrenceType = newContactRecurrenceType;
+        this.contactRecurrenceValue = newContactRecurrenceValue;
+        this.contactDueDate = Calendar.getInstance();
+        this.contactDueDate.setTime(newContactDueDate);
     }
 
     /**

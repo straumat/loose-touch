@@ -160,7 +160,9 @@ public enum TestContacts {
                 getNotes(),
                 getContactRecurrenceType(),
                 getContactRecurrenceValue());
-        contactDTO.setContactDueDate(getContactDueDate());
+        if (getContactDueDate() != null) {
+            contactDTO.setContactDueDate(getContactDueDate().getTime());
+        }
         return contactDTO;
     }
 

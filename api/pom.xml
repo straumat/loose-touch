@@ -42,6 +42,7 @@
         <swagger.version>2.9.2</swagger.version>
         <swagger-maven-plugin.version>3.1.8</swagger-maven-plugin.version>
         <jjwt.version>0.10.5</jjwt.version>
+        <typescript-generator-maven-plugin.version>2.12.476</typescript-generator-maven-plugin.version>
         <!-- Util -->
         <mapstruct.version>1.3.0.Final</mapstruct.version>
         <commons-validator.version>1.6</commons-validator.version>
@@ -225,6 +226,31 @@
                                 </configuration>
                             </execution>
                         </executions>
+                    </plugin>
+                    <!-- Typescript generator -->
+                    <plugin>
+                        <groupId>cz.habarta.typescript-generator</groupId>
+                        <artifactId>typescript-generator-maven-plugin</artifactId>
+                        <version>${typescript-generator-maven-plugin.version}</version>
+                        <executions>
+                            <execution>
+                                <id>generate</id>
+                                <goals>
+                                    <goal>generate</goal>
+                                </goals>
+                                <phase>process-classes</phase>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <jsonLibrary>jackson2</jsonLibrary>
+                            <classes>
+                                <class>com.oakinvest.lt.dto.v1.UserDTO</class>
+                                <class>com.oakinvest.lt.dto.v1.ContactDTO</class>
+                            </classes>
+                            <outputKind>module</outputKind>
+                            <mapEnum>asEnum</mapEnum>
+                            <excludeClasses>java.util.Observer,java.util.Observable</excludeClasses>
+                        </configuration>
                     </plugin>
                     <!-- Documentation plugin -->
                     <plugin>

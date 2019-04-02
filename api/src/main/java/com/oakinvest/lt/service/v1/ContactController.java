@@ -148,7 +148,7 @@ public class ContactController implements ContactAPI {
             c.get().setContactRecurrenceType(contact.getContactRecurrenceType());
             c.get().setContactRecurrenceValue(contact.getContactRecurrenceValue());
             if (contact.getContactDueDate() != null) {
-                c.get().setContactDueDate(contact.getContactDueDate());
+                c.get().getContactDueDate().setTime(contact.getContactDueDate());
             }
             contactRepository.save(c.get());
             return LooseTouchMapper.INSTANCE.contactToContactDTO(c.get());
@@ -172,7 +172,7 @@ public class ContactController implements ContactAPI {
         if (contact.isPresent()) {
             final ContactDTO contactDTO = LooseTouchMapper.INSTANCE.contactToContactDTO(contact.get());
             contactDTO.contacted();
-            contact.get().setContactDueDate(contactDTO.getContactDueDate());
+            contact.get().getContactDueDate().setTime(contactDTO.getContactDueDate());
             contactRepository.save(contact.get());
             return LooseTouchMapper.INSTANCE.contactToContactDTO(contact.get());
         } else {

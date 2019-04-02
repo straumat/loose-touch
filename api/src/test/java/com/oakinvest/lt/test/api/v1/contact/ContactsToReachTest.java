@@ -66,7 +66,7 @@ public class ContactsToReachTest extends APITest {
         // Test data.
         // User 1 / contact 1/
         c = CONTACT_1.toDTO();
-        c.setContactDueDate(new GregorianCalendar(2018, Calendar.DECEMBER, 31, 13, 24, 56));
+        c.setContactDueDate(new GregorianCalendar(2018, Calendar.DECEMBER, 31, 13, 24, 56).getTime());
         getMvc().perform(post(CONTACT_URL)
                 .contentType(APPLICATION_JSON_UTF8)
                 .header("Authorization", "Bearer " + looseToucheTokenForUser1)
@@ -74,7 +74,7 @@ public class ContactsToReachTest extends APITest {
                 .andExpect(status().isCreated());
         // User 1 / contact 2.
         c = CONTACT_2.toDTO();
-        c.setContactDueDate(new GregorianCalendar(2058, Calendar.DECEMBER, 31, 13, 24, 56));
+        c.setContactDueDate(new GregorianCalendar(2058, Calendar.DECEMBER, 31, 13, 24, 56).getTime());
         getMvc().perform(post(CONTACT_URL)
                 .contentType(APPLICATION_JSON_UTF8)
                 .header("Authorization", "Bearer " + looseToucheTokenForUser1)
@@ -84,7 +84,7 @@ public class ContactsToReachTest extends APITest {
         c = CONTACT_3.toDTO();
         Calendar tomorrow = Calendar.getInstance();
         tomorrow.add(DATE, 2);
-        c.setContactDueDate(tomorrow);
+        c.setContactDueDate(tomorrow.getTime());
         getMvc().perform(post(CONTACT_URL)
                 .contentType(APPLICATION_JSON_UTF8)
                 .header("Authorization", "Bearer " + looseToucheTokenForUser1)
@@ -94,7 +94,7 @@ public class ContactsToReachTest extends APITest {
         c = CONTACT_4.toDTO();
         Calendar yesterday = Calendar.getInstance();
         yesterday.add(DATE, -2);
-        c.setContactDueDate(yesterday);
+        c.setContactDueDate(yesterday.getTime());
         getMvc().perform(post(CONTACT_URL)
                 .contentType(APPLICATION_JSON_UTF8)
                 .header("Authorization", "Bearer " + looseToucheTokenForUser1)
@@ -103,7 +103,7 @@ public class ContactsToReachTest extends APITest {
 
         // User 2 / Contact 1.
         c = CONTACT_1.toDTO();
-        c.setContactDueDate(new GregorianCalendar(2018, Calendar.DECEMBER, 31, 13, 24, 56));
+        c.setContactDueDate(new GregorianCalendar(2018, Calendar.DECEMBER, 31, 13, 24, 56).getTime());
         getMvc().perform(post(CONTACT_URL)
                 .contentType(APPLICATION_JSON_UTF8)
                 .header("Authorization", "Bearer " + looseToucheTokenForUser2)
@@ -111,7 +111,7 @@ public class ContactsToReachTest extends APITest {
                 .andExpect(status().isCreated());
         // User 2 / Contact 2.
         c = CONTACT_2.toDTO();
-        c.setContactDueDate(new GregorianCalendar(2058, Calendar.DECEMBER, 31, 13, 24, 56));
+        c.setContactDueDate(new GregorianCalendar(2058, Calendar.DECEMBER, 31, 13, 24, 56).getTime());
         getMvc().perform(post(CONTACT_URL)
                 .contentType(APPLICATION_JSON_UTF8)
                 .header("Authorization", "Bearer " + looseToucheTokenForUser2)
