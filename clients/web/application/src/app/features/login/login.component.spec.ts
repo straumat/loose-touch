@@ -1,6 +1,7 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-
-import { LoginComponent } from './login.component';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import {LoginComponent} from './login.component';
+import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
+import {CustomMaterialModule} from '../../core/material.module';
 
 describe('LoginComponent', () => {
   let component: LoginComponent;
@@ -8,9 +9,10 @@ describe('LoginComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ LoginComponent ]
-    })
-    .compileComponents();
+      imports: [CustomMaterialModule],
+      declarations: [LoginComponent],
+      schemas: [CUSTOM_ELEMENTS_SCHEMA]
+    }).compileComponents();
   }));
 
   beforeEach(() => {
@@ -22,4 +24,12 @@ describe('LoginComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  // -------------------------------------------------------------------------------------------------------------------
+  // My own tests.
+  it('should display the title', () => {
+    const compiled = fixture.debugElement.nativeElement;
+    expect(compiled.querySelector('mat-card-title').textContent).toContain('Loose touch login');
+  });
+
 });

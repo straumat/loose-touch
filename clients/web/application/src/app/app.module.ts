@@ -6,6 +6,7 @@ import {AppComponent} from './app.component';
 import {CoreModule} from './core/core.module';
 import {FeaturesModule} from './features/features.module';
 import {CustomMaterialModule} from './core/material.module';
+import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
 
 @NgModule({
   declarations: [
@@ -15,6 +16,7 @@ import {CustomMaterialModule} from './core/material.module';
     BrowserModule,
     AppRoutingModule,
     CustomMaterialModule,
+    FontAwesomeModule,
     CoreModule,
     FeaturesModule,
   ],

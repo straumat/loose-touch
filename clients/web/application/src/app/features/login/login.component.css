@@ -1,0 +1,14 @@
+.login-box {
+  padding: 70px 0;
+  margin: auto;
+  width: 380px;
+}
+
+.mat-card {
+  padding-bottom: 35px;
+}
+
+.mat-card-actions {
+  width: 50%;
+  margin: 0 auto;
+}
