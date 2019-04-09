@@ -12,7 +12,7 @@ export class AuthenticationGuardService implements CanActivate {
   }
 
   /**
-   * Can activate only if a non expried token is present.
+   * Can activate only if a non expired token is present.
    * @param route route
    * @param state state
    */

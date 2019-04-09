@@ -94,6 +94,8 @@ public class GoogleLoginTest extends APITest {
                     .andExpect(status().isOk())
                     .andReturn();
             String looseTouchUser1Token1 = JsonPath.parse(result.getResponse().getContentAsString()).read("idToken").toString();
+//            System.out.println("==> " + looseTouchUser1Token1);
+//            System.exit(-1);
 
             // Check that the user now exists and that the token is correct.
             Optional<User> u1 = getUserRepository().findUserByGoogleUsername(GOOGLE_USER_1.getEmail());
