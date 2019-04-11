@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 
 /**
- * Google user info dto.
+ * Google account info dto.
  */
 @SuppressWarnings("unused")
 @JsonInclude(NON_NULL)

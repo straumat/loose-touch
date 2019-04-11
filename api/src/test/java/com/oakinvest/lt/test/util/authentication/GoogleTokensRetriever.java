@@ -1,6 +1,6 @@
 package com.oakinvest.lt.test.util.authentication;
 
-import com.oakinvest.lt.test.util.data.TestUsers;
+import com.oakinvest.lt.test.util.data.TestAccounts;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,7 +24,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
-import static com.oakinvest.lt.test.util.data.TestUsers.GOOGLE_USER_1;
+import static com.oakinvest.lt.test.util.data.TestAccounts.GOOGLE_ACCOUNT_1;
 
 /**
  * Google token retriever.
@@ -56,63 +56,63 @@ public class GoogleTokensRetriever {
     private String accessTokenUri;
 
     /**
-     * Google refresh token for test user 1 (loose.touch.test.1@gmail.com).
+     * Google refresh token for test account 1 (loose.touch.test.1@gmail.com).
      */
-    @Value("${application.test.user1.refreshToken}")
+    @Value("${application.test.account1.refreshToken}")
     private String user1GoogleRefreshToken;
 
     /**
-     * Google refresh token for test user 2 (loose.touch.test.2@gmail.com).
+     * Google refresh token for test account 2 (loose.touch.test.2@gmail.com).
      */
-    @Value("${application.test.user2.refreshToken}")
+    @Value("${application.test.account2.refreshToken}")
     private String user2GoogleRefreshToken;
 
     /**
-     * File name of the file where is stored google tokens for test user 1 (loose.touch.test.1@gmail.com).
+     * File name of the file where is stored google tokens for test account 1 (loose.touch.test.1@gmail.com).
      */
     private static final String USER_1_GOOGLE_TOKENS_FILE_NAME = "google-id-token-test-1.ser";
 
     /**
-     * File name of the file where is stored google tokens for test user 2 (loose.touch.test.2@gmail.com).
+     * File name of the file where is stored google tokens for test account 2 (loose.touch.test.2@gmail.com).
      */
     private static final String USER_2_GOOGLE_TOKENS_FILE_NAME = "google-id-token-test-2.ser";
 
     /**
-     * Retrieve an id ticket for a given user.
+     * Retrieve an id ticket for a given account.
      *
-     * @param user user (GOOGLE_USER_1 or GOOGLE_USER_2).
+     * @param user account (GOOGLE_ACCOUNT_1 or GOOGLE_ACCOUNT_2).
      * @return google id token.
      */
-    public Optional<GoogleRefreshToken> getIdToken(final TestUsers user) throws IOException {
-        log.info("Asking for a token for user " + user);
+    public Optional<GoogleRefreshToken> getIdToken(final TestAccounts user) throws IOException {
+        log.info("Asking for a token for account " + user);
         Optional<GoogleRefreshToken> idToken = getIdTokenFromCache(user);
 
         if (idToken.isPresent()) {
-            log.info("Token for user " + user + " found in cache : " + idToken.get());
+            log.info("Token for account " + user + " found in cache : " + idToken.get());
             return idToken;
         } else {
-            log.info("Token for user " + user + " not present in cache.");
+            log.info("Token for account " + user + " not present in cache.");
             idToken = getIdTokenFromGoogle(user);
             if (idToken.isPresent()) {
-                log.info("Token for user " + user + " returned by google : " + idToken.get());
+                log.info("Token for account " + user + " returned by google : " + idToken.get());
                 saveTokenInCache(user, idToken.get());
             } else {
-                log.info("Impossible to getContact a token for user " + user + " from Google");
+                log.info("Impossible to getContact a token for account " + user + " from Google");
             }
             return idToken;
         }
     }
 
     /**
-     * Retrieve an id ticket from cache for a given user.
+     * Retrieve an id ticket from cache for a given account.
      *
-     * @param user user (GOOGLE_USER_1 or GOOGLE_USER_2).
+     * @param user account (GOOGLE_ACCOUNT_1 or GOOGLE_ACCOUNT_2).
      * @return google id token.
      */
-    private Optional<GoogleRefreshToken> getIdTokenFromCache(final TestUsers user) throws IOException {
+    private Optional<GoogleRefreshToken> getIdTokenFromCache(final TestAccounts user) throws IOException {
         // File containing the token.
         File googleIdTokenFile;
-        if (user.equals(GOOGLE_USER_1)) {
+        if (user.equals(GOOGLE_ACCOUNT_1)) {
             googleIdTokenFile = new File(USER_1_GOOGLE_TOKENS_FILE_NAME);
         } else {
             googleIdTokenFile = new File(USER_2_GOOGLE_TOKENS_FILE_NAME);
@@ -146,17 +146,17 @@ public class GoogleTokensRetriever {
     }
 
     /**
-     * Retrieve an id ticket from google for a given user.
+     * Retrieve an id ticket from google for a given account.
      *
-     * @param user user (GOOGLE_USER_1 or GOOGLE_USER_2).
+     * @param user account (GOOGLE_ACCOUNT_1 or GOOGLE_ACCOUNT_2).
      * @return google id token.
      */
-    private Optional<GoogleRefreshToken> getIdTokenFromGoogle(final TestUsers user) {
+    private Optional<GoogleRefreshToken> getIdTokenFromGoogle(final TestAccounts user) {
         log.info("Saving google id token for " + user);
 
         // Refresh token.
         String refreshToken;
-        if (user.equals(GOOGLE_USER_1)) {
+        if (user.equals(GOOGLE_ACCOUNT_1)) {
             refreshToken = user1GoogleRefreshToken;
         } else {
             refreshToken = user2GoogleRefreshToken;
@@ -189,15 +189,15 @@ public class GoogleTokensRetriever {
     /**
      * Save a token in cache
      *
-     * @param user   user (GOOGLE_USER_1 or GOOGLE_USER_2).
+     * @param user   account (GOOGLE_ACCOUNT_1 or GOOGLE_ACCOUNT_2).
      * @param tokens tokens to save
      */
-    private void saveTokenInCache(final TestUsers user, final GoogleRefreshToken tokens) {
-        log.info("Saving google tokens in cache for user " + user);
+    private void saveTokenInCache(final TestAccounts user, final GoogleRefreshToken tokens) {
+        log.info("Saving google tokens in cache for account " + user);
 
         // File containing the token.
         String path;
-        if (user.equals(GOOGLE_USER_1)) {
+        if (user.equals(GOOGLE_ACCOUNT_1)) {
             path = USER_1_GOOGLE_TOKENS_FILE_NAME;
         } else {
             path = USER_2_GOOGLE_TOKENS_FILE_NAME;

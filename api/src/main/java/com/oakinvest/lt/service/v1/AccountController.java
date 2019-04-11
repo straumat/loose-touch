@@ -2,13 +2,13 @@ package com.oakinvest.lt.service.v1;
 
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 import com.oakinvest.lt.authentication.google.GoogleTokenVerifier;
-import com.oakinvest.lt.authentication.loosetouch.AuthenticatedUser;
+import com.oakinvest.lt.authentication.loosetouch.AuthenticatedAccount;
 import com.oakinvest.lt.authentication.loosetouch.LooseTouchTokenProvider;
-import com.oakinvest.lt.domain.User;
+import com.oakinvest.lt.domain.Account;
 import com.oakinvest.lt.dto.util.GoogleUserInfoDTO;
-import com.oakinvest.lt.dto.v1.UserDTO;
+import com.oakinvest.lt.dto.v1.AccountDTO;
 import com.oakinvest.lt.repository.ContactRepository;
-import com.oakinvest.lt.repository.UserRepository;
+import com.oakinvest.lt.repository.AccountRepository;
 import com.oakinvest.lt.util.error.LooseTouchException;
 import com.oakinvest.lt.util.mapper.LooseTouchMapper;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,17 +17,17 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.Optional;
 
-import static com.oakinvest.lt.authentication.loosetouch.UserAuthentication.GOOGLE;
+import static com.oakinvest.lt.authentication.loosetouch.AccountAuthentication.GOOGLE;
 import static com.oakinvest.lt.util.error.LooseTouchErrorType.api_error;
 import static com.oakinvest.lt.util.error.LooseTouchErrorType.authentication_error;
 import static com.oakinvest.lt.util.error.LooseTouchErrorType.invalid_request_error;
 
 /**
- * User controller.
+ * Account controller.
  */
 @SuppressWarnings("unused")
 @RestController
-public class UserController implements UserAPI {
+public class AccountController implements AccountAPI {
 
     /**
      * Client id.
@@ -58,9 +58,9 @@ public class UserController implements UserAPI {
     private final LooseTouchTokenProvider looseTouchTokenProvider;
 
     /**
-     * User repository.
+     * Account repository.
      */
-    private final UserRepository userRepository;
+    private final AccountRepository accountRepository;
 
     /**
      * Contact repository.
@@ -72,21 +72,21 @@ public class UserController implements UserAPI {
      *
      * @param newGoogleTokenVerifier     google token retriever
      * @param newLooseTouchTokenProvider loose touch token provider
-     * @param newUserRepository          user repository
+     * @param newAccountRepository          account repository
      * @param newContactRepository       contact repository
      */
-    public UserController(final GoogleTokenVerifier newGoogleTokenVerifier,
-                          final LooseTouchTokenProvider newLooseTouchTokenProvider,
-                          final UserRepository newUserRepository,
-                          final ContactRepository newContactRepository) {
+    public AccountController(final GoogleTokenVerifier newGoogleTokenVerifier,
+                             final LooseTouchTokenProvider newLooseTouchTokenProvider,
+                             final AccountRepository newAccountRepository,
+                             final ContactRepository newContactRepository) {
         this.googleTokenVerifier = newGoogleTokenVerifier;
         this.looseTouchTokenProvider = newLooseTouchTokenProvider;
-        this.userRepository = newUserRepository;
+        this.accountRepository = newAccountRepository;
         this.contactRepository = newContactRepository;
     }
 
     @Override
-    public final UserDTO googleLogin(final String googleIdToken, final String googleAccessToken) {
+    public final AccountDTO googleLogin(final String googleIdToken, final String googleAccessToken) {
 
         // Google Id token missing.
         if (googleIdToken == null) {
@@ -101,47 +101,47 @@ public class UserController implements UserAPI {
         } else {
             // It's a valid token.
 
-            // Search for the user email address in the database.
-            Optional<User> userInDatabase = userRepository.findUserByGoogleUsername(payload.get().getEmail());
-            User user;
+            // Search for the account email address in the database.
+            Optional<Account> accountInDatabase = accountRepository.findAccountByGoogleUsername(payload.get().getEmail());
+            Account account;
 
-            if (userInDatabase.isPresent()) {
-                // if the user in the database, we return a token.
-                user = userInDatabase.get();
+            if (accountInDatabase.isPresent()) {
+                // if the account in the database, we return a token.
+                account = accountInDatabase.get();
 
                 // Return the profile with the id token.
-                UserDTO u = LooseTouchMapper.INSTANCE.userToUserDTO(user);
-                u.setIdToken(looseTouchTokenProvider.createToken(user.getId()));
+                AccountDTO u = LooseTouchMapper.INSTANCE.accountToAccountDTO(account);
+                u.setIdToken(looseTouchTokenProvider.createToken(account.getId()));
                 return u;
             } else {
                 // If not, we createContact it first and then, we return a token.
 
-                // User data
+                // Account data
                 String firstName;
                 String lastName;
                 String email;
                 String imageUrl;
 
                 if (payload.get().get("given_name") != null) {
-                    // If user data are available in the id token.
+                    // If account data are available in the id token.
                     firstName = (String) payload.get().get("given_name");
                     lastName = (String) payload.get().get("family_name");
                     email = payload.get().getEmail();
                     imageUrl = (String) payload.get().get("picture");
                 } else {
-                    // else we search them via google user info.
+                    // else we search them via google account info.
                     GoogleUserInfoDTO googleUserInfo = getGoogleUserInfo(googleAccessToken);
                     firstName = googleUserInfo.getGivenName();
                     lastName = googleUserInfo.getFamilyName();
                     email = googleUserInfo.getEmail();
                     imageUrl = googleUserInfo.getPicture();
                 }
-                user = new User(firstName, lastName, email, imageUrl, GOOGLE);
-                userRepository.save(user);
+                account = new Account(firstName, lastName, email, imageUrl, GOOGLE);
+                accountRepository.save(account);
 
                 // Return the profile with the id token.
-                UserDTO u = LooseTouchMapper.INSTANCE.userToUserDTO(user);
-                u.setIdToken(looseTouchTokenProvider.createToken(user.getId()));
+                AccountDTO u = LooseTouchMapper.INSTANCE.accountToAccountDTO(account);
+                u.setIdToken(looseTouchTokenProvider.createToken(account.getId()));
                 u.setNewAccount(true);
                 return u;
             }
@@ -150,29 +150,29 @@ public class UserController implements UserAPI {
     }
 
     @Override
-    public final UserDTO getProfile(final AuthenticatedUser authenticatedUser) {
-        return userRepository.getUser(authenticatedUser.getUserId())
-                .map(user -> {
-                    UserDTO u = LooseTouchMapper.INSTANCE.userToUserDTO(user);
-                    u.setIdToken(looseTouchTokenProvider.createToken(user.getId()));
+    public final AccountDTO getProfile(final AuthenticatedAccount authenticatedAccount) {
+        return accountRepository.getAccount(authenticatedAccount.getAccountId())
+                .map(account -> {
+                    AccountDTO u = LooseTouchMapper.INSTANCE.accountToAccountDTO(account);
+                    u.setIdToken(looseTouchTokenProvider.createToken(account.getId()));
                     return u;
                 })
-                .orElseThrow(() -> new LooseTouchException(api_error, "User " + authenticatedUser.getUserId() + " not found"));
+                .orElseThrow(() -> new LooseTouchException(api_error, "Account " + authenticatedAccount.getAccountId() + " not found"));
     }
 
     @Override
-    public final void delete(final AuthenticatedUser authenticatedUser) {
+    public final void delete(final AuthenticatedAccount authenticatedAccount) {
         // Delete all contacts.
-        contactRepository.deleteAllContactsOfUser(authenticatedUser.getUserId());
-        // Delete user.
-        userRepository.delete(authenticatedUser.getUserId());
+        contactRepository.deleteAllContactsOfAccount(authenticatedAccount.getAccountId());
+        // Delete account.
+        accountRepository.delete(authenticatedAccount.getAccountId());
     }
 
     /**
-     * getContact google user info.
+     * getContact google account info.
      *
      * @param googleAccessToken google access token
-     * @return google user info
+     * @return google account info
      */
     @SuppressWarnings("WhitespaceAround")
     private GoogleUserInfoDTO getGoogleUserInfo(final String googleAccessToken) {

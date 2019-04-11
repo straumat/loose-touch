@@ -1,4 +1,4 @@
-package com.oakinvest.lt.test.api.v1.user;
+package com.oakinvest.lt.test.api.v1.account;
 
 import com.oakinvest.lt.test.util.api.APITest;
 import org.junit.Ignore;
@@ -10,8 +10,8 @@ import static com.oakinvest.lt.test.util.data.TestContacts.CONTACT_2;
 import static com.oakinvest.lt.test.util.data.TestContacts.CONTACT_3;
 import static com.oakinvest.lt.test.util.data.TestContacts.CONTACT_4;
 import static com.oakinvest.lt.test.util.data.TestContacts.CONTACT_5;
-import static com.oakinvest.lt.test.util.data.TestUsers.GOOGLE_USER_1;
-import static com.oakinvest.lt.test.util.data.TestUsers.GOOGLE_USER_2;
+import static com.oakinvest.lt.test.util.data.TestAccounts.GOOGLE_ACCOUNT_1;
+import static com.oakinvest.lt.test.util.data.TestAccounts.GOOGLE_ACCOUNT_2;
 import static com.oakinvest.lt.util.error.LooseTouchErrorType.authentication_error;
 import static com.oakinvest.lt.util.error.LooseTouchErrorType.invalid_request_error;
 import static java.util.Calendar.DATE;
@@ -27,12 +27,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 /**
  * Delete contact test.
  */
-public class DeleteUserTest extends APITest {
+public class DeleteAccountTest extends APITest {
 
     @Override
     public void authenticationTest() throws Exception {
         // No token provided.
-        getMvc().perform(delete(DELETE_USER_URL)
+        getMvc().perform(delete(DELETE_ACCOUNT_URL)
                 .contentType(APPLICATION_JSON_UTF8))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("type").value(invalid_request_error.toString()))
@@ -40,7 +40,7 @@ public class DeleteUserTest extends APITest {
                 .andExpect(jsonPath("errors", hasSize(0)));
 
         // Dummy bearer.
-        getMvc().perform(delete(DELETE_USER_URL)
+        getMvc().perform(delete(DELETE_ACCOUNT_URL)
                 .contentType(APPLICATION_JSON_UTF8)
                 .header("Authorization", "Bearer invalidToken"))
                 .andExpect(status().isUnauthorized())
@@ -49,7 +49,7 @@ public class DeleteUserTest extends APITest {
                 .andExpect(jsonPath("errors", hasSize(0)));
     }
 
-    @Ignore("Impossible that user id is not set")
+    @Ignore("Impossible that account id is not set")
     @Override
     public void validDataTest() {
 
@@ -57,76 +57,76 @@ public class DeleteUserTest extends APITest {
 
     @Override
     public void businessLogicTest() throws Exception {
-        // User creation.
-        assertEquals(0, usersCount());
+        // Account creation.
+        assertEquals(0, accountsCount());
         assertEquals(0, contactsCount());
-        final String looseToucheTokenForUser1 = getLooseToucheToken(GOOGLE_USER_1);
-        final String looseToucheTokenForUser2 = getLooseToucheToken(GOOGLE_USER_2);
+        final String looseToucheTokenForAccount1 = getLooseToucheToken(GOOGLE_ACCOUNT_1);
+        final String looseToucheTokenForAccount2 = getLooseToucheToken(GOOGLE_ACCOUNT_2);
 
         // Test data.
-        // User 1 / contact 1.
+        // Account 1 / contact 1.
         getMvc().perform(post(CONTACT_URL)
                 .contentType(APPLICATION_JSON_UTF8)
-                .header("Authorization", "Bearer " + looseToucheTokenForUser1)
+                .header("Authorization", "Bearer " + looseToucheTokenForAccount1)
                 .content(getMapper().writeValueAsString(CONTACT_1.toDTO())))
                 .andExpect(status().isCreated());
-        // User 1 / contact 2.
+        // Account 1 / contact 2.
         getMvc().perform(post(CONTACT_URL)
                 .contentType(APPLICATION_JSON_UTF8)
-                .header("Authorization", "Bearer " + looseToucheTokenForUser1)
+                .header("Authorization", "Bearer " + looseToucheTokenForAccount1)
                 .content(getMapper().writeValueAsString(CONTACT_2.toDTO())))
                 .andExpect(status().isCreated());
-        // User 1 / contact 3.
+        // Account 1 / contact 3.
         getMvc().perform(post(CONTACT_URL)
                 .contentType(APPLICATION_JSON_UTF8)
-                .header("Authorization", "Bearer " + looseToucheTokenForUser1)
+                .header("Authorization", "Bearer " + looseToucheTokenForAccount1)
                 .content(getMapper().writeValueAsString(CONTACT_3.toDTO())))
                 .andExpect(status().isCreated());
-        // User 1 / contact 4.
+        // Account 1 / contact 4.
         Calendar date = Calendar.getInstance();
         date.add(DATE, 4);
         getMvc().perform(post(CONTACT_URL)
                 .contentType(APPLICATION_JSON_UTF8)
-                .header("Authorization", "Bearer " + looseToucheTokenForUser1)
+                .header("Authorization", "Bearer " + looseToucheTokenForAccount1)
                 .content(getMapper().writeValueAsString(CONTACT_4.toDTO())))
                 .andExpect(status().isCreated());
-        // User 1 / Contact 5.
+        // Account 1 / Contact 5.
         date = Calendar.getInstance();
         date.add(MONTH, 5);
         getMvc().perform(post(CONTACT_URL)
                 .contentType(APPLICATION_JSON_UTF8)
-                .header("Authorization", "Bearer " + looseToucheTokenForUser1)
+                .header("Authorization", "Bearer " + looseToucheTokenForAccount1)
                 .content(getMapper().writeValueAsString(CONTACT_5.toDTO())))
                 .andExpect(status().isCreated());
-        // User 2 / Contact 1.
+        // Account 2 / Contact 1.
         getMvc().perform(post(CONTACT_URL)
                 .contentType(APPLICATION_JSON_UTF8)
-                .header("Authorization", "Bearer " + looseToucheTokenForUser2)
+                .header("Authorization", "Bearer " + looseToucheTokenForAccount2)
                 .content(getMapper().writeValueAsString(CONTACT_1.toDTO())))
                 .andExpect(status().isCreated());
-        // User 2 / Contact 2.
+        // Account 2 / Contact 2.
         getMvc().perform(post(CONTACT_URL)
                 .contentType(APPLICATION_JSON_UTF8)
-                .header("Authorization", "Bearer " + looseToucheTokenForUser2)
+                .header("Authorization", "Bearer " + looseToucheTokenForAccount2)
                 .content(getMapper().writeValueAsString(CONTACT_2.toDTO())))
                 .andExpect(status().isCreated());
-        assertEquals(2, usersCount());
+        assertEquals(2, accountsCount());
         assertEquals(7, contactsCount());
 
-        // Delete user 1.
-        getMvc().perform(delete(DELETE_USER_URL)
+        // Delete account 1.
+        getMvc().perform(delete(DELETE_ACCOUNT_URL)
                 .contentType(APPLICATION_JSON_UTF8)
-                .header("Authorization", "Bearer " + looseToucheTokenForUser1))
+                .header("Authorization", "Bearer " + looseToucheTokenForAccount1))
                 .andExpect(status().isOk());
-        assertEquals(1, usersCount());
+        assertEquals(1, accountsCount());
         assertEquals(2, contactsCount());
 
-        // Delete user 2.
-        getMvc().perform(delete(DELETE_USER_URL)
+        // Delete account 2.
+        getMvc().perform(delete(DELETE_ACCOUNT_URL)
                 .contentType(APPLICATION_JSON_UTF8)
-                .header("Authorization", "Bearer " + looseToucheTokenForUser2))
+                .header("Authorization", "Bearer " + looseToucheTokenForAccount2))
                 .andExpect(status().isOk());
-        assertEquals(0, usersCount());
+        assertEquals(0, accountsCount());
         assertEquals(0, contactsCount());
     }
 

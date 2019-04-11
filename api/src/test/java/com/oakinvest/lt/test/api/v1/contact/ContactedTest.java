@@ -12,8 +12,8 @@ import static com.oakinvest.lt.test.util.data.TestContacts.CONTACT_3;
 import static com.oakinvest.lt.test.util.data.TestContacts.CONTACT_4;
 import static com.oakinvest.lt.test.util.data.TestContacts.CONTACT_5;
 import static com.oakinvest.lt.test.util.data.TestContacts.CONTACT_6;
-import static com.oakinvest.lt.test.util.data.TestUsers.GOOGLE_USER_1;
-import static com.oakinvest.lt.test.util.data.TestUsers.GOOGLE_USER_2;
+import static com.oakinvest.lt.test.util.data.TestAccounts.GOOGLE_ACCOUNT_1;
+import static com.oakinvest.lt.test.util.data.TestAccounts.GOOGLE_ACCOUNT_2;
 import static com.oakinvest.lt.util.error.LooseTouchErrorType.authentication_error;
 import static com.oakinvest.lt.util.error.LooseTouchErrorType.invalid_request_error;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
@@ -57,63 +57,63 @@ public class ContactedTest extends APITest {
     @Override
     public void businessLogicTest() throws Exception {
         // Configuration.
-        final String looseToucheTokenForUser1 = getLooseToucheToken(GOOGLE_USER_1);
-        final String looseToucheTokenForUser2 = getLooseToucheToken(GOOGLE_USER_2);
+        final String looseToucheTokenForAccount1 = getLooseToucheToken(GOOGLE_ACCOUNT_1);
+        final String looseToucheTokenForAccount2 = getLooseToucheToken(GOOGLE_ACCOUNT_2);
 
         // =============================================================================================================
         // Test data.
-        // Creates User 1 / contact 1.
+        // Creates Account 1 / contact 1.
         getMvc().perform(post(CONTACT_URL)
                 .contentType(APPLICATION_JSON_UTF8)
-                .header("Authorization", "Bearer " + looseToucheTokenForUser1)
+                .header("Authorization", "Bearer " + looseToucheTokenForAccount1)
                 .content(getMapper().writeValueAsString(CONTACT_1.toDTO())))
                 .andExpect(status().isCreated());
-        // Creates User 1 / contact 2.
+        // Creates Account 1 / contact 2.
         getMvc().perform(post(CONTACT_URL)
                 .contentType(APPLICATION_JSON_UTF8)
-                .header("Authorization", "Bearer " + looseToucheTokenForUser1)
+                .header("Authorization", "Bearer " + looseToucheTokenForAccount1)
                 .content(getMapper().writeValueAsString(CONTACT_2.toDTO())))
                 .andExpect(status().isCreated());
-        // Creates User 1 / contact 3.
+        // Creates Account 1 / contact 3.
         getMvc().perform(post(CONTACT_URL)
                 .contentType(APPLICATION_JSON_UTF8)
-                .header("Authorization", "Bearer " + looseToucheTokenForUser1)
+                .header("Authorization", "Bearer " + looseToucheTokenForAccount1)
                 .content(getMapper().writeValueAsString(CONTACT_3.toDTO())))
                 .andExpect(status().isCreated());
-        // Creates User 1 / contact 4.
+        // Creates Account 1 / contact 4.
         getMvc().perform(post(CONTACT_URL)
                 .contentType(APPLICATION_JSON_UTF8)
-                .header("Authorization", "Bearer " + looseToucheTokenForUser1)
+                .header("Authorization", "Bearer " + looseToucheTokenForAccount1)
                 .content(getMapper().writeValueAsString(CONTACT_4.toDTO())))
                 .andExpect(status().isCreated());
-        // Creates User 1 / contact 5.
+        // Creates Account 1 / contact 5.
         getMvc().perform(post(CONTACT_URL)
                 .contentType(APPLICATION_JSON_UTF8)
-                .header("Authorization", "Bearer " + looseToucheTokenForUser1)
+                .header("Authorization", "Bearer " + looseToucheTokenForAccount1)
                 .content(getMapper().writeValueAsString(CONTACT_5.toDTO())))
                 .andExpect(status().isCreated());
-        // Creates User 1 / contact 6.
+        // Creates Account 1 / contact 6.
         getMvc().perform(post(CONTACT_URL)
                 .contentType(APPLICATION_JSON_UTF8)
-                .header("Authorization", "Bearer " + looseToucheTokenForUser1)
+                .header("Authorization", "Bearer " + looseToucheTokenForAccount1)
                 .content(getMapper().writeValueAsString(CONTACT_6.toDTO())))
                 .andExpect(status().isCreated());
-        // Creates User 2 / contact 1.
+        // Creates Account 2 / contact 1.
         getMvc().perform(post(CONTACT_URL)
                 .contentType(APPLICATION_JSON_UTF8)
-                .header("Authorization", "Bearer " + looseToucheTokenForUser2)
+                .header("Authorization", "Bearer " + looseToucheTokenForAccount2)
                 .content(getMapper().writeValueAsString(CONTACT_1.toDTO())))
                 .andExpect(status().isCreated());
-        // Creates User 2 / contact 2.
+        // Creates Account 2 / contact 2.
         getMvc().perform(post(CONTACT_URL)
                 .contentType(APPLICATION_JSON_UTF8)
-                .header("Authorization", "Bearer " + looseToucheTokenForUser2)
+                .header("Authorization", "Bearer " + looseToucheTokenForAccount2)
                 .content(getMapper().writeValueAsString(CONTACT_2.toDTO())))
                 .andExpect(status().isCreated());
-        // Creates User 2 / contact 3.
+        // Creates Account 2 / contact 3.
         getMvc().perform(post(CONTACT_URL)
                 .contentType(APPLICATION_JSON_UTF8)
-                .header("Authorization", "Bearer " + looseToucheTokenForUser2)
+                .header("Authorization", "Bearer " + looseToucheTokenForAccount2)
                 .content(getMapper().writeValueAsString(CONTACT_3.toDTO())))
                 .andExpect(status().isCreated());
 
@@ -121,17 +121,17 @@ public class ContactedTest extends APITest {
         // Test the new date.
         String contactDueDate;
 
-        // user 1 / contact 1 contacted.
+        // account 1 / contact 1 contacted.
         contactDueDate = calculateNextContactDueDate(CONTACT_1.getContactRecurrenceType(),
                 CONTACT_1.getContactRecurrenceValue());
         getMvc().perform(get(CONTACT_URL + "/" + CONTACT_1.getEmail() + "/contacted")
                 .contentType(APPLICATION_JSON_UTF8)
-                .header("Authorization", "Bearer " + looseToucheTokenForUser1))
+                .header("Authorization", "Bearer " + looseToucheTokenForAccount1))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("contactDueDate").value(contactDueDate));
         getMvc().perform(get(CONTACT_URL + "/" + CONTACT_1.getEmail() + "/")
                 .contentType(APPLICATION_JSON_UTF8)
-                .header("Authorization", "Bearer " + looseToucheTokenForUser1))
+                .header("Authorization", "Bearer " + looseToucheTokenForAccount1))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("email").value(CONTACT_1.getEmail()))
                 .andExpect(jsonPath("firstName").value(CONTACT_1.getFirstName()))
@@ -142,10 +142,10 @@ public class ContactedTest extends APITest {
                 .andExpect(jsonPath("contactRecurrenceValue").value(CONTACT_1.getContactRecurrenceValue()))
                 .andExpect(jsonPath("contactDueDate").value(contactDueDate));
 
-        // Check that user 2 / contact 1 did not change.
+        // Check that account 2 / contact 1 did not change.
         getMvc().perform(get(CONTACT_URL + "/" + CONTACT_1.getEmail() + "/")
                 .contentType(APPLICATION_JSON_UTF8)
-                .header("Authorization", "Bearer " + looseToucheTokenForUser2))
+                .header("Authorization", "Bearer " + looseToucheTokenForAccount2))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("email").value(CONTACT_1.getEmail()))
                 .andExpect(jsonPath("firstName").value(CONTACT_1.getFirstName()))
@@ -156,12 +156,12 @@ public class ContactedTest extends APITest {
                 .andExpect(jsonPath("contactRecurrenceValue").value(CONTACT_1.getContactRecurrenceValue()))
                 .andExpect(jsonPath("contactDueDate").value("31/12/2019"));
 
-        // user 1 / contact 2 contacted.
+        // account 1 / contact 2 contacted.
         contactDueDate = calculateNextContactDueDate(CONTACT_2.getContactRecurrenceType(),
                 CONTACT_2.getContactRecurrenceValue());
         getMvc().perform(get(CONTACT_URL + "/" + CONTACT_2.getEmail() + "/contacted")
                 .contentType(APPLICATION_JSON_UTF8)
-                .header("Authorization", "Bearer " + looseToucheTokenForUser1))
+                .header("Authorization", "Bearer " + looseToucheTokenForAccount1))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("contactDueDate").value(contactDueDate));
     }

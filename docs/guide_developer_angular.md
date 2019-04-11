@@ -4,7 +4,7 @@
   * [Node.js](https://nodejs.org) : Node.js is an open source server environment that uses JavaScript on the server.
   * [Npm](https://www.npmjs.com) : Npm is the a software registry used to share and borrow packages.
   * [Yarn](https://yarnpkg.com) : Like Npm, Fast, Yarn is a dependency management.
-  * [Protractor](https://www.protractortest.org) : Protractor is an end-to-end test framework for Angular and AngularJS applications. Protractor runs tests against your application running in a real browser, interacting with it as a user would.
+  * [Protractor](https://www.protractortest.org) : Protractor is an end-to-end test framework for Angular and AngularJS applications. Protractor runs tests against your application running in a real browser, interacting with it as a account would.
   
 _note : Yarn manipulates package.json files exactly like npm. You can use both._
 

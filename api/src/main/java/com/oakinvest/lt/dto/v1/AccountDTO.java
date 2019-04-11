@@ -3,10 +3,10 @@ package com.oakinvest.lt.dto.v1;
 import io.swagger.annotations.ApiModelProperty;
 
 /**
- * User DTO.
+ * Account DTO.
  */
 @SuppressWarnings({"magicnumber", "unused"})
-public class UserDTO {
+public class AccountDTO {
 
     /**
      * ID Token.

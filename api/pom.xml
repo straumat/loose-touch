@@ -244,7 +244,7 @@
                         <configuration>
                             <jsonLibrary>jackson2</jsonLibrary>
                             <classes>
-                                <class>com.oakinvest.lt.dto.v1.UserDTO</class>
+                                <class>com.oakinvest.lt.dto.v1.AccountDTO</class>
                                 <class>com.oakinvest.lt.dto.v1.ContactDTO</class>
                             </classes>
                             <outputKind>module</outputKind>

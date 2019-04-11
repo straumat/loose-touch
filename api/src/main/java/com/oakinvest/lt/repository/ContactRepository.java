@@ -46,14 +46,14 @@ public class ContactRepository {
     }
 
     /**
-     * Delete all contacts of user.
+     * Delete all contacts of account.
      *
-     * @param userId user id
+     * @param accountId account id
      */
-    public final void deleteAllContactsOfUser(final String userId) {
-        // User id.
+    public final void deleteAllContactsOfAccount(final String accountId) {
+        // Account id.
         Contact c = new Contact();
-        c.setUserId(userId);
+        c.setAccountId(accountId);
 
         // Build the query.
         DynamoDBQueryExpression<Contact> queryExpression = new DynamoDBQueryExpression<Contact>()
@@ -69,14 +69,14 @@ public class ContactRepository {
     /**
      * Returns a contact by its email.
      *
-     * @param userId user id
+     * @param accountId account id
      * @param email  contact email
      * @return contact
      */
-    public final Optional<Contact> findContactByEmail(final String userId, final String email) {
-        // User id.
+    public final Optional<Contact> findContactByEmail(final String accountId, final String email) {
+        // Account id.
         Contact c = new Contact();
-        c.setUserId(userId);
+        c.setAccountId(accountId);
 
         // Email.
         Condition rangeKeyCondition = new Condition();
@@ -91,7 +91,7 @@ public class ContactRepository {
         // Run the query.
         List<Contact> contacts = mapper.query(Contact.class, queryExpression);
 
-        // Returns the user if exists.
+        // Returns the account if exists.
         if (contacts.size() == 1) {
             return Optional.ofNullable(contacts.get(0));
         } else {
@@ -102,13 +102,13 @@ public class ContactRepository {
     /**
      * Returns the list of contacts to reach.
      *
-     * @param userId user id
+     * @param accountId account id
      * @return contact to reach
      */
-    public final List<Contact> getContactsToReach(final String userId) {
-        // User id.
+    public final List<Contact> getContactsToReach(final String accountId) {
+        // Account id.
         Contact c = new Contact();
-        c.setUserId(userId);
+        c.setAccountId(accountId);
 
         // Set the date as today.
         SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");

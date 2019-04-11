@@ -5,7 +5,7 @@
 ### How it works.
 Google's OAuth 2.0 APIs (conform to the OpenID Connect specification, and is OpenID Certified) can be used for both authentication and authorization. 
 
-Before your application can use Google's OAuth 2.0 authentication system for user login, you must set up a project in the [Google API Console](https://console.developers.google.com/) to obtain OAuth 2.0 credentials, set a redirect URI, and (optionally) customize the branding information that your users see on the user-consent screen
+Before your application can use Google's OAuth 2.0 authentication system for account login, you must set up a project in the [Google API Console](https://console.developers.google.com/) to obtain OAuth 2.0 credentials, set a redirect URI, and (optionally) customize the branding information that your users see on the account-consent screen
 
 We use two ways to interact : 
 
@@ -30,7 +30,7 @@ We use two ways to interact :
     * Refresh token : cf. loose-touch/back-end/src/test/resources/application.yml
 
 ### How we use it.
-We use [Google Sign-In](https://developers.google.com/identity/sign-in/) to display a google sign-in button that launches the permission page and returns the google id_token to the page. The page then calls our back that check the google token and retrieves user information thanks to [Google client libraries](https://developers.google.com/identity/protocols/OpenIDConnect#libraries). Our back end returns our own JWT token.
+We use [Google Sign-In](https://developers.google.com/identity/sign-in/) to display a google sign-in button that launches the permission page and returns the google id_token to the page. The page then calls our back that check the google token and retrieves account information thanks to [Google client libraries](https://developers.google.com/identity/protocols/OpenIDConnect#libraries). Our back end returns our own JWT token.
 
 This is the code that allows us to retrieve, from our web page, the google Id Token
 ```
@@ -88,7 +88,7 @@ Then, we send this token to the back end where the token will be verified :
 ```
 
 
-, user information will be retrieved and a loose-touch token will be returned.
+, account information will be retrieved and a loose-touch token will be returned.
 
 ### How to get the refresh token.
 A google token expires after one hour. To get a new valid token, we must get from Google a refresh token for the application. 
@@ -101,7 +101,7 @@ To do this, go to [Google ads](https://ads.google.com), go tools/script and crea
  * order to obtain a refresh token.
  *
  * This script uses the out-of-band redirect URI, which is not part of the
- * OAuth2 standard, to allow not redirecting the user. If this does not work
+ * OAuth2 standard, to allow not redirecting the account. If this does not work
  * with your API, try instead the OAuth playground:
  * https://developers.google.com/oauthplayground/
  *

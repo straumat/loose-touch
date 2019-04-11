@@ -17,10 +17,10 @@ import java.util.Date;
 public class Contact {
 
     /**
-     * User id.
+     * Account id.
      */
-    @DynamoDBHashKey(attributeName = "USER_ID")
-    private String userId;
+    @DynamoDBHashKey(attributeName = "ACCOUNT_ID")
+    private String accountId;
 
     /**
      * Email.
@@ -74,7 +74,7 @@ public class Contact {
     /**
      * Constructor.
      *
-     * @param newUserId                 user id
+     * @param newAccountId              account id
      * @param newEmail                  email
      * @param newFirstName              first name
      * @param newLastName               last name
@@ -84,7 +84,7 @@ public class Contact {
      * @param newContactDueDate         contact due date
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    public Contact(final String newUserId,
+    public Contact(final String newAccountId,
                    final String newEmail,
                    final String newFirstName,
                    final String newLastName,
@@ -92,7 +92,7 @@ public class Contact {
                    final String newContactRecurrenceType,
                    final int newContactRecurrenceValue,
                    final Calendar newContactDueDate) {
-        this.userId = newUserId;
+        this.accountId = newAccountId;
         this.email = newEmail;
         this.firstName = newFirstName;
         this.lastName = newLastName;
@@ -105,7 +105,7 @@ public class Contact {
     /**
      * Constructor.
      *
-     * @param newUserId                 user id
+     * @param newAccountId              account id
      * @param newEmail                  email
      * @param newFirstName              first name
      * @param newLastName               last name
@@ -115,7 +115,7 @@ public class Contact {
      * @param newContactDueDate         contact due date
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    public Contact(final String newUserId,
+    public Contact(final String newAccountId,
                    final String newEmail,
                    final String newFirstName,
                    final String newLastName,
@@ -123,7 +123,7 @@ public class Contact {
                    final String newContactRecurrenceType,
                    final int newContactRecurrenceValue,
                    final Date newContactDueDate) {
-        this.userId = newUserId;
+        this.accountId = newAccountId;
         this.email = newEmail;
         this.firstName = newFirstName;
         this.lastName = newLastName;
@@ -135,21 +135,21 @@ public class Contact {
     }
 
     /**
-     * Get userId.
+     * Get accountId.
      *
-     * @return userId
+     * @return accountId
      */
-    public final String getUserId() {
-        return userId;
+    public final String getAccountId() {
+        return accountId;
     }
 
     /**
-     * Set userId.
+     * Set accountId.
      *
-     * @param newUserId the userId to set
+     * @param newAccountId the accountId to set
      */
-    public final void setUserId(final String newUserId) {
-        userId = newUserId;
+    public final void setAccountId(final String newAccountId) {
+        accountId = newAccountId;
     }
 
     /**

@@ -1,6 +1,6 @@
 package com.oakinvest.lt.service.v1;
 
-import com.oakinvest.lt.authentication.loosetouch.AuthenticatedUser;
+import com.oakinvest.lt.authentication.loosetouch.AuthenticatedAccount;
 import com.oakinvest.lt.domain.Contact;
 import com.oakinvest.lt.dto.v1.ContactDTO;
 import com.oakinvest.lt.repository.ContactRepository;
@@ -53,7 +53,7 @@ public class ContactController implements ContactAPI {
     }
 
     @Override
-    public final ContactDTO createContact(final AuthenticatedUser authenticatedUser, final ContactDTO contact) {
+    public final ContactDTO createContact(final AuthenticatedAccount authenticatedAccount, final ContactDTO contact) {
 
         // =============================================================================================================
         // Managing errors.
@@ -70,7 +70,7 @@ public class ContactController implements ContactAPI {
         }
 
         // Test if the contact already exists.
-        if (contactRepository.findContactByEmail(authenticatedUser.getUserId(), contact.getEmail()).isPresent()) {
+        if (contactRepository.findContactByEmail(authenticatedAccount.getAccountId(), contact.getEmail()).isPresent()) {
             throw new LooseTouchException(invalid_request_error, "Contact already exists");
         }
 
@@ -83,7 +83,7 @@ public class ContactController implements ContactAPI {
         }
 
         // Create contact.
-        Contact contactToCreate = new Contact(authenticatedUser.getUserId(),
+        Contact contactToCreate = new Contact(authenticatedAccount.getAccountId(),
                 contact.getEmail(),
                 contact.getFirstName(),
                 contact.getLastName(),
@@ -96,8 +96,8 @@ public class ContactController implements ContactAPI {
     }
 
     @Override
-    public final ContactDTO getContact(final AuthenticatedUser authenticatedUser, final String email) {
-        Optional<Contact> contact = contactRepository.findContactByEmail(authenticatedUser.getUserId(), email);
+    public final ContactDTO getContact(final AuthenticatedAccount authenticatedAccount, final String email) {
+        Optional<Contact> contact = contactRepository.findContactByEmail(authenticatedAccount.getAccountId(), email);
         if (contact.isPresent()) {
             return LooseTouchMapper.INSTANCE.contactToContactDTO(contact.get());
         } else {
@@ -106,14 +106,14 @@ public class ContactController implements ContactAPI {
     }
 
     @Override
-    public final ContactDTO updateContact(final AuthenticatedUser authenticatedUser, final String email, final ContactDTO contact) {
+    public final ContactDTO updateContact(final AuthenticatedAccount authenticatedAccount, final String email, final ContactDTO contact) {
         // If email is null, error.
         if (email == null) {
             throw new LooseTouchException(invalid_request_error, "Email parameter is missing");
         }
 
         // Check if the contact exists.
-        Optional<Contact> c = contactRepository.findContactByEmail(authenticatedUser.getUserId(), email);
+        Optional<Contact> c = contactRepository.findContactByEmail(authenticatedAccount.getAccountId(), email);
         if (!c.isPresent()) {
             throw new LooseTouchException(resource_not_found, "Contact not found");
         } else {
@@ -128,10 +128,10 @@ public class ContactController implements ContactAPI {
                 throw new LooseTouchException(invalid_request_error, "Errors in the contact data", errors);
             }
 
-            // Test if the user tries to change the contact email address.
+            // Test if the account tries to change the contact email address.
             if (!email.equalsIgnoreCase(contact.getEmail())) {
-                // Check that the email is not used by another user.
-                Optional<Contact> existingContact = contactRepository.findContactByEmail(authenticatedUser.getUserId(), contact.getEmail());
+                // Check that the email is not used by another account.
+                Optional<Contact> existingContact = contactRepository.findContactByEmail(authenticatedAccount.getAccountId(), contact.getEmail());
                 if (existingContact.isPresent()) {
                     throw new LooseTouchException(invalid_request_error, "Email already used by another contact");
                 } else {
@@ -156,8 +156,8 @@ public class ContactController implements ContactAPI {
     }
 
     @Override
-    public final void delete(final AuthenticatedUser authenticatedUser, final String email) {
-        Optional<Contact> contact = contactRepository.findContactByEmail(authenticatedUser.getUserId(), email);
+    public final void delete(final AuthenticatedAccount authenticatedAccount, final String email) {
+        Optional<Contact> contact = contactRepository.findContactByEmail(authenticatedAccount.getAccountId(), email);
         if (contact.isPresent()) {
             contactRepository.delete(contact.get());
         } else {
@@ -167,8 +167,8 @@ public class ContactController implements ContactAPI {
     }
 
     @Override
-    public final ContactDTO contacted(final AuthenticatedUser authenticatedUser, final String email) {
-        Optional<Contact> contact = contactRepository.findContactByEmail(authenticatedUser.getUserId(), email);
+    public final ContactDTO contacted(final AuthenticatedAccount authenticatedAccount, final String email) {
+        Optional<Contact> contact = contactRepository.findContactByEmail(authenticatedAccount.getAccountId(), email);
         if (contact.isPresent()) {
             final ContactDTO contactDTO = LooseTouchMapper.INSTANCE.contactToContactDTO(contact.get());
             contactDTO.contacted();
@@ -181,8 +181,8 @@ public class ContactController implements ContactAPI {
     }
 
     @Override
-    public final List<ContactDTO> getContactsToReach(final AuthenticatedUser authenticatedUser) {
-        return LooseTouchMapper.INSTANCE.contactsToContactDTOs(contactRepository.getContactsToReach(authenticatedUser.getUserId()));
+    public final List<ContactDTO> getContactsToReach(final AuthenticatedAccount authenticatedAccount) {
+        return LooseTouchMapper.INSTANCE.contactsToContactDTOs(contactRepository.getContactsToReach(authenticatedAccount.getAccountId()));
     }
 
     /**

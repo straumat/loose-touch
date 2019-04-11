@@ -11,7 +11,7 @@ import com.amazonaws.services.dynamodbv2.model.Projection;
 import com.amazonaws.services.dynamodbv2.model.ProjectionType;
 import com.amazonaws.services.dynamodbv2.model.ProvisionedThroughput;
 import com.oakinvest.lt.domain.Contact;
-import com.oakinvest.lt.domain.User;
+import com.oakinvest.lt.domain.Account;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
@@ -57,14 +57,14 @@ public class Application extends SpringBootServletInitializer {
 
             ProvisionedThroughput provisionedThroughput = new ProvisionedThroughput(1L, 1L);
 
-            // Creates the tables USERS.
-            CreateTableRequest createUsersTableRequest = mapper.generateCreateTableRequest(User.class)
+            // Creates the tables ACCOUNTS.
+            CreateTableRequest createAccountsTableRequest = mapper.generateCreateTableRequest(Account.class)
                     .withProvisionedThroughput(provisionedThroughput);
-            createUsersTableRequest.getGlobalSecondaryIndexes().forEach(v -> {
+            createAccountsTableRequest.getGlobalSecondaryIndexes().forEach(v -> {
                 v.withProjection(new Projection().withProjectionType(ProjectionType.ALL));
                 v.setProvisionedThroughput(provisionedThroughput);
             });
-            dynamoDB.createTable(createUsersTableRequest);
+            dynamoDB.createTable(createAccountsTableRequest);
 
             // Creates the table CONTACTS.
             CreateTableRequest createContactsTableRequest = mapper.generateCreateTableRequest(Contact.class)

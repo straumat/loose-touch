@@ -11,8 +11,8 @@ import static com.oakinvest.lt.test.util.data.TestContacts.CONTACT_1;
 import static com.oakinvest.lt.test.util.data.TestContacts.CONTACT_2;
 import static com.oakinvest.lt.test.util.data.TestContacts.CONTACT_3;
 import static com.oakinvest.lt.test.util.data.TestContacts.CONTACT_4;
-import static com.oakinvest.lt.test.util.data.TestUsers.GOOGLE_USER_1;
-import static com.oakinvest.lt.test.util.data.TestUsers.GOOGLE_USER_2;
+import static com.oakinvest.lt.test.util.data.TestAccounts.GOOGLE_ACCOUNT_1;
+import static com.oakinvest.lt.test.util.data.TestAccounts.GOOGLE_ACCOUNT_2;
 import static com.oakinvest.lt.util.error.LooseTouchErrorType.authentication_error;
 import static com.oakinvest.lt.util.error.LooseTouchErrorType.invalid_request_error;
 import static java.util.Calendar.DATE;
@@ -58,73 +58,73 @@ public class ContactsToReachTest extends APITest {
     @Override
     public void businessLogicTest() throws Exception {
         // Configuration.
-        final String looseToucheTokenForUser1 = getLooseToucheToken(GOOGLE_USER_1);
-        final String looseToucheTokenForUser2 = getLooseToucheToken(GOOGLE_USER_2);
+        final String looseToucheTokenForAccount1 = getLooseToucheToken(GOOGLE_ACCOUNT_1);
+        final String looseToucheTokenForAccount2 = getLooseToucheToken(GOOGLE_ACCOUNT_2);
         ContactDTO c;
 
         // =============================================================================================================
         // Test data.
-        // User 1 / contact 1/
+        // Account 1 / contact 1/
         c = CONTACT_1.toDTO();
         c.setContactDueDate(new GregorianCalendar(2018, Calendar.DECEMBER, 31, 13, 24, 56).getTime());
         getMvc().perform(post(CONTACT_URL)
                 .contentType(APPLICATION_JSON_UTF8)
-                .header("Authorization", "Bearer " + looseToucheTokenForUser1)
+                .header("Authorization", "Bearer " + looseToucheTokenForAccount1)
                 .content(getMapper().writeValueAsString(c)))
                 .andExpect(status().isCreated());
-        // User 1 / contact 2.
+        // Account 1 / contact 2.
         c = CONTACT_2.toDTO();
         c.setContactDueDate(new GregorianCalendar(2058, Calendar.DECEMBER, 31, 13, 24, 56).getTime());
         getMvc().perform(post(CONTACT_URL)
                 .contentType(APPLICATION_JSON_UTF8)
-                .header("Authorization", "Bearer " + looseToucheTokenForUser1)
+                .header("Authorization", "Bearer " + looseToucheTokenForAccount1)
                 .content(getMapper().writeValueAsString(c)))
                 .andExpect(status().isCreated());
-        // User 1 / contact 3.
+        // Account 1 / contact 3.
         c = CONTACT_3.toDTO();
         Calendar tomorrow = Calendar.getInstance();
         tomorrow.add(DATE, 2);
         c.setContactDueDate(tomorrow.getTime());
         getMvc().perform(post(CONTACT_URL)
                 .contentType(APPLICATION_JSON_UTF8)
-                .header("Authorization", "Bearer " + looseToucheTokenForUser1)
+                .header("Authorization", "Bearer " + looseToucheTokenForAccount1)
                 .content(getMapper().writeValueAsString(c)))
                 .andExpect(status().isCreated());
-        // User 1 / contact 4.
+        // Account 1 / contact 4.
         c = CONTACT_4.toDTO();
         Calendar yesterday = Calendar.getInstance();
         yesterday.add(DATE, -2);
         c.setContactDueDate(yesterday.getTime());
         getMvc().perform(post(CONTACT_URL)
                 .contentType(APPLICATION_JSON_UTF8)
-                .header("Authorization", "Bearer " + looseToucheTokenForUser1)
+                .header("Authorization", "Bearer " + looseToucheTokenForAccount1)
                 .content(getMapper().writeValueAsString(c)))
                 .andExpect(status().isCreated());
 
-        // User 2 / Contact 1.
+        // Account 2 / Contact 1.
         c = CONTACT_1.toDTO();
         c.setContactDueDate(new GregorianCalendar(2018, Calendar.DECEMBER, 31, 13, 24, 56).getTime());
         getMvc().perform(post(CONTACT_URL)
                 .contentType(APPLICATION_JSON_UTF8)
-                .header("Authorization", "Bearer " + looseToucheTokenForUser2)
+                .header("Authorization", "Bearer " + looseToucheTokenForAccount2)
                 .content(getMapper().writeValueAsString(c)))
                 .andExpect(status().isCreated());
-        // User 2 / Contact 2.
+        // Account 2 / Contact 2.
         c = CONTACT_2.toDTO();
         c.setContactDueDate(new GregorianCalendar(2058, Calendar.DECEMBER, 31, 13, 24, 56).getTime());
         getMvc().perform(post(CONTACT_URL)
                 .contentType(APPLICATION_JSON_UTF8)
-                .header("Authorization", "Bearer " + looseToucheTokenForUser2)
+                .header("Authorization", "Bearer " + looseToucheTokenForAccount2)
                 .content(getMapper().writeValueAsString(c)))
                 .andExpect(status().isCreated());
-        assertEquals(2, usersCount());
+        assertEquals(2, accountsCount());
         assertEquals(6, contactsCount());
 
         // =============================================================================================================
         // Getting the list of contacts to reach.
         getMvc().perform(get(CONTACT_URL + "/toReach")
                 .contentType(APPLICATION_JSON_UTF8)
-                .header("Authorization", "Bearer " + looseToucheTokenForUser1))
+                .header("Authorization", "Bearer " + looseToucheTokenForAccount1))
                 .andExpect(jsonPath("$", hasSize(2)))
                 // First result.
                 .andExpect(jsonPath("$[0].email").value(CONTACT_1.getEmail()))
@@ -133,7 +133,7 @@ public class ContactsToReachTest extends APITest {
 
         getMvc().perform(get(CONTACT_URL + "/toReach")
                 .contentType(APPLICATION_JSON_UTF8)
-                .header("Authorization", "Bearer " + looseToucheTokenForUser2))
+                .header("Authorization", "Bearer " + looseToucheTokenForAccount2))
                 .andExpect(jsonPath("$", hasSize(1)))
                 // First result.
                 .andExpect(jsonPath("$[0].email").value(CONTACT_1.getEmail()));
@@ -142,18 +142,18 @@ public class ContactsToReachTest extends APITest {
         // Set CONTACT_1 as contacted and see if it disappears.
         getMvc().perform(get(CONTACT_URL + "/" + CONTACT_1.getEmail() + "/contacted")
                 .contentType(APPLICATION_JSON_UTF8)
-                .header("Authorization", "Bearer " + looseToucheTokenForUser1))
+                .header("Authorization", "Bearer " + looseToucheTokenForAccount1))
                 .andExpect(status().isOk());
         getMvc().perform(get(CONTACT_URL + "/toReach")
                 .contentType(APPLICATION_JSON_UTF8)
-                .header("Authorization", "Bearer " + looseToucheTokenForUser1))
+                .header("Authorization", "Bearer " + looseToucheTokenForAccount1))
                 .andExpect(jsonPath("$", hasSize(1)))
                 // First result.
                 .andExpect(jsonPath("$[0].email").value(CONTACT_4.getEmail()));
 
         getMvc().perform(get(CONTACT_URL + "/toReach")
                 .contentType(APPLICATION_JSON_UTF8)
-                .header("Authorization", "Bearer " + looseToucheTokenForUser2))
+                .header("Authorization", "Bearer " + looseToucheTokenForAccount2))
                 .andExpect(jsonPath("$", hasSize(1)))
                 // First result.
                 .andExpect(jsonPath("$[0].email").value(CONTACT_1.getEmail()));

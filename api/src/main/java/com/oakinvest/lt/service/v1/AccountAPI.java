@@ -1,7 +1,7 @@
 package com.oakinvest.lt.service.v1;
 
-import com.oakinvest.lt.authentication.loosetouch.AuthenticatedUser;
-import com.oakinvest.lt.dto.v1.UserDTO;
+import com.oakinvest.lt.authentication.loosetouch.AuthenticatedAccount;
+import com.oakinvest.lt.dto.v1.AccountDTO;
 import com.oakinvest.lt.service.util.V1Service;
 import com.oakinvest.lt.util.error.LooseTouchError;
 import io.swagger.annotations.Api;
@@ -30,13 +30,13 @@ import static com.oakinvest.lt.util.rest.HttpStatus.STATUS_UNAUTHORIZED;
 import static com.oakinvest.lt.util.rest.HttpStatus.STATUS_UNAUTHORIZED_MESSAGE;
 
 /**
- * User API.
+ * Account API.
  */
-@Api(tags = "User API")
-public interface UserAPI extends V1Service {
+@Api(tags = "Account API")
+public interface AccountAPI extends V1Service {
 
     /**
-     * Application login for google (if the user doesn't exists, creates it).
+     * Application login for google (if the account doesn't exists, creates it).
      *
      * @param googleIdToken     Google ID token
      * @param googleAccessToken Google access token
@@ -44,8 +44,8 @@ public interface UserAPI extends V1Service {
      */
     @RequestMapping(value = "/login/google",
             method = RequestMethod.GET)
-    @ApiOperation(value = "Application login for google (if the user doesn't exists, creates it)",
-            response = UserDTO.class)
+    @ApiOperation(value = "Application login for google (if the account doesn't exists, creates it)",
+            response = AccountDTO.class)
     @ApiImplicitParams({
             @ApiImplicitParam(name = "googleIdToken",
                     dataType = "string",
@@ -55,46 +55,46 @@ public interface UserAPI extends V1Service {
                     value = "Google access token")
     })
     @ApiResponses(value = {
-            @ApiResponse(code = STATUS_OK, message = STATUS_OK_MESSAGE, response = UserDTO.class),
+            @ApiResponse(code = STATUS_OK, message = STATUS_OK_MESSAGE, response = AccountDTO.class),
             @ApiResponse(code = STATUS_BAD_REQUEST, message = STATUS_BAD_REQUEST_MESSAGE, response = LooseTouchError.class),
             @ApiResponse(code = STATUS_UNAUTHORIZED, message = STATUS_UNAUTHORIZED_MESSAGE, response = LooseTouchError.class),
             @ApiResponse(code = STATUS_NOT_FOUND, message = STATUS_NOT_FOUND_MESSAGE, response = LooseTouchError.class),
             @ApiResponse(code = STATUS_REQUEST_FAILED, message = STATUS_REQUEST_FAILED_MESSAGE, response = LooseTouchError.class),
             @ApiResponse(code = STATUS_INTERNAL_SERVER_ERROR, message = STATUS_INTERNAL_SERVER_ERROR_MESSAGE, response = LooseTouchError.class)
     })
-    UserDTO googleLogin(@ApiParam(value = "Google id token")
+    AccountDTO googleLogin(@ApiParam(value = "Google id token")
                         @RequestParam(required = false) String googleIdToken,
-                        @ApiParam(value = "Google access token")
+                           @ApiParam(value = "Google access token")
                         @RequestParam(required = false) String googleAccessToken);
 
     /**
-     * Get the user profile and a new refreshed token.
+     * Get the account profile and a new refreshed token.
      *
-     * @param authenticatedUser authenticated user
+     * @param authenticatedAccount authenticated account
      * @return profile
      */
-    @RequestMapping(value = "/user/profile",
+    @RequestMapping(value = "/account/profile",
             method = RequestMethod.GET)
-    @ApiOperation(value = "Get the user profile and a new refreshed token",
-            response = UserDTO.class)
+    @ApiOperation(value = "Get the account profile and a new refreshed token",
+            response = AccountDTO.class)
     @ApiImplicitParams({})
     @ApiResponses(value = {
-            @ApiResponse(code = STATUS_OK, message = STATUS_OK_MESSAGE, response = UserDTO.class),
+            @ApiResponse(code = STATUS_OK, message = STATUS_OK_MESSAGE, response = AccountDTO.class),
             @ApiResponse(code = STATUS_BAD_REQUEST, message = STATUS_BAD_REQUEST_MESSAGE, response = LooseTouchError.class),
             @ApiResponse(code = STATUS_UNAUTHORIZED, message = STATUS_UNAUTHORIZED_MESSAGE, response = LooseTouchError.class),
             @ApiResponse(code = STATUS_NOT_FOUND, message = STATUS_NOT_FOUND_MESSAGE, response = LooseTouchError.class),
             @ApiResponse(code = STATUS_REQUEST_FAILED, message = STATUS_REQUEST_FAILED_MESSAGE, response = LooseTouchError.class),
             @ApiResponse(code = STATUS_INTERNAL_SERVER_ERROR, message = STATUS_INTERNAL_SERVER_ERROR_MESSAGE, response = LooseTouchError.class)
     })
-    UserDTO getProfile(AuthenticatedUser authenticatedUser);
+    AccountDTO getProfile(AuthenticatedAccount authenticatedAccount);
 
     /**
-     * Delete the user and all its data.
+     * Delete the account and all its data.
      *
-     * @param authenticatedUser user.
+     * @param authenticatedAccount account.
      */
-    @DeleteMapping(value = "/user/delete")
-    @ApiOperation(value = "Get the user profile and a new refreshed token")
+    @DeleteMapping(value = "/account/delete")
+    @ApiOperation(value = "Get the account profile and a new refreshed token")
     @ApiImplicitParams({})
     @ApiResponses(value = {
             @ApiResponse(code = STATUS_OK, message = STATUS_OK_MESSAGE),
@@ -104,6 +104,6 @@ public interface UserAPI extends V1Service {
             @ApiResponse(code = STATUS_REQUEST_FAILED, message = STATUS_REQUEST_FAILED_MESSAGE, response = LooseTouchError.class),
             @ApiResponse(code = STATUS_INTERNAL_SERVER_ERROR, message = STATUS_INTERNAL_SERVER_ERROR_MESSAGE, response = LooseTouchError.class)
     })
-    void delete(AuthenticatedUser authenticatedUser);
+    void delete(AuthenticatedAccount authenticatedAccount);
 
 }

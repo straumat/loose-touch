@@ -1,10 +1,10 @@
 package com.oakinvest.lt.authentication.loosetouch;
 
 /**
- * User authentication type.
+ * Account authentication type.
  */
 @SuppressWarnings("unused")
-public enum UserAuthentication {
+public enum AccountAuthentication {
 
     /**
      * Authentication with google.
@@ -26,7 +26,7 @@ public enum UserAuthentication {
      *
      * @param newValue new value
      */
-    UserAuthentication(final String newValue) {
+    AccountAuthentication(final String newValue) {
         value = newValue;
     }
 

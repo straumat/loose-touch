@@ -14,13 +14,13 @@ import com.amazonaws.services.dynamodbv2.util.TableUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
 import com.oakinvest.lt.authentication.loosetouch.LooseTouchTokenProvider;
+import com.oakinvest.lt.domain.Account;
 import com.oakinvest.lt.domain.Contact;
-import com.oakinvest.lt.domain.User;
 import com.oakinvest.lt.repository.ContactRepository;
-import com.oakinvest.lt.repository.UserRepository;
+import com.oakinvest.lt.repository.AccountRepository;
 import com.oakinvest.lt.test.util.authentication.GoogleRefreshToken;
 import com.oakinvest.lt.test.util.authentication.GoogleTokensRetriever;
-import com.oakinvest.lt.test.util.data.TestUsers;
+import com.oakinvest.lt.test.util.data.TestAccounts;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -36,8 +36,8 @@ import org.springframework.test.web.servlet.MvcResult;
 import java.util.Optional;
 
 import static com.oakinvest.lt.configuration.Application.LOCAL_DYNAMODB_ENVIRONMENT;
-import static com.oakinvest.lt.test.util.data.TestUsers.GOOGLE_USER_1;
-import static com.oakinvest.lt.test.util.data.TestUsers.GOOGLE_USER_2;
+import static com.oakinvest.lt.test.util.data.TestAccounts.GOOGLE_ACCOUNT_1;
+import static com.oakinvest.lt.test.util.data.TestAccounts.GOOGLE_ACCOUNT_2;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -58,12 +58,12 @@ public abstract class APITest {
     /**
      * Profile URL.
      */
-    protected static final String PROFILE_URL = "/v1/user/profile";
+    protected static final String ACCOUNT_PROFILE_URL = "/v1/account/profile";
 
     /**
-     * Delete user URL.
+     * Delete account URL.
      */
-    protected static final String DELETE_USER_URL = "/v1/user/delete";
+    protected static final String DELETE_ACCOUNT_URL = "/v1/account/delete";
 
     /**
      * Contact URL.
@@ -105,10 +105,10 @@ public abstract class APITest {
     private AmazonDynamoDB dynamoDB;
 
     /**
-     * User repository.
+     * Account repository.
      */
     @Autowired
-    private UserRepository userRepository;
+    private AccountRepository accountRepository;
 
     /**
      * Contact repository.
@@ -161,20 +161,20 @@ public abstract class APITest {
         ProvisionedThroughput provisionedThroughput = new ProvisionedThroughput(5L, 5L);
 
         // Creates the table USERS.
-        CreateTableRequest createUsersTableRequest = mapper.generateCreateTableRequest(User.class)
+        CreateTableRequest createAccountTableRequest = mapper.generateCreateTableRequest(Account.class)
                 .withProvisionedThroughput(provisionedThroughput);
-        createUsersTableRequest.getGlobalSecondaryIndexes().forEach(v -> {
+        createAccountTableRequest.getGlobalSecondaryIndexes().forEach(v -> {
             v.withProjection(new Projection().withProjectionType(ProjectionType.ALL));
             v.setProvisionedThroughput(provisionedThroughput);
         });
-        dynamoDB.createTable(createUsersTableRequest);
+        dynamoDB.createTable(createAccountTableRequest);
 
         // Creates the table CONTACTS.
         CreateTableRequest createContactsTableRequest = mapper.generateCreateTableRequest(Contact.class).withProvisionedThroughput(provisionedThroughput);
         dynamoDB.createTable(createContactsTableRequest);
 
         // Waits for every table to be created.
-        TableUtils.waitUntilActive(dynamoDB, createUsersTableRequest.getTableName());
+        TableUtils.waitUntilActive(dynamoDB, createAccountTableRequest.getTableName());
         TableUtils.waitUntilActive(dynamoDB, createContactsTableRequest.getTableName());
     }
 
@@ -189,18 +189,18 @@ public abstract class APITest {
     }
 
     /**
-     * Return a loose touch for a user.
+     * Return a loose touch for a account.
      *
-     * @param user GOOGLE_USER_1 or GOOGLE_USER_2.
+     * @param account GOOGLE_ACCOUNT_1 or GOOGLE_ACCOUNT_2.
      * @return token
      * @throws Exception exception
      */
-    protected String getLooseToucheToken(final TestUsers user) throws Exception {
+    protected String getLooseToucheToken(final TestAccounts account) throws Exception {
         Optional<GoogleRefreshToken> googleToken;
-        if (GOOGLE_USER_1 == user) {
-            googleToken = googleTokenRetriever.getIdToken(GOOGLE_USER_1);
+        if (GOOGLE_ACCOUNT_1 == account) {
+            googleToken = googleTokenRetriever.getIdToken(GOOGLE_ACCOUNT_1);
         } else {
-            googleToken = googleTokenRetriever.getIdToken(GOOGLE_USER_2);
+            googleToken = googleTokenRetriever.getIdToken(GOOGLE_ACCOUNT_2);
         }
 
         if (googleToken.isPresent()) {
@@ -232,8 +232,8 @@ public abstract class APITest {
      *
      * @return number of users.
      */
-    public final long usersCount() {
-        ScanRequest scanRequest = new ScanRequest().withTableName("USERS");
+    public final long accountsCount() {
+        ScanRequest scanRequest = new ScanRequest().withTableName("ACCOUNTS");
         ScanResult result = dynamoDB.scan(scanRequest);
         return result.getCount();
     }
@@ -279,8 +279,8 @@ public abstract class APITest {
      *
      * @return userRepository
      */
-    public final UserRepository getUserRepository() {
-        return userRepository;
+    public final AccountRepository getAccountRepository() {
+        return accountRepository;
     }
 
     /**

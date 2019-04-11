@@ -1,9 +1,9 @@
 package com.oakinvest.lt.util.mapper;
 
 import com.oakinvest.lt.domain.Contact;
-import com.oakinvest.lt.domain.User;
+import com.oakinvest.lt.domain.Account;
+import com.oakinvest.lt.dto.v1.AccountDTO;
 import com.oakinvest.lt.dto.v1.ContactDTO;
-import com.oakinvest.lt.dto.v1.UserDTO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Mappings;
@@ -24,10 +24,10 @@ public interface LooseTouchMapper {
     LooseTouchMapper INSTANCE = Mappers.getMapper(LooseTouchMapper.class);
 
     /**
-     * Maps a user to a userDTO.
+     * Maps a account to a accountDTO.
      *
-     * @param user user data
-     * @return userDTO
+     * @param account account data
+     * @return accountDTO
      */
     @Mappings({
             @Mapping(source = "firstName", target = "firstName"),
@@ -35,7 +35,7 @@ public interface LooseTouchMapper {
             @Mapping(source = "email", target = "email"),
             @Mapping(source = "pictureUrl", target = "pictureUrl")
     })
-    UserDTO userToUserDTO(User user);
+    AccountDTO accountToAccountDTO(Account account);
 
     /**
      * Maps a contact to a contactDTO.

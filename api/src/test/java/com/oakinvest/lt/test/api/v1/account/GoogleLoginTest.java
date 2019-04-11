@@ -1,7 +1,7 @@
-package com.oakinvest.lt.test.api.v1.user;
+package com.oakinvest.lt.test.api.v1.account;
 
 import com.jayway.jsonpath.JsonPath;
-import com.oakinvest.lt.domain.User;
+import com.oakinvest.lt.domain.Account;
 import com.oakinvest.lt.test.util.api.APITest;
 import com.oakinvest.lt.test.util.authentication.GoogleRefreshToken;
 import org.junit.Assert;
@@ -11,8 +11,8 @@ import org.springframework.test.web.servlet.MvcResult;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
-import static com.oakinvest.lt.test.util.data.TestUsers.GOOGLE_USER_1;
-import static com.oakinvest.lt.test.util.data.TestUsers.GOOGLE_USER_2;
+import static com.oakinvest.lt.test.util.data.TestAccounts.GOOGLE_ACCOUNT_1;
+import static com.oakinvest.lt.test.util.data.TestAccounts.GOOGLE_ACCOUNT_2;
 import static com.oakinvest.lt.util.error.LooseTouchErrorType.authentication_error;
 import static com.oakinvest.lt.util.error.LooseTouchErrorType.invalid_request_error;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
@@ -72,23 +72,23 @@ public class GoogleLoginTest extends APITest {
 
     @Override
     public void businessLogicTest() throws Exception {
-        // Valid user token (loose.touch.test.1@gmail.com).
-        Optional<GoogleRefreshToken> user1GoogleToken = getGoogleTokenRetriever().getIdToken(GOOGLE_USER_1);
+        // Valid account token (loose.touch.test.1@gmail.com).
+        Optional<GoogleRefreshToken> user1GoogleToken = getGoogleTokenRetriever().getIdToken(GOOGLE_ACCOUNT_1);
         if (user1GoogleToken.isPresent()) {
-            // Check that there is no user in the database.
-            assertEquals("There are users in the database", 0, usersCount());
+            // Check that there is no account in the database.
+            assertEquals("There are users in the database", 0, accountsCount());
 
-            // Check that the user doesn't exists yet.
-            assertFalse("User 1 already exists", getUserRepository().findUserByGoogleUsername(GOOGLE_USER_1.getEmail()).isPresent());
+            // Check that the account doesn't exists yet.
+            assertFalse("Account 1 already exists", getAccountRepository().findAccountByGoogleUsername(GOOGLE_ACCOUNT_1.getEmail()).isPresent());
 
             // First login.
             MvcResult result = getMvc().perform(get(GOOGLE_LOGIN_URL)
                     .param("googleIdToken", user1GoogleToken.get().getIdToken())
                     .param("googleAccessToken", user1GoogleToken.get().getAccessToken()))
                     .andExpect(jsonPath("idToken").isNotEmpty())
-                    .andExpect(jsonPath("firstName").value(GOOGLE_USER_1.getFirstName()))
-                    .andExpect(jsonPath("lastName").value(GOOGLE_USER_1.getLastName()))
-                    .andExpect(jsonPath("email").value(GOOGLE_USER_1.getEmail()))
+                    .andExpect(jsonPath("firstName").value(GOOGLE_ACCOUNT_1.getFirstName()))
+                    .andExpect(jsonPath("lastName").value(GOOGLE_ACCOUNT_1.getLastName()))
+                    .andExpect(jsonPath("email").value(GOOGLE_ACCOUNT_1.getEmail()))
                     .andExpect(jsonPath("pictureUrl").isString())
                     .andExpect(jsonPath("newAccount").value(true))
                     .andExpect(status().isOk())
@@ -97,12 +97,12 @@ public class GoogleLoginTest extends APITest {
 //            System.out.println("==> " + looseTouchUser1Token1);
 //            System.exit(-1);
 
-            // Check that the user now exists and that the token is correct.
-            Optional<User> u1 = getUserRepository().findUserByGoogleUsername(GOOGLE_USER_1.getEmail());
-            Assert.assertTrue("User 1 doesn't exists", u1.isPresent());
-            assertEquals("There are too many users in the database", 1, usersCount());
-            Assert.assertTrue("Token for user 1 is not valid", getLooseTouchTokenProvider().getUserId(looseTouchUser1Token1).isPresent());
-            assertEquals("Token for user 1 doesn't have the good ID", u1.get().getId(), getLooseTouchTokenProvider().getUserId(looseTouchUser1Token1).get());
+            // Check that the account now exists and that the token is correct.
+            Optional<Account> u1 = getAccountRepository().findAccountByGoogleUsername(GOOGLE_ACCOUNT_1.getEmail());
+            Assert.assertTrue("Account 1 doesn't exists", u1.isPresent());
+            assertEquals("There are too many users in the database", 1, accountsCount());
+            Assert.assertTrue("Token for account 1 is not valid", getLooseTouchTokenProvider().getAccountId(looseTouchUser1Token1).isPresent());
+            assertEquals("Token for account 1 doesn't have the good ID", u1.get().getId(), getLooseTouchTokenProvider().getAccountId(looseTouchUser1Token1).get());
 
             Thread.sleep(TimeUnit.SECONDS.toMillis(1));
 
@@ -112,33 +112,33 @@ public class GoogleLoginTest extends APITest {
                     .param("googleIdToken", user1GoogleToken.get().getIdToken()))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("idToken").isNotEmpty())
-                    .andExpect(jsonPath("firstName").value(GOOGLE_USER_1.getFirstName()))
-                    .andExpect(jsonPath("lastName").value(GOOGLE_USER_1.getLastName()))
-                    .andExpect(jsonPath("email").value(GOOGLE_USER_1.getEmail()))
+                    .andExpect(jsonPath("firstName").value(GOOGLE_ACCOUNT_1.getFirstName()))
+                    .andExpect(jsonPath("lastName").value(GOOGLE_ACCOUNT_1.getLastName()))
+                    .andExpect(jsonPath("email").value(GOOGLE_ACCOUNT_1.getEmail()))
                     .andExpect(jsonPath("pictureUrl").isString())
                     .andExpect(jsonPath("newAccount").value(false))
                     .andReturn();
             String looseTouchUser1Token2 = JsonPath.parse(result.getResponse().getContentAsString()).read("idToken").toString();
 
-            // Check that the user is not created twice and that the token is new correct.
+            // Check that the account is not created twice and that the token is new correct.
             assertNotEquals("Token are not different", looseTouchUser1Token1, looseTouchUser1Token2);
-            u1 = getUserRepository().findUserByGoogleUsername(GOOGLE_USER_1.getEmail());
-            Assert.assertTrue("User 1 doesn't exists", u1.isPresent());
-            assertEquals("There are too many users in the database", 1, usersCount());
-            Assert.assertTrue("Token for user 1 is not valid", getLooseTouchTokenProvider().getUserId(looseTouchUser1Token2).isPresent());
-            assertEquals("Token for user 1 doesn't have the good ID", u1.get().getId(), getLooseTouchTokenProvider().getUserId(looseTouchUser1Token2).get());
+            u1 = getAccountRepository().findAccountByGoogleUsername(GOOGLE_ACCOUNT_1.getEmail());
+            Assert.assertTrue("Account 1 doesn't exists", u1.isPresent());
+            assertEquals("There are too many users in the database", 1, accountsCount());
+            Assert.assertTrue("Token for account 1 is not valid", getLooseTouchTokenProvider().getAccountId(looseTouchUser1Token2).isPresent());
+            assertEquals("Token for account 1 doesn't have the good ID", u1.get().getId(), getLooseTouchTokenProvider().getAccountId(looseTouchUser1Token2).get());
         } else {
-            fail("Impossible to retrieve a token for user 1");
+            fail("Impossible to retrieve a token for account 1");
         }
 
-        // Another user (loose.touch.test.2@gmail.com).
-        Optional<GoogleRefreshToken> user2GoogleToken = getGoogleTokenRetriever().getIdToken(GOOGLE_USER_2);
+        // Another account (loose.touch.test.2@gmail.com).
+        Optional<GoogleRefreshToken> user2GoogleToken = getGoogleTokenRetriever().getIdToken(GOOGLE_ACCOUNT_2);
         if (user2GoogleToken.isPresent()) {
-            // Check that there is one user in the database.
-            assertEquals("There are two users in the database", 1, usersCount());
+            // Check that there is one account in the database.
+            assertEquals("There are two users in the database", 1, accountsCount());
 
-            // Check that the user doesn't exists yet.
-            assertFalse("User 2 already exists", getUserRepository().findUserByGoogleUsername(GOOGLE_USER_2.getEmail()).isPresent());
+            // Check that the account doesn't exists yet.
+            assertFalse("Account 2 already exists", getAccountRepository().findAccountByGoogleUsername(GOOGLE_ACCOUNT_2.getEmail()).isPresent());
 
             // First login.
             MvcResult result = getMvc().perform(get(GOOGLE_LOGIN_URL)
@@ -147,20 +147,20 @@ public class GoogleLoginTest extends APITest {
                     .param("googleAccessToken", user2GoogleToken.get().getAccessToken()))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("idToken").isNotEmpty())
-                    .andExpect(jsonPath("firstName").value(GOOGLE_USER_2.getFirstName()))
-                    .andExpect(jsonPath("lastName").value(GOOGLE_USER_2.getLastName()))
-                    .andExpect(jsonPath("email").value(GOOGLE_USER_2.getEmail()))
+                    .andExpect(jsonPath("firstName").value(GOOGLE_ACCOUNT_2.getFirstName()))
+                    .andExpect(jsonPath("lastName").value(GOOGLE_ACCOUNT_2.getLastName()))
+                    .andExpect(jsonPath("email").value(GOOGLE_ACCOUNT_2.getEmail()))
                     .andExpect(jsonPath("pictureUrl").isString())
                     .andExpect(jsonPath("newAccount").value(true))
                     .andReturn();
             String looseTouchUser2Token1 = JsonPath.parse(result.getResponse().getContentAsString()).read("idToken").toString();
 
-            // Check that the user now exists and that the token is correct.
-            Optional<User> u2 = getUserRepository().findUserByGoogleUsername(GOOGLE_USER_2.getEmail());
-            Assert.assertTrue("User 2 doesn't exists", u2.isPresent());
-            assertEquals("There are too many users in the database", 2, usersCount());
-            Assert.assertTrue("Token for user 2 is not valid", getLooseTouchTokenProvider().getUserId(looseTouchUser2Token1).isPresent());
-            assertEquals("Token for user 2 doesn't have the good ID", u2.get().getId(), getLooseTouchTokenProvider().getUserId(looseTouchUser2Token1).get());
+            // Check that the account now exists and that the token is correct.
+            Optional<Account> u2 = getAccountRepository().findAccountByGoogleUsername(GOOGLE_ACCOUNT_2.getEmail());
+            Assert.assertTrue("Account 2 doesn't exists", u2.isPresent());
+            assertEquals("There are too many users in the database", 2, accountsCount());
+            Assert.assertTrue("Token for account 2 is not valid", getLooseTouchTokenProvider().getAccountId(looseTouchUser2Token1).isPresent());
+            assertEquals("Token for account 2 doesn't have the good ID", u2.get().getId(), getLooseTouchTokenProvider().getAccountId(looseTouchUser2Token1).get());
 
             Thread.sleep(TimeUnit.SECONDS.toMillis(1));
 
@@ -170,23 +170,23 @@ public class GoogleLoginTest extends APITest {
                     .param("googleIdToken", user2GoogleToken.get().getIdToken()))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("idToken").isNotEmpty())
-                    .andExpect(jsonPath("firstName").value(GOOGLE_USER_2.getFirstName()))
-                    .andExpect(jsonPath("lastName").value(GOOGLE_USER_2.getLastName()))
-                    .andExpect(jsonPath("email").value(GOOGLE_USER_2.getEmail()))
+                    .andExpect(jsonPath("firstName").value(GOOGLE_ACCOUNT_2.getFirstName()))
+                    .andExpect(jsonPath("lastName").value(GOOGLE_ACCOUNT_2.getLastName()))
+                    .andExpect(jsonPath("email").value(GOOGLE_ACCOUNT_2.getEmail()))
                     .andExpect(jsonPath("pictureUrl").isString())
                     .andExpect(jsonPath("newAccount").value(false))
                     .andReturn();
             String looseTouchUser2Token2 = JsonPath.parse(result.getResponse().getContentAsString()).read("idToken").toString();
 
-            // Check that the user is not created twice and that the token is new correct.
+            // Check that the account is not created twice and that the token is new correct.
             assertNotEquals("Token are not different", looseTouchUser2Token1, looseTouchUser2Token2);
-            u2 = getUserRepository().findUserByGoogleUsername(GOOGLE_USER_2.getEmail());
-            Assert.assertTrue("User 2 doesn't exists", u2.isPresent());
-            assertEquals("There are too many users in the database", 2, usersCount());
-            Assert.assertTrue("Token for user 2 is not valid", getLooseTouchTokenProvider().getUserId(looseTouchUser2Token2).isPresent());
-            assertEquals("Token for user 2 doesn't have the good ID", u2.get().getId(), getLooseTouchTokenProvider().getUserId(looseTouchUser2Token2).get());
+            u2 = getAccountRepository().findAccountByGoogleUsername(GOOGLE_ACCOUNT_2.getEmail());
+            Assert.assertTrue("Account 2 doesn't exists", u2.isPresent());
+            assertEquals("There are too many users in the database", 2, accountsCount());
+            Assert.assertTrue("Token for account 2 is not valid", getLooseTouchTokenProvider().getAccountId(looseTouchUser2Token2).isPresent());
+            assertEquals("Token for account 2 doesn't have the good ID", u2.get().getId(), getLooseTouchTokenProvider().getAccountId(looseTouchUser2Token2).get());
         } else {
-            fail("Impossible to retrieve a token for user 2");
+            fail("Impossible to retrieve a token for account 2");
         }
     }
 

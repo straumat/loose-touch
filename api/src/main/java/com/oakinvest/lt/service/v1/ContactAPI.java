@@ -1,6 +1,6 @@
 package com.oakinvest.lt.service.v1;
 
-import com.oakinvest.lt.authentication.loosetouch.AuthenticatedUser;
+import com.oakinvest.lt.authentication.loosetouch.AuthenticatedAccount;
 import com.oakinvest.lt.dto.v1.ContactDTO;
 import com.oakinvest.lt.service.util.V1Service;
 import com.oakinvest.lt.util.error.LooseTouchError;
@@ -47,7 +47,7 @@ public interface ContactAPI extends V1Service {
     /**
      * Create a contact.
      *
-     * @param authenticatedUser authenticated user
+     * @param authenticatedAccount authenticated account
      * @param contact           contact to createContact
      * @return contact created
      */
@@ -68,13 +68,13 @@ public interface ContactAPI extends V1Service {
             @ApiResponse(code = STATUS_REQUEST_FAILED, message = STATUS_REQUEST_FAILED_MESSAGE, response = LooseTouchError.class),
             @ApiResponse(code = STATUS_INTERNAL_SERVER_ERROR, message = STATUS_INTERNAL_SERVER_ERROR_MESSAGE, response = LooseTouchError.class)
     })
-    ContactDTO createContact(AuthenticatedUser authenticatedUser,
+    ContactDTO createContact(AuthenticatedAccount authenticatedAccount,
                              @RequestBody(required = false) ContactDTO contact);
 
     /**
      * Get a contact.
      *
-     * @param authenticatedUser authenticated user
+     * @param authenticatedAccount authenticated account
      * @param email             email of the contact
      * @return contact
      */
@@ -92,13 +92,13 @@ public interface ContactAPI extends V1Service {
             @ApiResponse(code = STATUS_REQUEST_FAILED, message = STATUS_REQUEST_FAILED_MESSAGE, response = LooseTouchError.class),
             @ApiResponse(code = STATUS_INTERNAL_SERVER_ERROR, message = STATUS_INTERNAL_SERVER_ERROR_MESSAGE, response = LooseTouchError.class)
     })
-    ContactDTO getContact(AuthenticatedUser authenticatedUser,
+    ContactDTO getContact(AuthenticatedAccount authenticatedAccount,
                           @PathVariable(value = "email", required = false) String email);
 
     /**
      * Update a contact.
      *
-     * @param authenticatedUser authenticated user
+     * @param authenticatedAccount authenticated account
      * @param email             email of the contact to updateContact
      * @param contact           contact data
      * @return contact updated
@@ -123,14 +123,14 @@ public interface ContactAPI extends V1Service {
             @ApiResponse(code = STATUS_REQUEST_FAILED, message = STATUS_REQUEST_FAILED_MESSAGE, response = LooseTouchError.class),
             @ApiResponse(code = STATUS_INTERNAL_SERVER_ERROR, message = STATUS_INTERNAL_SERVER_ERROR_MESSAGE, response = LooseTouchError.class)
     })
-    ContactDTO updateContact(AuthenticatedUser authenticatedUser,
+    ContactDTO updateContact(AuthenticatedAccount authenticatedAccount,
                              @PathVariable(value = "email", required = false) String email,
                              @RequestBody(required = false) ContactDTO contact);
 
     /**
      * Delete a contact.
      *
-     * @param authenticatedUser authenticated user
+     * @param authenticatedAccount authenticated account
      * @param email             email of the contact to delete
      */
     @DeleteMapping(value = "/contacts/{email:.+}")
@@ -147,13 +147,13 @@ public interface ContactAPI extends V1Service {
             @ApiResponse(code = STATUS_REQUEST_FAILED, message = STATUS_REQUEST_FAILED_MESSAGE, response = LooseTouchError.class),
             @ApiResponse(code = STATUS_INTERNAL_SERVER_ERROR, message = STATUS_INTERNAL_SERVER_ERROR_MESSAGE, response = LooseTouchError.class)
     })
-    void delete(AuthenticatedUser authenticatedUser,
+    void delete(AuthenticatedAccount authenticatedAccount,
                 @PathVariable("email") String email);
 
     /**
      * Indicates that the contact has been contacted.
      *
-     * @param authenticatedUser authenticated user
+     * @param authenticatedAccount authenticated account
      * @param email             email of the contact
      * @return contact
      */
@@ -173,13 +173,13 @@ public interface ContactAPI extends V1Service {
             @ApiResponse(code = STATUS_REQUEST_FAILED, message = STATUS_REQUEST_FAILED_MESSAGE, response = LooseTouchError.class),
             @ApiResponse(code = STATUS_INTERNAL_SERVER_ERROR, message = STATUS_INTERNAL_SERVER_ERROR_MESSAGE, response = LooseTouchError.class)
     })
-    ContactDTO contacted(AuthenticatedUser authenticatedUser,
+    ContactDTO contacted(AuthenticatedAccount authenticatedAccount,
                          @PathVariable("email") String email);
 
     /**
      * Get the list of contacts to reach.
      *
-     * @param authenticatedUser authenticated user to reach
+     * @param authenticatedAccount authenticated account to reach
      * @return contact list
      */
     @RequestMapping(value = "/contacts/toReach",
@@ -196,6 +196,6 @@ public interface ContactAPI extends V1Service {
             @ApiResponse(code = STATUS_REQUEST_FAILED, message = STATUS_REQUEST_FAILED_MESSAGE, response = LooseTouchError.class),
             @ApiResponse(code = STATUS_INTERNAL_SERVER_ERROR, message = STATUS_INTERNAL_SERVER_ERROR_MESSAGE, response = LooseTouchError.class)
     })
-    List<ContactDTO> getContactsToReach(AuthenticatedUser authenticatedUser);
+    List<ContactDTO> getContactsToReach(AuthenticatedAccount authenticatedAccount);
 
 }

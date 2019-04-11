@@ -1,10 +1,10 @@
 package com.oakinvest.lt.authentication.loosetouch;
 
 /**
- * Authenticated user.
+ * Authenticated account.
  */
 @SuppressWarnings("unused")
-public class AuthenticatedUser {
+public class AuthenticatedAccount {
 
     /**
      * Loose touch token.
@@ -12,19 +12,19 @@ public class AuthenticatedUser {
     private String looseTouchToken;
 
     /**
-     * User id.
+     * Account id.
      */
-    private String userId;
+    private String accountId;
 
     /**
      * Constructor.
      *
      * @param newLooseTouchToken loose touch token.
-     * @param newUserId          user id.
+     * @param newAccountId          account id.
      */
-    AuthenticatedUser(final String newLooseTouchToken, final String newUserId) {
+    AuthenticatedAccount(final String newLooseTouchToken, final String newAccountId) {
         this.looseTouchToken = newLooseTouchToken;
-        this.userId = newUserId;
+        this.accountId = newAccountId;
     }
 
     /**
@@ -46,21 +46,21 @@ public class AuthenticatedUser {
     }
 
     /**
-     * Get userId.
+     * Get accountId.
      *
-     * @return userId
+     * @return accountId
      */
-    public final String getUserId() {
-        return userId;
+    public final String getAccountId() {
+        return accountId;
     }
 
     /**
-     * Set userId.
+     * Set accountId.
      *
-     * @param newUserId the userId to set
+     * @param newAccountId the accountId to set
      */
-    public final void setUserId(final String newUserId) {
-        userId = newUserId;
+    public final void setAccountId(final String newAccountId) {
+        accountId = newAccountId;
     }
 
 }

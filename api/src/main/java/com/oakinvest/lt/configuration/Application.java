@@ -22,9 +22,9 @@ public final class Application {
     public static final String LOCAL_DYNAMODB_ENVIRONMENT = "local-dynamodb";
 
     /**
-     * Parameter containing user id.
+     * Parameter containing account id.
      */
-    public static final String USER_ID_PARAMETER = "userId";
+    public static final String ACCOUNT_ID_PARAMETER = "accountId";
 
     /**
      * Parameter containing loose touch token.

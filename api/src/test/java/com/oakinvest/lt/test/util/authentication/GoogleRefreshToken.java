@@ -37,7 +37,7 @@ public class GoogleRefreshToken implements Serializable {
     private String tokenType;
 
     /**
-     * A JWT that contains identity information about the user that is digitally signed by Google.
+     * A JWT that contains identity information about the account that is digitally signed by Google.
      */
     @JsonProperty("id_token")
     private String idToken;

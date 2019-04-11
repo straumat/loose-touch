@@ -11,7 +11,7 @@ import java.util.Optional;
 
 import static com.oakinvest.lt.configuration.Application.BEARER_TYPE;
 import static com.oakinvest.lt.configuration.Application.LOOSE_TOUCH_TOKEN_PARAMETER;
-import static com.oakinvest.lt.configuration.Application.USER_ID_PARAMETER;
+import static com.oakinvest.lt.configuration.Application.ACCOUNT_ID_PARAMETER;
 import static com.oakinvest.lt.util.error.LooseTouchErrorType.authentication_error;
 import static com.oakinvest.lt.util.error.LooseTouchErrorType.invalid_request_error;
 
@@ -31,11 +31,11 @@ public class AuthenticationInterceptor extends HandlerInterceptorAdapter {
     public final boolean preHandle(final HttpServletRequest request, final HttpServletResponse response, final Object handler) throws Exception {
         Optional<String> idToken = extractHeaderToken(request);
         if (idToken.isPresent()) {
-            Optional<String> userId = looseTouchTokenProvider.getUserId(idToken.get());
-            if (userId.isPresent()) {
-                // We set the token & userId as parameter.
+            Optional<String> accountId = looseTouchTokenProvider.getAccountId(idToken.get());
+            if (accountId.isPresent()) {
+                // We set the token & accountId as parameter.
                 request.setAttribute(LOOSE_TOUCH_TOKEN_PARAMETER, idToken.get());
-                request.setAttribute(USER_ID_PARAMETER, userId.get());
+                request.setAttribute(ACCOUNT_ID_PARAMETER, accountId.get());
             } else {
                 // Invalid in the headers.
                 throw new LooseTouchException(authentication_error, "Invalid loose touch token : " + idToken.get());

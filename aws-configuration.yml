@@ -23,10 +23,10 @@ Mappings:
   # Tables.
   TableNameMap:
     staging:
-      users: STAGING_USERS
+      users: STAGING_ACCOUNTS
       contacts: STAGING_CONTACTS
     production:
-      users: PRODUCTION_USERS
+      users: PRODUCTION_ACCOUNTS
       contacts: PRODUCTION_CONTACTS
   # Buckets.
   bucketMap:
@@ -91,7 +91,7 @@ Resources:
     Type: AWS::DynamoDB::Table
     Properties:
       AttributeDefinitions:
-        - AttributeName: "USER_ID"                                                # ID.
+        - AttributeName: "ACCOUNT_ID"                                                # ID.
           AttributeType: S                                                        # String.
         - AttributeName: "EMAIL"                                                  # Contact email.
           AttributeType: S                                                        # String.
@@ -101,7 +101,7 @@ Resources:
       LocalSecondaryIndexes:                                                      # Local secondary indexes to be created on the table.
         - IndexName: "INDEX_CONTACT_DUE_DATE"
           KeySchema:
-            - AttributeName: "USER_ID"
+            - AttributeName: "ACCOUNT_ID"
               KeyType: "HASH"
             - AttributeName: "CONTACT_DUE_DATE"
               KeyType: "RANGE"
@@ -109,7 +109,7 @@ Resources:
             ProjectionType: "ALL"
       TableName: !FindInMap [TableNameMap, !Ref Environment, contacts]
       KeySchema:
-        - AttributeName: "USER_ID"
+        - AttributeName: "ACCOUNT_ID"
           KeyType: "HASH"
         - AttributeName: "EMAIL"
           KeyType: "RANGE"
@@ -179,7 +179,7 @@ Resources:
               HTTPPort: 80                                                        # The HTTP port the custom origin listens on.
               HTTPSPort: 443                                                      # The HTTPS port the custom origin listens on.
               OriginProtocolPolicy: https-only                                    # The origin protocol policy to apply to your origin.
-        Enabled: 'true'                                                           # Controls whether the distribution is enabled to accept end user requests for content.
+        Enabled: 'true'                                                           # Controls whether the distribution is enabled to accept end account requests for content.
         Aliases:                                                                  # CNAMEs (alternate domain names), if any, for the distribution.
           - !Sub
             - ${Subdomain}.${Domain}

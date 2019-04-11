@@ -5,8 +5,8 @@ import org.junit.Ignore;
 
 import static com.oakinvest.lt.test.util.data.TestContacts.CONTACT_1;
 import static com.oakinvest.lt.test.util.data.TestContacts.CONTACT_3;
-import static com.oakinvest.lt.test.util.data.TestUsers.GOOGLE_USER_1;
-import static com.oakinvest.lt.test.util.data.TestUsers.GOOGLE_USER_2;
+import static com.oakinvest.lt.test.util.data.TestAccounts.GOOGLE_ACCOUNT_1;
+import static com.oakinvest.lt.test.util.data.TestAccounts.GOOGLE_ACCOUNT_2;
 import static com.oakinvest.lt.util.error.LooseTouchErrorType.authentication_error;
 import static com.oakinvest.lt.util.error.LooseTouchErrorType.invalid_request_error;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
@@ -50,28 +50,28 @@ public class GetContactTest extends APITest {
     @Override
     public void businessLogicTest() throws Exception {
         // Configuration.
-        final String looseToucheTokenForUser1 = getLooseToucheToken(GOOGLE_USER_1);
-        final String looseToucheTokenForUser2 = getLooseToucheToken(GOOGLE_USER_2);
+        final String looseToucheTokenForAccount1 = getLooseToucheToken(GOOGLE_ACCOUNT_1);
+        final String looseToucheTokenForAccount2 = getLooseToucheToken(GOOGLE_ACCOUNT_2);
 
         System.out.println("TOTO " + getMapper().writeValueAsString(CONTACT_3.toDTO()));
 
-        // Contact 1 for user 1 should not exists.
+        // Contact 1 for account 1 should not exists.
         getMvc().perform(get(CONTACT_URL + "/" + CONTACT_1.getEmail() + "/")
                 .contentType(APPLICATION_JSON_UTF8)
-                .header("Authorization", "Bearer " + looseToucheTokenForUser1))
+                .header("Authorization", "Bearer " + looseToucheTokenForAccount1))
                 .andExpect(status().isNotFound());
 
-        // Create contact 1 for user 1.
+        // Create contact 1 for account 1.
         getMvc().perform(post(CONTACT_URL)
                 .contentType(APPLICATION_JSON_UTF8)
-                .header("Authorization", "Bearer " + looseToucheTokenForUser1)
+                .header("Authorization", "Bearer " + looseToucheTokenForAccount1)
                 .content(getMapper().writeValueAsString(CONTACT_1.toDTO())))
                 .andExpect(status().isCreated());
 
-        // Contact 1 for user 1 should exists.
+        // Contact 1 for account 1 should exists.
         getMvc().perform(get(CONTACT_URL + "/" + CONTACT_1.getEmail() + "/")
                 .contentType(APPLICATION_JSON_UTF8)
-                .header("Authorization", "Bearer " + looseToucheTokenForUser1))
+                .header("Authorization", "Bearer " + looseToucheTokenForAccount1))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("email").value(CONTACT_1.getEmail()))
                 .andExpect(jsonPath("firstName").value(CONTACT_1.getFirstName()))
@@ -82,10 +82,10 @@ public class GetContactTest extends APITest {
                 .andExpect(jsonPath("contactRecurrenceValue").value(CONTACT_1.getContactRecurrenceValue()))
                 .andExpect(jsonPath("contactDueDate").value("31/12/2019"));
 
-        // Contact 1 for user 2 should not exists.
+        // Contact 1 for account 2 should not exists.
         getMvc().perform(get(CONTACT_URL + "/" + CONTACT_1.getEmail() + "/")
                 .contentType(APPLICATION_JSON_UTF8)
-                .header("Authorization", "Bearer " + looseToucheTokenForUser2))
+                .header("Authorization", "Bearer " + looseToucheTokenForAccount2))
                 .andExpect(status().isNotFound());
     }
 

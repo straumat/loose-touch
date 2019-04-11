@@ -1,7 +1,7 @@
 package com.oakinvest.lt.configuration;
 
 import com.oakinvest.lt.authentication.loosetouch.AuthenticationInterceptor;
-import com.oakinvest.lt.authentication.loosetouch.AuthenticationUserResolver;
+import com.oakinvest.lt.authentication.loosetouch.AuthenticationAccountResolver;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
@@ -39,19 +39,19 @@ public class Spring implements WebMvcConfigurer {
     }
 
     /**
-     * Returns authentication user resolver.
+     * Returns authentication account resolver.
      *
-     * @return authentication user resolver
+     * @return authentication account resolver
      */
     @Bean
     @SuppressWarnings("checkstyle:DesignForExtension")
-    public AuthenticationUserResolver authenticationUserResolver() {
-        return new AuthenticationUserResolver();
+    public AuthenticationAccountResolver authenticationAccountResolver() {
+        return new AuthenticationAccountResolver();
     }
 
     @Override
     public final void addArgumentResolvers(final List<HandlerMethodArgumentResolver> argumentResolvers) {
-        argumentResolvers.add(authenticationUserResolver());
+        argumentResolvers.add(authenticationAccountResolver());
     }
 
     @Override

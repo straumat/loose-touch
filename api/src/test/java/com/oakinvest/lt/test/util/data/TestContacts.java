@@ -149,7 +149,7 @@ public enum TestContacts {
     private final Calendar contactDueDate;
 
     /**
-     * Returns a UserDTO.
+     * Returns a AccountDTO.
      *
      * @return userDTO
      */

@@ -3,7 +3,7 @@ package com.oakinvest.lt.repository;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBQueryExpression;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
-import com.oakinvest.lt.domain.User;
+import com.oakinvest.lt.domain.Account;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -13,10 +13,10 @@ import java.util.Map;
 import java.util.Optional;
 
 /**
- * User repository.
+ * Account repository.
  */
 @Component
-public class UserRepository {
+public class AccountRepository {
 
     /**
      * DynamoDB mapper.
@@ -25,49 +25,49 @@ public class UserRepository {
     private DynamoDBMapper mapper;
 
     /**
-     * Save a user in database.
+     * Save a account in database.
      *
-     * @param user user
+     * @param account account
      */
-    public final void save(final User user) {
-        mapper.save(user);
+    public final void save(final Account account) {
+        mapper.save(account);
     }
 
     /**
-     * Returns a user by its key.
+     * Returns a account by its key.
      *
-     * @param id user id
-     * @return user
+     * @param id account id
+     * @return account
      */
-    public final Optional<User> getUser(final String id) {
-        return Optional.ofNullable(mapper.load(User.class, id));
+    public final Optional<Account> getAccount(final String id) {
+        return Optional.ofNullable(mapper.load(Account.class, id));
     }
 
     /**
-     * Returns a user by its google username.
+     * Returns a account by its google username.
      *
      * @param googleUsername google username
-     * @return user
+     * @return account
      */
-    public final Optional<User> findUserByGoogleUsername(final String googleUsername) {
+    public final Optional<Account> findAccountByGoogleUsername(final String googleUsername) {
 
         // Set parameters.
         Map<String, AttributeValue> eav = new HashMap<>();
         eav.put(":googleUsername", new AttributeValue().withS(googleUsername));
 
         // Define the query.
-        DynamoDBQueryExpression<User> queryExpression = new DynamoDBQueryExpression<User>()
+        DynamoDBQueryExpression<Account> queryExpression = new DynamoDBQueryExpression<Account>()
                 .withConsistentRead(false)
                 .withIndexName("INDEX_GOOGLE_USERNAME")
                 .withKeyConditionExpression("GOOGLE_USERNAME = :googleUsername")
                 .withExpressionAttributeValues(eav);
 
         // Run the query.
-        List<User> user = mapper.query(User.class, queryExpression);
+        List<Account> account = mapper.query(Account.class, queryExpression);
 
-        // Returns the user if exists.
-        if (user.size() == 1) {
-            return Optional.ofNullable(user.get(0));
+        // Returns the account if exists.
+        if (account.size() == 1) {
+            return Optional.ofNullable(account.get(0));
         } else {
             return Optional.empty();
         }
@@ -75,12 +75,12 @@ public class UserRepository {
     }
 
     /**
-     * Delete a user.
+     * Delete a account.
      *
-     * @param userId user id
+     * @param accountId account id
      */
-    public final void delete(final String userId) {
-        getUser(userId).ifPresent(value -> mapper.delete(value));
+    public final void delete(final String accountId) {
+        getAccount(accountId).ifPresent(value -> mapper.delete(value));
     }
 
 }

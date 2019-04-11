@@ -37,15 +37,15 @@ public class LooseTouchTokenProviderTest {
      */
     @Test
     public final void tokenCreationTest() {
-        final String testUserId = "straumat";
+        final String testAccoundId = "straumat";
 
         // Token creation.
-        final String token = looseTouchTokenProvider.createToken(testUserId);
+        final String token = looseTouchTokenProvider.createToken(testAccoundId);
 
-        // userId retrieval.
-        Optional<String> userId = looseTouchTokenProvider.getUserId(token);
-        assertTrue("userId is not present", userId.isPresent());
-        assertEquals("Wrong user id retrieved from token", testUserId, userId.get());
+        // accountId retrieval.
+        Optional<String> accountId = looseTouchTokenProvider.getAccountId(token);
+        assertTrue("accountId is not present", accountId.isPresent());
+        assertEquals("Wrong account id retrieved from token", testAccoundId, accountId.get());
     }
 
     /**
@@ -55,9 +55,9 @@ public class LooseTouchTokenProviderTest {
     public final void tokenValidityTest() {
         final String invalidToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c";
 
-        // userId retrieval.
-        Optional<String> userId = looseTouchTokenProvider.getUserId(invalidToken);
-        assertFalse("userId was retrieved from an invalid token", userId.isPresent());
+        // accountId retrieval.
+        Optional<String> accountId = looseTouchTokenProvider.getAccountId(invalidToken);
+        assertFalse("accountId was retrieved from an invalid token", accountId.isPresent());
     }
 
     /**
@@ -66,21 +66,21 @@ public class LooseTouchTokenProviderTest {
      */
     @Test
     public final void tokenExpirationDelayTest() throws InterruptedException {
-        final String testUserId = "straumat";
+        final String testAccountId = "straumat";
 
         // Token creation with an expiration delay of 2 seconds.
-        final String token = looseTouchTokenProvider.createToken(testUserId, TimeUnit.SECONDS.toMillis(2));
+        final String token = looseTouchTokenProvider.createToken(testAccountId, TimeUnit.SECONDS.toMillis(2));
 
-        // userId retrieval.
-        Optional<String> userId = looseTouchTokenProvider.getUserId(token);
-        assertTrue("userId is not present", userId.isPresent());
+        // accountId retrieval.
+        Optional<String> accountId = looseTouchTokenProvider.getAccountId(token);
+        assertTrue("accountId is not present", accountId.isPresent());
 
         // We wait until the delay is expired.
         Thread.sleep(TimeUnit.SECONDS.toMillis(2));
 
-        // userId retrieval.
-        userId = looseTouchTokenProvider.getUserId(token);
-        assertFalse("userId is present", userId.isPresent());
+        // accountId retrieval.
+        accountId = looseTouchTokenProvider.getAccountId(token);
+        assertFalse("accountId is present", accountId.isPresent());
     }
 
     /**
@@ -88,12 +88,12 @@ public class LooseTouchTokenProviderTest {
      */
     @Test
     public final void testEmptyToken() {
-        Optional<String> userId = looseTouchTokenProvider.getUserId(null);
-        assertFalse("userId is not present", userId.isPresent());
+        Optional<String> accountId = looseTouchTokenProvider.getAccountId(null);
+        assertFalse("accountId is not present", accountId.isPresent());
     }
 
     /**
-     * Test that we can createContact token with user ID generated for dynamo db.
+     * Test that we can createContact token with account ID generated for dynamo db.
      */
     @Test
     public final void testDynamoDBUserToken() {

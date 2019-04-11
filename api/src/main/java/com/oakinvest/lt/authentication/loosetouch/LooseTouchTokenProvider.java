@@ -45,25 +45,25 @@ public class LooseTouchTokenProvider {
     private long defaultExpirationDelay;
 
     /**
-     * Creates a token for the given userId (with application default delay.
-     * @param userId userId
+     * Creates a token for the given accountId (with application default delay.
+     * @param accountId accountId
      * @return token
      */
-    public final String createToken(final String userId) {
-        return createToken(userId, defaultExpirationDelay);
+    public final String createToken(final String accountId) {
+        return createToken(accountId, defaultExpirationDelay);
     }
 
     /**
-     * Creates a token for the given userId with an expiration delay.
-     * @param userId userId
+     * Creates a token for the given accountId with an expiration delay.
+     * @param accountId accountId
      * @param expirationDelay expiration delay
      * @return token
      */
-    public final String createToken(final String userId, final long expirationDelay) {
-        log.debug("Creating a token for user " + userId);
+    public final String createToken(final String accountId, final long expirationDelay) {
+        log.debug("Creating a token for account " + accountId);
 
-        // Set userId.
-        Claims claims = Jwts.claims().setSubject(userId);
+        // Set accountId.
+        Claims claims = Jwts.claims().setSubject(accountId);
 
         // Set issued date & validity.
         Date now = new Date();
@@ -88,8 +88,8 @@ public class LooseTouchTokenProvider {
      * @param token token
      * @return userId
      */
-    public final Optional<String> getUserId(final String token) {
-        log.debug("Getting user id for token " + token);
+    public final Optional<String> getAccountId(final String token) {
+        log.debug("Getting account id for token " + token);
         try {
             // Getting data from the claims.
             Jws<Claims> claims = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
@@ -99,10 +99,10 @@ public class LooseTouchTokenProvider {
                 log.debug("Token " + token + " expired");
                 return Optional.empty();
             } else {
-                // Return the userId.
-                String userId = claims.getBody().getSubject();
-                log.debug("Token " + token + " is from user " + userId);
-                return Optional.of(userId);
+                // Return the accountId.
+                String accountId = claims.getBody().getSubject();
+                log.debug("Token " + token + " is from account " + accountId);
+                return Optional.of(accountId);
             }
         } catch (JwtException | IllegalArgumentException e) {
             log.debug("Invalid token : " + token);
