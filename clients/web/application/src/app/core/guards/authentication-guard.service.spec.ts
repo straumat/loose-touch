@@ -11,6 +11,7 @@ import {DashboardComponent} from '../../features/dashboard/dashboard.component';
 import {DummyComponent} from '../../features/dummy/dummy.component';
 import {PageNotFoundComponent} from '../../features/page-not-found/page-not-found.component';
 import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
+import {ProfileComponent} from '../../features/profile/profile.component';
 
 const coreRoutes: Routes = [
   {
@@ -38,11 +39,10 @@ const coreRoutes: Routes = [
         path: 'dashboard',
         component: DashboardComponent,
         canActivate: [AuthenticationGuardService]
-      }
-      ,
+      },
       {
-        path: 'dummy',
-        component: DummyComponent,
+        path: 'profile',
+        component: ProfileComponent,
         canActivate: [AuthenticationGuardService]
       }
     ]
@@ -56,7 +56,7 @@ const coreRoutes: Routes = [
 describe('AuthenticationGuardService', () => {
 
   beforeEach(() => TestBed.configureTestingModule(({
-    declarations: [CoreComponent, DashboardComponent, LoginComponent, DummyComponent, PageNotFoundComponent],
+    declarations: [CoreComponent, DashboardComponent, LoginComponent, ProfileComponent, PageNotFoundComponent],
     imports: [
       JwtModule.forRoot({
         config: {
@@ -77,7 +77,6 @@ describe('AuthenticationGuardService', () => {
   });
 
   it('should not allow access to pages without token or with expired token', () => {
-    const service: AuthenticationGuardService = TestBed.get(AuthenticationGuardService);
     const router: Router = TestBed.get(Router);
     localStorage.clear();
 
@@ -99,6 +98,10 @@ describe('AuthenticationGuardService', () => {
       .then(() => {
         expect(router.url).toBe('/login');
       })
+      .then(() => router.navigate(['profile']))
+      .then(() => {
+        expect(router.url).toBe('/login');
+      })
       // Access to pages with expired token.
       .then(() => localStorage.setItem('token', expiredToken))
       .then(() => router.navigate(['login']))
@@ -110,6 +113,10 @@ describe('AuthenticationGuardService', () => {
         expect(router.url).toBe('/login');
       })
       .then(() => router.navigate(['dashboard']))
+      .then(() => {
+        expect(router.url).toBe('/login');
+      })
+      .then(() => router.navigate(['profile']))
       .then(() => {
         expect(router.url).toBe('/login');
       })
@@ -126,6 +133,10 @@ describe('AuthenticationGuardService', () => {
       .then(() => router.navigate(['dashboard']))
       .then(() => {
         expect(router.url).toBe('/dashboard');
+      })
+      .then(() => router.navigate(['profile']))
+      .then(() => {
+        expect(router.url).toBe('/profile');
       });
   });
 

@@ -44,4 +44,15 @@ describe('AuthenticationService', () => {
     expect(service.isAuthenticated()).toBe(true);
   });
 
+  it('If the token is expired, the token should be removed', () => {
+    const service: AuthenticationService = TestBed.get(AuthenticationService);
+    localStorage.clear();
+
+    const expiredToken = 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI2OGQwY2FiOC00YzVhLTRlNDctOGZlZS04ZWNmZjEyMjIzYTciLCJpYXQiOjE1NTQzOTI2NDMsImV4cCI6MTU1NDM5MjY0M30.gyj3mErABtm8jyaoROPzCiaFW8tQ2HCkhSP0vb8BVkw';
+    // Should return false if the token is present and expired.
+    localStorage.setItem('token', expiredToken);
+    expect(service.isAuthenticated()).toBe(false);
+    expect(localStorage.getItem('token')).toBeNull();
+  });
+
 });

@@ -6,6 +6,7 @@ import {DummyComponent} from '../features/dummy/dummy.component';
 import {LoginComponent} from '../features/login/login.component';
 import {PageNotFoundComponent} from '../features/page-not-found/page-not-found.component';
 import {AuthenticationGuardService} from './guards/authentication-guard.service';
+import {ProfileComponent} from '../features/profile/profile.component';
 
 const coreRoutes: Routes = [
   {
@@ -32,6 +33,11 @@ const coreRoutes: Routes = [
       {
         path: 'dashboard',
         component: DashboardComponent,
+        canActivate: [AuthenticationGuardService]
+      },
+      {
+        path: 'profile',
+        component: ProfileComponent,
         canActivate: [AuthenticationGuardService]
       }
       ,

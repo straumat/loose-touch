@@ -13,9 +13,12 @@ export class AuthenticationService {
    * Returns true if the token is present and not expired.
    */
   public isAuthenticated(): boolean {
-    const token = localStorage.getItem('token');
-    console.error('Is it null ? ' + (token == null) + ' /  Is it expired ? ' + this.jwtHelper.isTokenExpired(token));
-    return !(token == null || this.jwtHelper.isTokenExpired(token));
+    // If the token is expired we remove it.
+    if (this.jwtHelper.isTokenExpired(localStorage.getItem('token'))) {
+      localStorage.clear();
+    }
+
+    return (localStorage.getItem('token') != null);
   }
 
 }

@@ -7,9 +7,10 @@ import {LoginComponent} from './login/login.component';
 import {PageNotFoundComponent} from './page-not-found/page-not-found.component';
 import {CustomMaterialModule} from '../core/material.module';
 import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
+import { ProfileComponent } from './profile/profile.component';
 
 @NgModule({
-  declarations: [DashboardComponent, DummyComponent, LoginComponent, PageNotFoundComponent],
+  declarations: [DashboardComponent, DummyComponent, LoginComponent, PageNotFoundComponent, ProfileComponent],
   imports: [
     CommonModule,
     NgbModule,

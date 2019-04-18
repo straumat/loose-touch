@@ -24,19 +24,19 @@ describe('Account management test', () => {
     // Going to "/".
     browser.get('/');
     browser.getTitle().then(function(title) {
-      this.expect(title).toEqual('Loose touch login');
+      expect(title).toEqual('Loose touch login');
     });
 
     // Going to "dashboard".
     dashboardPage.navigateTo();
     browser.getTitle().then(function(title) {
-      this.expect(title).toEqual('Loose touch login');
+      expect(title).toEqual('Loose touch login');
     });
 
     // Going to "login".
     loginPage.navigateTo();
     browser.getTitle().then(function(title) {
-      this.expect(title).toEqual('Loose touch login');
+      expect(title).toEqual('Loose touch login');
     });
   });
 
@@ -48,19 +48,19 @@ describe('Account management test', () => {
     // Going to "/".
     browser.get('/');
     browser.getTitle().then(function(title) {
-      this.expect(title).toEqual('Loose touch login');
+      expect(title).toEqual('Loose touch login');
     });
 
     // Going to "dashboard".
     dashboardPage.navigateTo();
     browser.getTitle().then(function(title) {
-      this.expect(title).toEqual('Loose touch login');
+      expect(title).toEqual('Loose touch login');
     });
 
     // Going to "login".
     loginPage.navigateTo();
     browser.getTitle().then(function(title) {
-      this.expect(title).toEqual('Loose touch login');
+      expect(title).toEqual('Loose touch login');
     });
   });
 
@@ -72,19 +72,19 @@ describe('Account management test', () => {
     // Going to "/".
     browser.get('/');
     browser.getTitle().then(function(title) {
-      this.expect(title).toEqual('Dashboard');
+      expect(title).toEqual('Dashboard');
     });
 
     // Going to "dashboard".
     dashboardPage.navigateTo();
     browser.getTitle().then(function(title) {
-      this.expect(title).toEqual('Dashboard');
+      expect(title).toEqual('Dashboard');
     });
 
     // Going to "login".
     loginPage.navigateTo();
     browser.getTitle().then(function(title) {
-      this.expect(title).toEqual('Loose touch login');
+      expect(title).toEqual('Loose touch login');
     });
   });
 

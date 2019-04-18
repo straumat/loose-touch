@@ -25,8 +25,6 @@ describe('LoginComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  // -------------------------------------------------------------------------------------------------------------------
-  // My own tests.
   it('should display the title', () => {
     const compiled = fixture.debugElement.nativeElement;
     expect(compiled.querySelector('mat-card-title').textContent).toContain('Loose touch login');

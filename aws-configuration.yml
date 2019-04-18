@@ -321,10 +321,8 @@ Resources:
         - Name: !Sub
             - ${Subdomain}.${Domain}
             - { Subdomain: !FindInMap [SubdomainMap, !Ref Environment, www], Domain: !FindInMap [DomainMap, !Ref Environment, domain] }
-          Type: A
-          AliasTarget:
-            HostedZoneId: "Z2FDTNDATAQYW2"
-            DNSName: !GetAtt LooseTouchWWWDistribution.DomainName
+          Type: CNAME
+          ResourceRecords: !GetAtt LooseTouchWWWDistribution.DomainName
         # Root.
         - Name: !Sub
             - ${Domain}
