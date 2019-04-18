@@ -76,12 +76,12 @@ jobs: # We have jobs key. Each job represents a phase in your Build-Test-Deploy 
       # Deploy to aws (test).
       - run:
           name: Configure AWS and deploy API
+          no_output_timeout: 30m
           command: |
             aws cloudformation package --region ${AWS_REGION} --s3-bucket ${AWS_CONFIGURATION_BUCKET} --template-file aws-configuration.yml --output-template-file output-test-aws-configuration.yml
             aws cloudformation deploy --region ${AWS_REGION} --capabilities CAPABILITY_NAMED_IAM --parameter-override Stage=staging --template-file output-test-aws-configuration.yml --stack-name loose-touch-staging
       - run:
           name: Deploy sources (www & app)
-          no_output_timeout: 30m
           command: |
             aws s3 sync ./clients/web/application/dist/application s3://loose-touch-app-staging --delete --acl public-read
             aws s3 sync ./clients/web/public s3://loose-touch-www-staging --delete --acl public-read
