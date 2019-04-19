@@ -29,11 +29,11 @@ describe('ProfileComponent', () => {
     },
 
     disconnect() {
-      console.log('accountServiceStub - Disconnect')
+      console.log('accountServiceStub - Disconnect');
     },
 
     delete() {
-      console.log('accountServiceStub - Delete')
+      console.log('accountServiceStub - Delete');
     }
 
   };
