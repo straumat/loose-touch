@@ -322,7 +322,7 @@ Resources:
             - ${Subdomain}.${Domain}
             - { Subdomain: !FindInMap [SubdomainMap, !Ref Environment, www], Domain: !FindInMap [DomainMap, !Ref Environment, domain] }
           Type: CNAME
-          ResourceRecords: [GetAtt LooseTouchWWWDistribution.DomainName]
+          ResourceRecords: [!GetAtt LooseTouchWWWDistribution.DomainName]
         # Root.
         - Name: !Sub
             - ${Domain}
