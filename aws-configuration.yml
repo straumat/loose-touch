@@ -91,7 +91,7 @@ Resources:
     Type: AWS::DynamoDB::Table
     Properties:
       AttributeDefinitions:
-        - AttributeName: "ACCOUNT_ID"                                                # ID.
+        - AttributeName: "ACCOUNT_ID"                                             # ID.
           AttributeType: S                                                        # String.
         - AttributeName: "EMAIL"                                                  # Contact email.
           AttributeType: S                                                        # String.
@@ -150,14 +150,14 @@ Resources:
 
   # ====================================================================================================================
   # Defines buckets for public website.
-  LooseTouchWWWBucket:                                                           # The AWS::S3::Bucket resource creates an Amazon Simple Storage Service (Amazon S3) bucket in the same AWS Region where you create the AWS CloudFormation stack.
+  LooseTouchWWWBucket:                                                            # The AWS::S3::Bucket resource creates an Amazon Simple Storage Service (Amazon S3) bucket in the same AWS Region where you create the AWS CloudFormation stack.
     Type: AWS::S3::Bucket
     Properties:
-      BucketName: !FindInMap [bucketMap, !Ref Environment, www]                  # A name for the bucket. If you don't specify a name, AWS CloudFormation generates a unique physical ID and uses that ID for the bucket name.
-      AccessControl: PublicRead                                                  # A canned access control list (ACL) that grants predefined permissions to the bucket.
-      WebsiteConfiguration:                                                      # Information used to configure the bucket as a static website. For more information
-        IndexDocument: index.html                                                # The name of the index document for the website.
-        ErrorDocument: 404.html                                                  # The name of the error document for the website.
+      BucketName: !FindInMap [bucketMap, !Ref Environment, www]                   # A name for the bucket. If you don't specify a name, AWS CloudFormation generates a unique physical ID and uses that ID for the bucket name.
+      AccessControl: PublicRead                                                   # A canned access control list (ACL) that grants predefined permissions to the bucket.
+      WebsiteConfiguration:                                                       # Information used to configure the bucket as a static website.
+        IndexDocument: index.html                                                 # The name of the index document for the website.
+        ErrorDocument: 404.html                                                   # The name of the error document for the website.
 
   LooseTouchAppBucket:
     Type: AWS::S3::Bucket
@@ -338,13 +338,13 @@ Resources:
           ResourceRecords:
             - !GetAtt LooseTouchWWWDistribution.DomainName
         # Root.
-        - Name: !Sub
-            - ${Domain}
-            - Domain: !FindInMap [DomainMap, !Ref Environment, domain]
-          Type: CNAME
-          TTL: 900
-          ResourceRecords:
-            - !GetAtt LooseTouchWWWDistribution.DomainName
+#        - Name: !Sub
+#            - ${Domain}
+#            - Domain: !FindInMap [DomainMap, !Ref Environment, domain]
+#          Type: CNAME
+#          TTL: 900
+#          ResourceRecords:
+#            - !GetAtt LooseTouchWWWDistribution.DomainName
         # API.
         - Name: !Sub
             - ${Subdomain}.${Domain}
