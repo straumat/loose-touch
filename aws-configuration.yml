@@ -155,12 +155,18 @@ Resources:
     Properties:
       BucketName: !FindInMap [bucketMap, !Ref Environment, www]                  # A name for the bucket. If you don't specify a name, AWS CloudFormation generates a unique physical ID and uses that ID for the bucket name.
       AccessControl: PublicRead                                                  # A canned access control list (ACL) that grants predefined permissions to the bucket.
+      WebsiteConfiguration:                                                      # Information used to configure the bucket as a static website. For more information
+        IndexDocument: index.html                                                # The name of the index document for the website.
+        ErrorDocument: 404.html                                                  # The name of the error document for the website.
 
   LooseTouchAppBucket:
     Type: AWS::S3::Bucket
     Properties:
       BucketName: !FindInMap [bucketMap, !Ref Environment, app]
       AccessControl: PublicRead
+      WebsiteConfiguration:
+        IndexDocument: index.html
+        ErrorDocument: 404.html
 
   # ====================================================================================================================
   # Cloudfront distribution.
@@ -171,9 +177,12 @@ Resources:
     Properties:
       DistributionConfig:                                                         # The distribution's configuration information.
         Origins:                                                                  # A list of origins for this CloudFront distribution. For each origin, you can specify whether it is an Amazon S3 or custom origin.
-          - DomainName: !Sub                                                      # The DNS name of the Amazon Simple Storage Service (S3) bucket or the HTTP server from which you want CloudFront to get objects for this origin.
-              - ${Bucket}.s3-external-1.amazonaws.com
-              - Bucket: !FindInMap [bucketMap, !Ref Environment, www]
+          - DomainName: !Join
+              - ''
+              - - !FindInMap [bucketMap, !Ref Environment, www]
+                - '.s3-website.'
+                - !Ref 'AWS::Region'
+                - '.amazonaws.com'
             Id: www                                                               # An identifier for the origin which must be unique within the distribution
             CustomOriginConfig:                                                   # Origin information to specify a custom origin.
               HTTPPort: 80                                                        # The HTTP port the custom origin listens on.
@@ -267,9 +276,12 @@ Resources:
     Properties:
       DistributionConfig:
         Origins:
-          - DomainName: !Sub
-              - ${Bucket}.s3-external-1.amazonaws.com
-              - Bucket: !FindInMap [bucketMap, !Ref Environment, app]
+          - DomainName: !Join
+              - ''
+              - - !FindInMap [bucketMap, !Ref Environment, app]
+                - '.s3-website.'
+                - !Ref 'AWS::Region'
+                - '.amazonaws.com'
             Id: app
             CustomOriginConfig:
               HTTPPort: 80
@@ -322,29 +334,30 @@ Resources:
             - ${Subdomain}.${Domain}
             - { Subdomain: !FindInMap [SubdomainMap, !Ref Environment, www], Domain: !FindInMap [DomainMap, !Ref Environment, domain] }
           Type: CNAME
-          TTL : 900
-          ResourceRecords: [!GetAtt LooseTouchWWWDistribution.DomainName]
+          TTL: 900
+          ResourceRecords:
+            - !GetAtt LooseTouchWWWDistribution.DomainName
         # Root.
         - Name: !Sub
             - ${Domain}
             - Domain: !FindInMap [DomainMap, !Ref Environment, domain]
-          Type: A
-          AliasTarget:
-            HostedZoneId: "Z2FDTNDATAQYW2"
-            DNSName: !GetAtt LooseTouchWWWDistribution.DomainName
+          Type: CNAME
+          TTL: 900
+          ResourceRecords:
+            - !GetAtt LooseTouchWWWDistribution.DomainName
         # API.
         - Name: !Sub
             - ${Subdomain}.${Domain}
             - { Subdomain: !FindInMap [SubdomainMap, !Ref Environment, api], Domain: !FindInMap [DomainMap, !Ref Environment, domain] }
-          Type: A
-          AliasTarget:
-            HostedZoneId: "Z2FDTNDATAQYW2"
-            DNSName: !GetAtt LooseTouchAPIDistribution.DomainName
+          Type: CNAME
+          TTL: 900
+          ResourceRecords:
+            - !GetAtt LooseTouchAPIDistribution.DomainName
         # APP.
         - Name: !Sub
             - ${Subdomain}.${Domain}
             - { Subdomain: !FindInMap [SubdomainMap, !Ref Environment, app], Domain: !FindInMap [DomainMap, !Ref Environment, domain] }
-          Type: A
-          AliasTarget:
-            HostedZoneId: "Z2FDTNDATAQYW2"
-            DNSName: !GetAtt LooseTouchAppDistribution.DomainName
+          Type: CNAME
+          TTL: 900
+          ResourceRecords:
+            - !GetAtt LooseTouchAppDistribution.DomainName
