@@ -249,7 +249,6 @@
                             </classes>
                             <outputKind>module</outputKind>
                             <mapEnum>asEnum</mapEnum>
-                            <excludeClasses>java.util.Observer,java.util.Observable</excludeClasses>
                         </configuration>
                     </plugin>
                     <!-- Documentation plugin -->

@@ -60,7 +60,7 @@ curl    --header "Content-Type: application/json" \
         ${LOOSE_TOUCH_SERVER_URL}/v1/contacts | jq
 ```
 
-## Get contact to reach.
+## Get contacts to reach.
 ```
 curl "${LOOSE_TOUCH_SERVER_URL}/v1/contacts/toReach" -H "Authorization: Bearer ${LOOSE_TOUCH_ID_TOKEN_FOR_USER_1}" -X GET -s | jq
 ```

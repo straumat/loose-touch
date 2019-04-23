@@ -10,6 +10,13 @@ export class AuthenticationService {
   }
 
   /**
+   * Login via Google.
+   */
+  public googleLogin(): string {
+    return 'toto';
+  }
+
+  /**
    * Returns true if the token is present and not expired.
    */
   public isAuthenticated(): boolean {
