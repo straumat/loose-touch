@@ -50,6 +50,21 @@ links
   * [Angular Router Tutorial: Setting Up Routing in Your Application](https://www.intertech.com/Blog/angular-router-tutorial-setting-up-routing-in-your-application/)
   * [6 Best Practices & Pro Tips when using Angular CLI](https://medium.com/@tomastrajan/6-best-practices-pro-tips-for-angular-cli-better-developer-experience-7b328bc9db81)
   
+## Angular module system: NgModule.
+A @NgModule decorator has four keys: declarations, imports, providers, and bootstrap.
+
+### declarations.
+declarations specifies the components that are defined in this module. You have to declare components in a NgModule before you can use them in your templates. You can think of an NgModule a bit like a “package” and declarations states what components are “owned by” this module.
+
+### imports.
+imports describes which dependencies this module has. We’re creating a browser app, so we want to import the BrowserModule. If your module depends on other modules, you list them here.
+
+### providers.
+providers is used for dependency injection. So to make a service available to be injected throughout our application, we will add it here.
+
+### bootstrap.
+bootstrap tells Angular that when this module is used to bootstrap an app, we need to load the AppComponent component as the top-level component.
+
 # Notes
   * Added ng-bootstrap
   * Added https://material.angular.io/ 

@@ -28,10 +28,7 @@ describe('Authentication error handler', () => {
   it('Error handler should not be called if everything is ok', () => {
     const component: AuthenticationErrorHandler = TestBed.get(AuthenticationErrorHandler);
     spyOn(component, 'handleError');
-
     // mock.expectOne('/test').flush(null, {status: 200, statusText: 'Request OK'});
-
-
     // expect(component.handleError).toHaveBeenCalled();
   });
 

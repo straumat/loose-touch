@@ -4,6 +4,7 @@ import {AccountService} from './account.service';
 import {HttpClientTestingModule, HttpTestingController} from '@angular/common/http/testing';
 import {HttpClient} from '@angular/common/http';
 import {AccountDTO} from '../models/api';
+import {JwtModule} from '@auth0/angular-jwt';
 
 describe('AccountService', () => {
 
@@ -12,9 +13,17 @@ describe('AccountService', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule]
+      imports: [
+        HttpClientTestingModule,
+        JwtModule.forRoot({
+          config: {
+            tokenGetter: () => {
+              return localStorage.getItem('token');
+            }
+          }
+        })
+      ]
     });
-
     // Inject the http service and test controller for each test
     httpClient = TestBed.get(HttpClient);
     httpTestingController = TestBed.get(HttpTestingController);
@@ -27,6 +36,37 @@ describe('AccountService', () => {
   it('should be created', () => {
     const service: AccountService = TestBed.get(AccountService);
     expect(service).toBeTruthy();
+  });
+
+  it('should return false if not token or token expired', () => {
+    const service: AccountService = TestBed.get(AccountService);
+    localStorage.clear();
+
+    // Tokens used for tests.
+    const validToken = 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJjMjUyOWI1OC1hYzVhLTRiYTMtODA2Yy02NjlmYzkwZmQ4YTMiLCJpYXQiOjE1NTQzODgzNzksImV4cCI6Mjc0NzQzODgzODF9.z_pCx8hxTEc5J1PIOAzW-NEUKZE6LD6AE-pG_v17QVo';
+    const expiredToken = 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI2OGQwY2FiOC00YzVhLTRlNDctOGZlZS04ZWNmZjEyMjIzYTciLCJpYXQiOjE1NTQzOTI2NDMsImV4cCI6MTU1NDM5MjY0M30.gyj3mErABtm8jyaoROPzCiaFW8tQ2HCkhSP0vb8BVkw';
+
+    // Should return false if the token is not present.
+    expect(service.isTokenPresent()).toBe(false);
+
+    // Should return false if the token is present and expired.
+    localStorage.setItem('token', expiredToken);
+    expect(service.isTokenPresent()).toBe(false);
+
+    // Should return true if the token is present and valid.
+    localStorage.setItem('token', validToken);
+    expect(service.isTokenPresent()).toBe(true);
+  });
+
+  it('If the token is expired, the token should be removed', () => {
+    const service: AccountService = TestBed.get(AccountService);
+    localStorage.clear();
+
+    const expiredToken = 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI2OGQwY2FiOC00YzVhLTRlNDctOGZlZS04ZWNmZjEyMjIzYTciLCJpYXQiOjE1NTQzOTI2NDMsImV4cCI6MTU1NDM5MjY0M30.gyj3mErABtm8jyaoROPzCiaFW8tQ2HCkhSP0vb8BVkw';
+    // Should return false if the token is present and expired.
+    localStorage.setItem('token', expiredToken);
+    expect(service.isTokenPresent()).toBe(false);
+    expect(localStorage.getItem('token')).toBeNull();
   });
 
   it('We should receive profile data', () => {

@@ -5229,6 +5229,13 @@ protoduck@^5.0.1:
   dependencies:
     genfun "^5.0.0"
 
+protractor-http-client@latest:
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/protractor-http-client/-/protractor-http-client-1.0.4.tgz#f8eeaf273ec13e28d75b9630268b00715cb8fca6"
+  integrity sha1-+O6vJz7BPijXW5YwJosAcVy4/KY=
+  dependencies:
+    request "^2.83.0"
+
 protractor@~5.4.0:
   version "5.4.2"
   resolved "https://registry.yarnpkg.com/protractor/-/protractor-5.4.2.tgz#329efe37f48b2141ab9467799be2d4d12eb48c13"

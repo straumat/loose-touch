@@ -7,6 +7,7 @@ import {HttpClientTestingModule} from '@angular/common/http/testing';
 import {AccountDTO} from '../../core/models/api';
 import {Observable} from 'rxjs';
 import {of} from 'rxjs';
+import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
 
 describe('ProfileComponent', () => {
   let component: ProfileComponent;
@@ -42,9 +43,9 @@ describe('ProfileComponent', () => {
       TestBed.configureTestingModule({
         imports: [CustomMaterialModule, HttpClientTestingModule],
         declarations: [ProfileComponent],
-        providers: [{provide: AccountService, useValue: accountServiceStub}]
-      })
-        .compileComponents();
+        providers: [{provide: AccountService, useValue: accountServiceStub}],
+        schemas: [CUSTOM_ELEMENTS_SCHEMA]
+      }).compileComponents();
     })
   );
 

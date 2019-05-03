@@ -2,16 +2,17 @@ import {TestBed} from '@angular/core/testing';
 
 import {AuthenticationGuardService} from './authentication-guard.service';
 import {JwtHelperService, JwtModule} from '@auth0/angular-jwt';
-import {AuthenticationService} from '../services/authentication.service';
 import {RouterTestingModule} from '@angular/router/testing';
 import {Router, Routes} from '@angular/router';
 import {LoginComponent} from '../../features/login/login.component';
 import {CoreComponent} from '../core.component';
 import {DashboardComponent} from '../../features/dashboard/dashboard.component';
-import {DummyComponent} from '../../features/dummy/dummy.component';
 import {PageNotFoundComponent} from '../../features/page-not-found/page-not-found.component';
 import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
 import {ProfileComponent} from '../../features/profile/profile.component';
+import {AccountService} from '../services/account.service';
+import {HttpClient} from '@angular/common/http';
+import {HttpClientTestingModule, HttpTestingController} from '@angular/common/http/testing';
 
 const coreRoutes: Routes = [
   {
@@ -55,21 +56,30 @@ const coreRoutes: Routes = [
 
 describe('AuthenticationGuardService', () => {
 
-  beforeEach(() => TestBed.configureTestingModule(({
-    declarations: [CoreComponent, DashboardComponent, LoginComponent, ProfileComponent, PageNotFoundComponent],
-    imports: [
-      JwtModule.forRoot({
-        config: {
-          tokenGetter: () => {
-            return localStorage.getItem('token');
+  let httpClient: HttpClient;
+  let httpTestingController: HttpTestingController;
+
+  beforeEach(() => {
+    TestBed.configureTestingModule({
+      declarations: [CoreComponent, DashboardComponent, LoginComponent, ProfileComponent, PageNotFoundComponent],
+      imports: [
+        HttpClientTestingModule,
+        JwtModule.forRoot({
+          config: {
+            tokenGetter: () => {
+              return localStorage.getItem('token');
+            }
           }
-        }
-      }),
-      RouterTestingModule.withRoutes(coreRoutes)
-    ],
-    providers: [JwtHelperService, AuthenticationService],
-    schemas: [CUSTOM_ELEMENTS_SCHEMA]
-  })));
+        }),
+        RouterTestingModule.withRoutes(coreRoutes)
+      ],
+      providers: [JwtHelperService, AccountService],
+      schemas: [CUSTOM_ELEMENTS_SCHEMA]
+    });
+    // Inject the http service and test controller for each test
+    httpClient = TestBed.get(HttpClient);
+    httpTestingController = TestBed.get(HttpTestingController);
+  });
 
   it('should be created', () => {
     const service: AuthenticationGuardService = TestBed.get(AuthenticationGuardService);
@@ -140,4 +150,5 @@ describe('AuthenticationGuardService', () => {
       });
   });
 
-});
+})
+;

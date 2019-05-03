@@ -4,7 +4,13 @@
 
 export const environment = {
   production: false,
+
+  // URL.
   apiURL: 'http://localhost:8080/v1'
+
+  // Constants.
+
+
 };
 
 /*
