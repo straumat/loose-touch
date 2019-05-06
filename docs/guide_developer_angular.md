@@ -65,10 +65,36 @@ providers is used for dependency injection. So to make a service available to be
 ### bootstrap.
 bootstrap tells Angular that when this module is used to bootstrap an app, we need to load the AppComponent component as the top-level component.
 
-# Notes
-  * Added ng-bootstrap
-  * Added https://material.angular.io/ 
+# Setup.
+  * ng new application --routing=true --style=css
+  
+  * go to application directory
+  * Add bootstrap
+    * npm install --save bootstrap
+  * Add ng-bootstrap
+    * npm install --save @ng-bootstrap/ng-bootstrap
+    * Add NgbModule to your AppModule imports.
+  * Add material angular 
     * npm install --save @angular/material @angular/cdk @angular/animations
-    * In style.css : @import '~@angular/material/prebuilt-themes/indigo-pink.css';
-    * In index.html : <link href="//fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-
+    * In style.css : 
+        * @import "~bootstrap/dist/css/bootstrap.css";
+        * @import '~@angular/material/prebuilt-themes/deeppurple-amber.css';
+  
+  * Creates core, shared and feature
+    * ng generate module core --routing
+    * ng generate module shared
+    * ng generate module features
+  
+  * Creates the core component and its routing.
+    * ng generate component core --module core 
+  
+  * Creates material.module.ts in core to list all components you will use. Import it in app.component.ts.
+   
+  * You can create :  ng g component core/components/header --module=core.
+  
+  * You can then create pages.
+    * ng generate component features/dashboard
+    * ng generate component features/login
+  
+  
+  C'est quoi material icons ?
