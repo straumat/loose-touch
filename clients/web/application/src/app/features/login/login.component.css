@@ -1,0 +1,37 @@
+.login-box {
+  padding-bottom: 80px;
+  margin: auto;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.login-image {
+  background-image: url('/assets/images/signin/user.jpeg');
+  background-size: cover;
+}
+
+.mat-card {
+  padding-bottom: 35px;
+}
+
+.mat-card-actions {
+  width: 50%;
+  margin: 0 auto;
+}
+
+.google-sign-in {
+  border-style: none;
+  outline: none;
+  background: transparent url('/assets/images/signin/google/btn_google_signin_dark_normal_web.png');
+  height: 46px;
+  width: 191px;
+}
+
+.google-sign-in:hover {
+  border-style: none;
+  outline-style: none;
+  background: transparent url('/assets/images/signin/google/btn_google_signin_dark_focus_web.png');
+}
+

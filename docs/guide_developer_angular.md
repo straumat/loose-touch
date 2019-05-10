@@ -79,11 +79,14 @@ bootstrap tells Angular that when this module is used to bootstrap an app, we ne
     * In style.css : 
         * @import "~bootstrap/dist/css/bootstrap.css";
         * @import '~@angular/material/prebuilt-themes/deeppurple-amber.css';
+  * Add angular social login :
+    * npm install --save angularx-social-login
   
   * Creates core, shared and feature
     * ng generate module core --routing
     * ng generate module shared
     * ng generate module features
+  * Add CoreModule, FeaturesModule and SharedModule to appModule.
   
   * Creates the core component and its routing.
     * ng generate component core --module core 
