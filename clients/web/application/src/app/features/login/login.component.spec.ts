@@ -3,18 +3,39 @@ import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 import {LoginComponent} from './login.component';
 import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
 import {RouterTestingModule} from '@angular/router/testing';
+import {HttpClientTestingModule, HttpTestingController} from '@angular/common/http/testing';
+import {JwtModule} from '@auth0/angular-jwt';
+import {environment} from '../../../environments/environment';
+import {HttpClient} from '@angular/common/http';
 
 describe('LoginComponent', () => {
+
   let component: LoginComponent;
   let fixture: ComponentFixture<LoginComponent>;
+  let httpClient: HttpClient;
+  let httpTestingController: HttpTestingController;
 
-  beforeEach(async(() => {
+  beforeEach(() => {
     TestBed.configureTestingModule({
       declarations: [LoginComponent],
-      imports: [RouterTestingModule],
+      imports: [
+        HttpClientTestingModule,
+        RouterTestingModule,
+        JwtModule.forRoot({
+          config: {
+            tokenGetter: () => {
+              return localStorage.getItem(environment.tokenNameInLocalStorage);
+            }
+          }
+        })
+      ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
-    }).compileComponents();
-  }));
+    });
+    // Inject the http service and test controller for each test
+    httpClient = TestBed.get(HttpClient);
+    httpTestingController = TestBed.get(HttpTestingController);
+    localStorage.clear();
+  });
 
   beforeEach(() => {
     fixture = TestBed.createComponent(LoginComponent);
@@ -53,8 +74,8 @@ describe('LoginComponent', () => {
 
     const button = fixture.debugElement.nativeElement.querySelector('.google-sign-in');
     button.click();
-    fixture.detectChanges();
 
+    fixture.detectChanges();
     fixture.whenStable().then(() => {
       expect(component.signInWithGoogle).toHaveBeenCalled();
     });

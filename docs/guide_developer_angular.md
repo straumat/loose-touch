@@ -81,6 +81,8 @@ bootstrap tells Angular that when this module is used to bootstrap an app, we ne
         * @import '~@angular/material/prebuilt-themes/deeppurple-amber.css';
   * Add angular social login :
     * npm install --save angularx-social-login
+  * Add jwt manager
+    * npm install --save @auth0/angular-jwt
   
   * Creates core, shared and feature
     * ng generate module core --routing

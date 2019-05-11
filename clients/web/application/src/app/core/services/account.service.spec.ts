@@ -1,0 +1,123 @@
+/* tslint:disable */
+import {TestBed} from '@angular/core/testing';
+
+import {AccountService} from './account.service';
+import {HttpClientTestingModule, HttpTestingController} from '@angular/common/http/testing';
+import {HttpClient} from '@angular/common/http';
+import {JwtModule} from '@auth0/angular-jwt';
+import {environment} from '../../../environments/environment';
+import {AccountDTO} from '../models/account';
+
+describe('AccountService', () => {
+
+  let httpClient: HttpClient;
+  let httpTestingController: HttpTestingController;
+
+  // Test data.
+  const googleUser1IdToken = 'eyJhbGciOiJSUzI1NiIsImtpZCI6IjI4ZjU4MTNlMzI3YWQxNGNhYWYxYmYyYTEyMzY4NTg3ZTg4MmI2MDQiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmdvb2dsZS5jb20iLCJhenAiOiI0MDgzMTQyMTkxNDktNjBzOGwybHRyYmFsODJobnVqMzV1ODFvcHQyN2doc2EuYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJhdWQiOiI0MDgzMTQyMTkxNDktNjBzOGwybHRyYmFsODJobnVqMzV1ODFvcHQyN2doc2EuYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJzdWIiOiIxMDk5NzE4MTY5MTIxNjI4ODcwNDkiLCJlbWFpbCI6Imxvb3NlLnRvdWNoLnRlc3QuMUBnbWFpbC5jb20iLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwiYXRfaGFzaCI6IkZpMWgtZlgzSC1HT2l4dTh1R3ctTVEiLCJuYW1lIjoibG9vc2UgMSB0b3VjaCAxIiwicGljdHVyZSI6Imh0dHBzOi8vbGg1Lmdvb2dsZXVzZXJjb250ZW50LmNvbS8tdlRJTWh5TDllUE0vQUFBQUFBQUFBQUkvQUFBQUFBQUFBQUEvQUNIaTNyZlVmeVg3ZnRVaGFCX291aTRqbnV2blFNQmh3dy9zOTYtYy9waG90by5qcGciLCJnaXZlbl9uYW1lIjoibG9vc2UgMSIsImZhbWlseV9uYW1lIjoidG91Y2ggMSIsImxvY2FsZSI6ImZyIiwiaWF0IjoxNTU3NjA3NDI0LCJleHAiOjE1NTc2MTEwMjR9.eZkeAabrhA1Y_YAbX3F8uVP_TSolLhu_vvGqISqsm2kUPWnqboHUuW4MVrw_-LNjy0A75lBbrkXwZiH3NQAvwPigkRQ-d7j881dTjGvuuPX3d448hQlRUYu01SL2Fms0oCILc1RkeKXQfmEByEFt-xTannQNhCZjAC7uv7StfmA5KGkPRllQqWAlqkhjeTJeiF-d4-_gyUkUpbNwqgKa1Ctx8p9cWB3XhnfON3rC99QQ5TdpgYKm1BIBvlerZKgw7Rw2WKqmGoh1MbI6geOgOHzQmNM-Xjf7Bwp251WK48XNoOyuskRMKlQxqViG8edV2tKjF9zN67y5qn5RDKyyPw';
+  const googleUser1AccessToken = 'ya29.Gl0GB8nUQyjnRM4QmgFFinHGn2l8RH0_WSzw0fNaEwgZvdKQMf9kTI1e9_po4n4XXr0MwyRxsNtcBSoDgXteZ8l4ivewkdZ_1OuTKaS-HVgCzJ-9yt8_SCcT79xWUk0';
+
+  const googleUser2IdToken = 'eyJhbGciOiJSUzI1NiIsImtpZCI6IjI4ZjU4MTNlMzI3YWQxNGNhYWYxYmYyYTEyMzY4NTg3ZTg4MmI2MDQiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmdvb2dsZS5jb20iLCJhenAiOiI0MDgzMTQyMTkxNDktNjBzOGwybHRyYmFsODJobnVqMzV1ODFvcHQyN2doc2EuYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJhdWQiOiI0MDgzMTQyMTkxNDktNjBzOGwybHRyYmFsODJobnVqMzV1ODFvcHQyN2doc2EuYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJzdWIiOiIxMTU3ODc3MTAxOTYwNjc0NzY4ODEiLCJlbWFpbCI6Imxvb3NlLnRvdWNoLnRlc3QuMkBnbWFpbC5jb20iLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwiYXRfaGFzaCI6IlBiSTF0NTJlMjNFMFlmeU41dDdKVEEiLCJuYW1lIjoibG9vc2UgMiB0b3VjaCAyIiwicGljdHVyZSI6Imh0dHBzOi8vbGgzLmdvb2dsZXVzZXJjb250ZW50LmNvbS8tR3htalpQRjRUSTgvQUFBQUFBQUFBQUkvQUFBQUFBQUFBQUEvQUNIaTNyYzduaENva1kzbVR1QmQ4MEZrMW5MQXZzOTZ3US9zOTYtYy9waG90by5qcGciLCJnaXZlbl9uYW1lIjoibG9vc2UgMiIsImZhbWlseV9uYW1lIjoidG91Y2ggMiIsImxvY2FsZSI6ImZyIiwiaWF0IjoxNTU3NjA3NDI0LCJleHAiOjE1NTc2MTEwMjR9.NXt0r_S16HstzAx7Hxi-MxN5BZTbBKlnpRPHeJHiaJu8YnbdX5ouXRTVNYYTl9tS3f-RaNbd9jbjRRSnP81AfZTFo3geMIV8Zu8SuoHb1YcOCM2i0MVtcDOuQqZmQgoa4qIKaCt687spE8g049zNH-ij80xsaLMCCiA8oI9b7o-_gct8EJNPDyohxK6U-duAcSDZN1uYdQI-hK9vXF9NMzfj_IwMPkucZBlhBlWPihCISddIvAi9oX4AJdjxs_ZZ0y4fP1RUXTKNaXXrtYqdJd0r-oS9Y29U-tYwHWDGCvOi9kd8xUyHFYmPJvbhoOLCDYUcpIdc5-i986YLyBDe8g';
+  const googleUser2AccessToken = 'ya29.Gl0GBwswd8sIHW-DOia1l0XZ4zQJFcCPAzZtRO5QAV1NxjFD6BFSZssyGgyxuTtivHs4pkr1bnLWSu8IfIH_k7ruZ-LoOp2sbaU2zNzx3l2enW5oPxzxVZpa15sHir0';
+
+  beforeEach(() => {
+    TestBed.configureTestingModule({
+      imports: [
+        HttpClientTestingModule,
+        JwtModule.forRoot({
+          config: {
+            tokenGetter: () => {
+              return localStorage.getItem(environment.tokenNameInLocalStorage);
+            }
+          }
+        })
+      ]
+    });
+    // Inject the http service and test controller for each test
+    httpClient = TestBed.get(HttpClient);
+    httpTestingController = TestBed.get(HttpTestingController);
+    localStorage.clear();
+  });
+
+  it('should be created', () => {
+    const service: AccountService = TestBed.get(AccountService);
+    expect(service).toBeTruthy();
+  });
+
+  it('should connect with correct google credentials', () => {
+    const service: AccountService = TestBed.get(AccountService);
+
+    // Test account data.
+    const expectedData: AccountDTO = {
+      idToken: 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIyYjI5ZTY3ZS0zM2U0LTRiMGItYmY5YS1jOTIxNDJlZmQ5MWEiLCJpYXQiOjE1NTQ5ODMzMTYsImV4cCI6MTU1NzU3NTMxNn0._Jj8TLKQJAjGnzq4om2ujbLTgNCf_ZhJdhlNYiuk3xE',
+      firstName: 'loose 1',
+      lastName: 'touch 1',
+      email: 'loose.touch.test.1@gmail.com',
+      pictureUrl: 'https://lh5.googleusercontent.com/-vTIMhyL9ePM/AAAAAAAAAAI/AAAAAAAAAAA/ACHi3rfUfyX7ftUhaB_oui4jnuvnQMBhww/s96-c/photo.jpg',
+      newAccount: true
+    };
+
+    // Verify default data.
+    expect(service.account).toBeNull();
+    expect(localStorage.getItem(environment.tokenNameInLocalStorage)).toBeNull();
+
+    // Calling the service and testing results.
+    service.googleLogin(googleUser1IdToken, googleUser1AccessToken).subscribe(data => {
+      // Test returned value.
+      expect(data).toEqual(expectedData);
+      // Test stored data in service.
+      expect(data).toEqual(service.account);
+      // Test stored token.
+      expect(localStorage.getItem(environment.tokenNameInLocalStorage)).toEqual(data.idToken);
+    });
+
+    // Then we set the fake data to be returned by the mock
+    const req = httpTestingController.expectOne('http://localhost:8080/v1/login/google');
+    expect(req.request.method).toEqual('POST');
+    req.flush({
+      idToken: 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIyYjI5ZTY3ZS0zM2U0LTRiMGItYmY5YS1jOTIxNDJlZmQ5MWEiLCJpYXQiOjE1NTQ5ODMzMTYsImV4cCI6MTU1NzU3NTMxNn0._Jj8TLKQJAjGnzq4om2ujbLTgNCf_ZhJdhlNYiuk3xE',
+      firstName: 'loose 1',
+      lastName: 'touch 1',
+      email: 'loose.touch.test.1@gmail.com',
+      pictureUrl: 'https://lh5.googleusercontent.com/-vTIMhyL9ePM/AAAAAAAAAAI/AAAAAAAAAAA/ACHi3rfUfyX7ftUhaB_oui4jnuvnQMBhww/s96-c/photo.jpg',
+      newAccount: true
+    });
+
+  });
+
+  it('should not connect with incorrect google credentials', () => {
+    const service: AccountService = TestBed.get(AccountService);
+
+    /*    // Test account data.
+        const expectedData: LooseTouchError = {
+          type: LooseTouchErrorType.authentication_error,
+          message: 'Invalid Google Id token : invalid"',
+          errors: []
+        };
+
+        // Verify default data.
+        expect(service.account).toBeNull();
+        expect(localStorage.getItem(environment.tokenNameInLocalStorage)).toBeNull();
+
+        // Calling the service and testing results.
+        service.googleLogin(googleUser1IdToken, googleUser1AccessToken).subscribe(data => {
+          // Test returned value.
+          expect(data).toEqual(expectedData);
+          // Test stored data in service.
+          expect(data).toBeNull();
+          // Test stored token.
+          expect(localStorage.getItem(environment.tokenNameInLocalStorage)).toEqual(data.idToken);
+        });
+
+        // Then we set the fake data to be returned by the mock
+        const req = httpTestingController.expectOne('http://localhost:8080/v1/login/google');
+        expect(req.request.method).toEqual('POST');
+        req.flush({
+          "type": "authentication_error",
+          "message": "Invalid Google Id token : invalid",
+          "errors": []
+        });*/
+
+  });
+
+});

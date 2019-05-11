@@ -234,22 +234,54 @@
                         <version>${typescript-generator-maven-plugin.version}</version>
                         <executions>
                             <execution>
-                                <id>generate</id>
+                                <id>generate-account</id>
                                 <goals>
                                     <goal>generate</goal>
                                 </goals>
                                 <phase>process-classes</phase>
+                                <configuration>
+                                    <jsonLibrary>jackson2</jsonLibrary>
+                                    <classes>
+                                        <class>com.oakinvest.lt.dto.v1.AccountDTO</class>
+                                    </classes>
+                                    <outputFile>target/typescript-generator/account.d.ts</outputFile>
+                                    <outputKind>module</outputKind>
+                                    <mapEnum>asEnum</mapEnum>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>generate-contact</id>
+                                <goals>
+                                    <goal>generate</goal>
+                                </goals>
+                                <phase>process-classes</phase>
+                                <configuration>
+                                    <jsonLibrary>jackson2</jsonLibrary>
+                                    <classes>
+                                        <class>com.oakinvest.lt.dto.v1.ContactDTO</class>
+                                    </classes>
+                                    <outputFile>target/typescript-generator/contact.d.ts</outputFile>
+                                    <outputKind>module</outputKind>
+                                    <mapEnum>asEnum</mapEnum>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>generate-looseTouchError</id>
+                                <goals>
+                                    <goal>generate</goal>
+                                </goals>
+                                <phase>process-classes</phase>
+                                <configuration>
+                                    <jsonLibrary>jackson2</jsonLibrary>
+                                    <classes>
+                                        <class>com.oakinvest.lt.util.error.LooseTouchError</class>
+                                    </classes>
+                                    <outputFile>target/typescript-generator/looseToucheError.d.ts</outputFile>
+                                    <outputKind>module</outputKind>
+                                    <mapEnum>asEnum</mapEnum>
+                                </configuration>
                             </execution>
                         </executions>
-                        <configuration>
-                            <jsonLibrary>jackson2</jsonLibrary>
-                            <classes>
-                                <class>com.oakinvest.lt.dto.v1.AccountDTO</class>
-                                <class>com.oakinvest.lt.dto.v1.ContactDTO</class>
-                            </classes>
-                            <outputKind>module</outputKind>
-                            <mapEnum>asEnum</mapEnum>
-                        </configuration>
                     </plugin>
                     <!-- Documentation plugin -->
                     <plugin>

@@ -1,0 +1,46 @@
+import {Injectable} from '@angular/core';
+import {environment} from '../../../environments/environment';
+import {HttpClient, HttpParams} from '@angular/common/http';
+import {JwtHelperService} from '@auth0/angular-jwt';
+import {AccountDTO} from '../models/account';
+import {Observable} from 'rxjs';
+import {map} from 'rxjs/operators';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class AccountService {
+
+  /**
+   * Connected account.
+   */
+  account: AccountDTO = null;
+
+  /**
+   * Constructor.
+   * @param http enable rest connection
+   * @param jwtHelper enable jwt management
+   */
+  constructor(private http: HttpClient, public jwtHelper: JwtHelperService) {
+  }
+
+  /**
+   * Login via Google.
+   */
+  public googleLogin(googleIdToken: string, googleAccessToken: string): Observable<AccountDTO> {
+    // Defines parameters.
+    const body = new HttpParams();
+    body.set('googleIdToken', googleIdToken);
+    body.set('googleAccessToken', googleAccessToken);
+
+    // Make the post call.
+    return this.http.post<AccountDTO>(environment.GOOGLE_LOGIN_URL, body).pipe(
+      map(account => {
+        this.account = account;
+        localStorage.setItem(environment.tokenNameInLocalStorage, this.account.idToken);
+        return account;
+      })
+    );
+  }
+
+}

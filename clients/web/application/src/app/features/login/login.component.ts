@@ -1,6 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {Title} from '@angular/platform-browser';
 import {Router} from '@angular/router';
+import {AccountService} from '../../core/services/account.service';
 
 @Component({
   selector: 'app-login',
@@ -9,7 +10,7 @@ import {Router} from '@angular/router';
 })
 export class LoginComponent implements OnInit {
 
-  constructor(private titleService: Title, public router: Router) {
+  constructor(private titleService: Title, public router: Router, public accountService: AccountService) {
     this.titleService.setTitle('Loose touch connexion');
   }
 
@@ -20,7 +21,7 @@ export class LoginComponent implements OnInit {
    * Sign in with google.
    */
   signInWithGoogle(): void {
-    console.log('On se connecte avec google');
+
     this.router.navigate(['dashboard']);
   }
 
