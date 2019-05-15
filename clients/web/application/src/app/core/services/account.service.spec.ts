@@ -1,12 +1,21 @@
 /* tslint:disable */
-import {TestBed} from '@angular/core/testing';
+import {fakeAsync, TestBed, tick} from '@angular/core/testing';
 
 import {AccountService} from './account.service';
 import {HttpClientTestingModule, HttpTestingController} from '@angular/common/http/testing';
-import {HttpClient} from '@angular/common/http';
+import {HTTP_INTERCEPTORS, HttpClient} from '@angular/common/http';
 import {JwtModule} from '@auth0/angular-jwt';
 import {environment} from '../../../environments/environment';
 import {AccountDTO} from '../models/account';
+import {LooseTouchError, LooseTouchErrorType} from '../models/looseToucheError';
+import {ApplicationInterceptor} from '../interceptors/application-interceptor.service';
+import {RouterTestingModule} from '@angular/router/testing';
+import {CoreRoutingModule, routes} from '../core-routing.module';
+import {LoginComponent} from '../../features/login/login.component';
+import {CoreComponent} from '../core.component';
+import {DashboardComponent} from '../../features/dashboard/dashboard.component';
+import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
+import {Router} from '@angular/router';
 
 describe('AccountService', () => {
 
@@ -22,8 +31,10 @@ describe('AccountService', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
+      declarations: [CoreComponent, LoginComponent, DashboardComponent],
       imports: [
         HttpClientTestingModule,
+        RouterTestingModule.withRoutes(routes),
         JwtModule.forRoot({
           config: {
             tokenGetter: () => {
@@ -31,7 +42,9 @@ describe('AccountService', () => {
             }
           }
         })
-      ]
+      ],
+      providers: [{provide: HTTP_INTERCEPTORS, useClass: ApplicationInterceptor, multi: true}],
+      schemas: [CUSTOM_ELEMENTS_SCHEMA]
     });
     // Inject the http service and test controller for each test
     httpClient = TestBed.get(HttpClient);
@@ -85,39 +98,42 @@ describe('AccountService', () => {
 
   });
 
-  it('should not connect with incorrect google credentials', () => {
+  it('should not connect with incorrect google credentials', fakeAsync(() => {
     const service: AccountService = TestBed.get(AccountService);
+    const router: Router = TestBed.get(Router);
 
-    /*    // Test account data.
-        const expectedData: LooseTouchError = {
-          type: LooseTouchErrorType.authentication_error,
-          message: 'Invalid Google Id token : invalid"',
-          errors: []
-        };
+    // Expected error.
+    const expectedError: LooseTouchError = {
+      type: LooseTouchErrorType.authentication_error,
+      message: 'Invalid Google Id token : FakeToken"',
+      errors: []
+    };
 
-        // Verify default data.
-        expect(service.account).toBeNull();
-        expect(localStorage.getItem(environment.tokenNameInLocalStorage)).toBeNull();
+    // Verify data.
+    expect(service.account).toBeNull();
+    expect(localStorage.getItem(environment.tokenNameInLocalStorage)).toBeNull();
 
-        // Calling the service and testing results.
-        service.googleLogin(googleUser1IdToken, googleUser1AccessToken).subscribe(data => {
-          // Test returned value.
-          expect(data).toEqual(expectedData);
-          // Test stored data in service.
-          expect(data).toBeNull();
-          // Test stored token.
-          expect(localStorage.getItem(environment.tokenNameInLocalStorage)).toEqual(data.idToken);
-        });
+    // Calling the service and testing that an error occured.
+    service.googleLogin(googleUser1IdToken, googleUser1AccessToken).subscribe(data => {
+      fail('No error was found');
+    });
 
-        // Then we set the fake data to be returned by the mock
-        const req = httpTestingController.expectOne('http://localhost:8080/v1/login/google');
-        expect(req.request.method).toEqual('POST');
-        req.flush({
-          "type": "authentication_error",
-          "message": "Invalid Google Id token : invalid",
-          "errors": []
-        });*/
+    // Then we set the fake data to be returned by the mock
+    const req = httpTestingController.expectOne('http://localhost:8080/v1/login/google');
+    expect(req.request.method).toEqual('POST');
+    req.flush({
+      'type': 'authentication_error',
+      'message': 'Invalid Google Id token : invalid',
+      'errors': []
+    }, {status: 401, statusText: 'Bad Request'});
 
-  });
+    // Test for the url.
+    tick();
+    expect(router.url).toBe('/login');
+
+    // Test data.
+    expect(service.account).toBeNull();
+    expect(localStorage.getItem(environment.tokenNameInLocalStorage)).toBeNull();
+  }));
 
 });

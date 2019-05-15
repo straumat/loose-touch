@@ -7,6 +7,8 @@ import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {CoreModule} from './core/core.module';
 import {FeaturesModule} from './features/features.module';
 import {SharedModule} from './shared/shared.module';
+import {ApplicationInterceptor} from './core/interceptors/application-interceptor.service';
+import {HTTP_INTERCEPTORS} from '@angular/common/http';
 
 @NgModule({
   declarations: [
@@ -20,7 +22,10 @@ import {SharedModule} from './shared/shared.module';
     FeaturesModule,
     SharedModule
   ],
-  providers: [Title],
+  providers: [
+    Title,
+    {provide: HTTP_INTERCEPTORS, useClass: ApplicationInterceptor, multi: true}
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule {

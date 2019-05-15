@@ -4,7 +4,7 @@ import {LoginComponent} from '../features/login/login.component';
 import {CoreComponent} from './core.component';
 import {DashboardComponent} from '../features/dashboard/dashboard.component';
 
-const routes: Routes = [
+export const routes: Routes = [
   {
     // Login.
     path: 'login',

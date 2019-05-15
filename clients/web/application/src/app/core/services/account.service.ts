@@ -12,6 +12,21 @@ import {map} from 'rxjs/operators';
 export class AccountService {
 
   /**
+   * Authentication URL.
+   */
+  GOOGLE_LOGIN_URL: string = environment.apiURL + '/login/google';
+
+  /**
+   * Account URL.
+   */
+  ACCOUNT_URL: string = environment.apiURL + '/account';
+
+  /**
+   * Delete URL.
+   */
+  DELETE_URL: string = environment.apiURL + '/account/delete';
+
+  /**
    * Connected account.
    */
   account: AccountDTO = null;
@@ -34,10 +49,10 @@ export class AccountService {
     body.set('googleAccessToken', googleAccessToken);
 
     // Make the post call.
-    return this.http.post<AccountDTO>(environment.GOOGLE_LOGIN_URL, body).pipe(
+    return this.http.post<AccountDTO>(this.GOOGLE_LOGIN_URL, body).pipe(
       map(account => {
         this.account = account;
-        localStorage.setItem(environment.tokenNameInLocalStorage, this.account.idToken);
+        localStorage.setItem(environment.tokenNameInLocalStorage, account.idToken);
         return account;
       })
     );
