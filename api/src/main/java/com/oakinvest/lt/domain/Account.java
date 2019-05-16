@@ -75,7 +75,7 @@ public class Account {
         this.pictureUrl = newImageUrl;
 
         // Authentication type GOOGLE.
-        if (accountAuthentication == GOOGLE) {
+        if (GOOGLE.equals(accountAuthentication)) {
             this.googleUsername = newEmail;
         }
     }

@@ -33,6 +33,7 @@ public class ContactRepository {
      * @param contact contact
      */
     public final void save(final Contact contact) {
+        contact.calculateSearchContent();
         mapper.save(contact);
     }
 
@@ -70,7 +71,7 @@ public class ContactRepository {
      * Returns a contact by its email.
      *
      * @param accountId account id
-     * @param email  contact email
+     * @param email     contact email
      * @return contact
      */
     public final Optional<Contact> findContactByEmail(final String accountId, final String email) {

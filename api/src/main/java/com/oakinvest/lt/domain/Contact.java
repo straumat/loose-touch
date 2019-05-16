@@ -5,6 +5,7 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBHashKey;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBIndexRangeKey;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBRangeKey;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -15,6 +16,11 @@ import java.util.Date;
 @SuppressWarnings("unused")
 @DynamoDBTable(tableName = "CONTACTS")
 public class Contact {
+
+    /**
+     * Separator for search content field.
+     */
+    private static final String SEARCH_SEPARATOR = " ";
 
     /**
      * Account id.
@@ -63,6 +69,12 @@ public class Contact {
      */
     @DynamoDBIndexRangeKey(attributeName = "CONTACT_DUE_DATE", localSecondaryIndexName = "INDEX_CONTACT_DUE_DATE")
     private Calendar contactDueDate;
+
+    /**
+     * Search content.
+     */
+    @DynamoDBAttribute(attributeName = "SEARCH_CONTENT")
+    private String searchContent;
 
     /**
      * Constructor.
@@ -276,6 +288,45 @@ public class Contact {
      */
     public final void setContactDueDate(final Calendar newContactDueDate) {
         contactDueDate = newContactDueDate;
+    }
+
+    /**
+     * Get searchContent.
+     *
+     * @return searchContent
+     */
+    public final String getSearchContent() {
+        return searchContent;
+    }
+
+    /**
+     * Set searchContent.
+     *
+     * @param newSearchContent the searchContent to set
+     */
+    public final void setSearchContent(final String newSearchContent) {
+        searchContent = newSearchContent;
+    }
+
+    /**
+     * Calculate the search field content.
+     */
+    public final void calculateSearchContent() {
+        searchContent = getAccountId()
+                + getSearchContentField(email)
+                + getSearchContentField(firstName)
+                + getSearchContentField(lastName)
+                + getSearchContentField(notes);
+    }
+
+    /**
+     * Remove accents and add a sepator for a field.
+     *
+     * @param value string to clean
+     * @return cleaned value
+     */
+    private String getSearchContentField(final String value) {
+        return SEARCH_SEPARATOR + StringUtils.stripAccents(value);
     }
 
 }

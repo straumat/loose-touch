@@ -1,10 +1,12 @@
 package com.oakinvest.lt.test.api.v1.contact;
 
+import com.oakinvest.lt.domain.Contact;
 import com.oakinvest.lt.dto.v1.ContactDTO;
 import com.oakinvest.lt.test.util.api.APITest;
 
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.Optional;
 
 import static com.oakinvest.lt.dto.v1.ContactDTO.RECURRENCE_TYPE_DAY;
 import static com.oakinvest.lt.dto.v1.ContactDTO.RECURRENCE_TYPE_YEAR;
@@ -20,6 +22,7 @@ import static com.oakinvest.lt.util.error.LooseTouchErrorCode.email_invalid;
 import static com.oakinvest.lt.util.error.LooseTouchErrorType.authentication_error;
 import static com.oakinvest.lt.util.error.LooseTouchErrorType.invalid_request_error;
 import static com.oakinvest.lt.util.error.LooseTouchErrorType.resource_not_found;
+import static org.assertj.core.api.Fail.fail;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.junit.Assert.assertEquals;
 import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8;
@@ -170,6 +173,7 @@ public class UpdateContactTest extends APITest {
     public void businessLogicTest() throws Exception {
         // Configuration.
         final String looseToucheTokenForAccount1 = getLooseToucheToken(GOOGLE_ACCOUNT_1);
+        final String account1Id = getAccountRepository().findAccountByGoogleUsername(GOOGLE_ACCOUNT_1.getEmail()).get().getId();
         final String looseToucheTokenForAccount2 = getLooseToucheToken(GOOGLE_ACCOUNT_2);
 
         // Creates Account 1 / contact 1.
@@ -188,9 +192,9 @@ public class UpdateContactTest extends APITest {
         // Updates Account 1 / Contact1 without changing the date.
         ContactDTO contact = new ContactDTO();
         contact.setEmail(CONTACT_1.getEmail());
-        contact.setFirstName("first name test 1 (update user1");
-        contact.setLastName("last name test 1 (update user1");
-        contact.setNotes("notes 1 (update user1)");
+        contact.setFirstName("first name test 1 - é (update user1)");
+        contact.setLastName("last name test 1 - é (update user1)");
+        contact.setNotes("notes 1 - é (update user1)");
         contact.setContactRecurrenceType(RECURRENCE_TYPE_YEAR);
         contact.setContactRecurrenceValue(9);
         getMvc().perform(put(CONTACT_URL + "/" + CONTACT_1.getEmail() + "/")
@@ -199,9 +203,9 @@ public class UpdateContactTest extends APITest {
                 .content(getMapper().writeValueAsString(contact)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("email").value(CONTACT_1.getEmail()))
-                .andExpect(jsonPath("firstName").value("first name test 1 (update user1"))
-                .andExpect(jsonPath("lastName").value("last name test 1 (update user1"))
-                .andExpect(jsonPath("notes").value("notes 1 (update user1)"))
+                .andExpect(jsonPath("firstName").value("first name test 1 - é (update user1)"))
+                .andExpect(jsonPath("lastName").value("last name test 1 - é (update user1)"))
+                .andExpect(jsonPath("notes").value("notes 1 - é (update user1)"))
                 .andExpect(jsonPath("contactRecurrenceType").value(RECURRENCE_TYPE_YEAR))
                 .andExpect(jsonPath("contactRecurrenceValue").value(9))
                 .andExpect(jsonPath("contactDueDate").value("31/12/2019"));
@@ -213,12 +217,25 @@ public class UpdateContactTest extends APITest {
                 .content(getMapper().writeValueAsString(contact)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("email").value(CONTACT_1.getEmail()))
-                .andExpect(jsonPath("firstName").value("first name test 1 (update user1"))
-                .andExpect(jsonPath("lastName").value("last name test 1 (update user1"))
-                .andExpect(jsonPath("notes").value("notes 1 (update user1)"))
+                .andExpect(jsonPath("firstName").value("first name test 1 - é (update user1)"))
+                .andExpect(jsonPath("lastName").value("last name test 1 - é (update user1)"))
+                .andExpect(jsonPath("notes").value("notes 1 - é (update user1)"))
                 .andExpect(jsonPath("contactRecurrenceType").value(RECURRENCE_TYPE_YEAR))
                 .andExpect(jsonPath("contactRecurrenceValue").value(9))
                 .andExpect(jsonPath("contactDueDate").value("08/08/1978"));
+
+        // Checking the search content field.
+        Optional<Contact> contact1InDynamoDD = getContactRepository().findContactByEmail(account1Id, CONTACT_1.getEmail());
+        if (contact1InDynamoDD.isPresent()) {
+            final String expectedValue = contact1InDynamoDD.get().getAccountId()
+                    + " " + CONTACT_1.getEmail()
+                    + " first name test 1 - e (update user1)"
+                    + " last name test 1 - e (update user1)"
+                    + " notes 1 - e (update user1)";
+            assertEquals(expectedValue, contact1InDynamoDD.get().getSearchContent());
+        } else {
+            fail("Contact 1 not found");
+        }
 
         // Checking that contact 1 of account 2 did not change.
         getMvc().perform(get(CONTACT_URL + "/" + CONTACT_1.getEmail() + "/")
@@ -259,6 +276,19 @@ public class UpdateContactTest extends APITest {
                 .content(getMapper().writeValueAsString(c1)))
                 .andExpect(status().isOk());
         assertEquals(contactsCount(), 2);
+
+        // Checking the search content field.
+        contact1InDynamoDD = getContactRepository().findContactByEmail(account1Id, "test1@test1.com");
+        if (contact1InDynamoDD.isPresent()) {
+            final String expectedValue = contact1InDynamoDD.get().getAccountId()
+                    + " test1@test1.com"
+                    + " first name test 1"
+                    + " last name test 1"
+                    + " notes 1";
+            assertEquals(expectedValue, contact1InDynamoDD.get().getSearchContent());
+        } else {
+            fail("Contact 1 not found");
+        }
 
         // Check that we have the good email address.
         getMvc().perform(get(CONTACT_URL + "/" + CONTACT_1.getEmail() + "/")

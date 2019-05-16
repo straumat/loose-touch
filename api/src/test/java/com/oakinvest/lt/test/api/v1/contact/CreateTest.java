@@ -28,6 +28,7 @@ import static com.oakinvest.lt.util.error.LooseTouchErrorType.invalid_request_er
 import static java.util.Calendar.DATE;
 import static java.util.Calendar.MONTH;
 import static java.util.Calendar.YEAR;
+import static org.assertj.core.api.Fail.fail;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -66,6 +67,7 @@ public class CreateTest extends APITest {
     public void validDataTest() throws Exception {
         // Configuration.
         final String looseToucheTokenForAccount1 = getLooseToucheToken(GOOGLE_ACCOUNT_1);
+        final String account1Id = getAccountRepository().findAccountByGoogleUsername(GOOGLE_ACCOUNT_1.getEmail()).get().getId();
 
         // Trying to createContact a contact without contact data.
         getMvc().perform(post(CONTACT_URL)
@@ -179,6 +181,19 @@ public class CreateTest extends APITest {
                 .andExpect(status().isCreated());
         assertEquals(contactsCount(), 2);
 
+        // Checking the search content field.
+        Optional<Contact> contact1InDynamoDD = getContactRepository().findContactByEmail(account1Id, CONTACT_1.getEmail());
+        if (contact1InDynamoDD.isPresent()) {
+            final String expectedValue = contact1InDynamoDD.get().getAccountId()
+                    + " " + CONTACT_1.getEmail()
+                    + " " + CONTACT_1.getFirstName()
+                    + " " + CONTACT_1.getLastName()
+                    + " " + CONTACT_1.getNotes();
+            assertEquals(expectedValue, contact1InDynamoDD.get().getSearchContent());
+        } else {
+            fail("Contact 1 not found");
+        }
+
         // Creates contact number 4 for account 1 (date not set).
         getMvc().perform(post(CONTACT_URL)
                 .contentType(APPLICATION_JSON_UTF8)
@@ -186,6 +201,19 @@ public class CreateTest extends APITest {
                 .content(getMapper().writeValueAsString(CONTACT_4.toDTO())))
                 .andExpect(status().isCreated());
         assertEquals(contactsCount(), 3);
+
+        // Checking the search content field.
+        Optional<Contact> c4 = getContactRepository().findContactByEmail(account1Id, CONTACT_4.getEmail());
+        if (c4.isPresent()) {
+            final String expectedValue = c4.get().getAccountId()
+                    + " " + CONTACT_4.getEmail()
+                    + " " + CONTACT_4.getFirstName()
+                    + " " + CONTACT_4.getLastName()
+                    + " " + CONTACT_4.getNotes();
+            assertEquals(expectedValue, c4.get().getSearchContent());
+        } else {
+            fail("Contact 4 not found");
+        }
 
         // Try to createContact a duplicate contact.
         getMvc().perform(post(CONTACT_URL)
