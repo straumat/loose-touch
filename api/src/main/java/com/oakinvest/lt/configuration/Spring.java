@@ -1,11 +1,12 @@
 package com.oakinvest.lt.configuration;
 
-import com.oakinvest.lt.authentication.loosetouch.AuthenticationInterceptor;
 import com.oakinvest.lt.authentication.loosetouch.AuthenticationAccountResolver;
+import com.oakinvest.lt.authentication.loosetouch.AuthenticationInterceptor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.PathMatchConfigurer;
@@ -25,6 +26,11 @@ public class Spring implements WebMvcConfigurer {
         registry.addInterceptor(authenticationInterceptor())
                 .addPathPatterns("/v1/**/*")
                 .excludePathPatterns("/v1/login/*");
+    }
+
+    @Override
+    public final void addCorsMappings(final CorsRegistry registry) {
+        registry.addMapping("/**");
     }
 
     /**

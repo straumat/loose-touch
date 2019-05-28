@@ -5,7 +5,3 @@ _Loose touch reminds you to keep in touch with your key contacts_
 You can execute the application with the command `mvn spring-boot:run -Dspring-boot.run.arguments=--start-local-dynamodb -Dspring-boot.run.profiles=local-dynamodb`.
 
 The project includes a `aws_configuration.yaml` file. You can validate your sam file locally with the command `sam validate -t aws-configuration.yml`._
-
-## Project structure.
-The [project](https://github.com/straumat/loose-touch) is composed of the following sub projects :
- * api : back end with rest API.

@@ -1,5 +1,10 @@
-<div class="login-box">
+<!-- Error message -->
+<div class="alert alert-warning" role="alert" *ngIf="error">
+  {{error.message}}
+</div>
 
+<!-- Login box-->
+<div class="login-box">
   <mat-card class="mat-elevation-z3">
     <!-- Header -->
     <mat-card-header>
@@ -16,5 +21,4 @@
       <button id="google-sign-in" class="google-sign-in" (click)="signInWithGoogle()"></button>
     </mat-card-actions>
   </mat-card>
-
 </div>

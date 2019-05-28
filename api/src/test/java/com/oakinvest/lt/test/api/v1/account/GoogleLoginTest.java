@@ -45,8 +45,8 @@ public class GoogleLoginTest extends APITest {
         // No google token provided.
         getMvc().perform(get(GOOGLE_LOGIN_URL)
                 .contentType(APPLICATION_JSON_UTF8))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("type").value(invalid_request_error.toString()))
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("type").value(authentication_error.toString()))
                 .andExpect(jsonPath("message").value("Google Id token missing"))
                 .andExpect(jsonPath("errors", hasSize(0)));
 

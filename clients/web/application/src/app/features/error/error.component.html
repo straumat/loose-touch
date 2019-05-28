@@ -1,0 +1,19 @@
+<!-- Error box-->
+<div class="error-box">
+  <mat-card class="mat-elevation-z3">
+    <!-- Header -->
+    <mat-card-header>
+      <div id="avatar" mat-card-avatar class="error-image"></div>
+      <mat-card-title>An error occurred !</mat-card-title>
+      <mat-card-subtitle *ngIf="error">{{error.message}}</mat-card-subtitle>
+    </mat-card-header>
+    <!-- Separator -->
+    <mat-card-content>
+      <hr style="width: 380px">
+    </mat-card-content>
+    <!-- Action -->
+    <mat-card-actions>
+      <button mat-raised-button color="warn" (click)="goToDashboard()">Go back to dashboard</button>
+    </mat-card-actions>
+  </mat-card>
+</div>

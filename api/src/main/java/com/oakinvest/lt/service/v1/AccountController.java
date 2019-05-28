@@ -7,8 +7,8 @@ import com.oakinvest.lt.authentication.loosetouch.LooseTouchTokenProvider;
 import com.oakinvest.lt.domain.Account;
 import com.oakinvest.lt.dto.util.GoogleUserInfoDTO;
 import com.oakinvest.lt.dto.v1.AccountDTO;
-import com.oakinvest.lt.repository.ContactRepository;
 import com.oakinvest.lt.repository.AccountRepository;
+import com.oakinvest.lt.repository.ContactRepository;
 import com.oakinvest.lt.util.error.LooseTouchException;
 import com.oakinvest.lt.util.mapper.LooseTouchMapper;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,7 +20,6 @@ import java.util.Optional;
 import static com.oakinvest.lt.authentication.loosetouch.AccountAuthentication.GOOGLE;
 import static com.oakinvest.lt.util.error.LooseTouchErrorType.api_error;
 import static com.oakinvest.lt.util.error.LooseTouchErrorType.authentication_error;
-import static com.oakinvest.lt.util.error.LooseTouchErrorType.invalid_request_error;
 
 /**
  * Account controller.
@@ -90,7 +89,7 @@ public class AccountController implements AccountAPI {
 
         // Google Id token missing.
         if (googleIdToken == null) {
-            throw new LooseTouchException(invalid_request_error, "Google Id token missing");
+            throw new LooseTouchException(authentication_error, "Google Id token missing");
         }
 
         // Token verification.

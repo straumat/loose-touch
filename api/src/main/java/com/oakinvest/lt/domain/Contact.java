@@ -312,21 +312,11 @@ public class Contact {
      * Calculate the search field content.
      */
     public final void calculateSearchContent() {
-        searchContent = getAccountId()
-                + getSearchContentField(email)
-                + getSearchContentField(firstName)
-                + getSearchContentField(lastName)
-                + getSearchContentField(notes);
-    }
-
-    /**
-     * Remove accents and add a sepator for a field.
-     *
-     * @param value string to clean
-     * @return cleaned value
-     */
-    private String getSearchContentField(final String value) {
-        return SEARCH_SEPARATOR + StringUtils.stripAccents(value);
+        setSearchContent(StringUtils.stripAccents(getAccountId()
+                + SEARCH_SEPARATOR + email
+                + SEARCH_SEPARATOR + firstName
+                + SEARCH_SEPARATOR + lastName
+                + SEARCH_SEPARATOR + notes));
     }
 
 }

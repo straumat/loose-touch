@@ -1,0 +1,23 @@
+.error-box {
+  padding-bottom: 80px;
+  margin: auto;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.error-image {
+  background-image: url('/assets/images/generic/error.png');
+  background-size: cover;
+}
+
+.mat-card {
+  padding-bottom: 35px;
+}
+
+.mat-card-actions {
+  width: 50%;
+  margin: 0 auto;
+}
+

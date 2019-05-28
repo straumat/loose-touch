@@ -8,7 +8,24 @@ import {CoreModule} from './core/core.module';
 import {FeaturesModule} from './features/features.module';
 import {SharedModule} from './shared/shared.module';
 import {ApplicationInterceptor} from './core/interceptors/application-interceptor.service';
-import {HTTP_INTERCEPTORS} from '@angular/common/http';
+import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
+import {JwtModule} from '@auth0/angular-jwt';
+import {environment} from '../environments/environment';
+import {AuthServiceConfig, GoogleLoginProvider, SocialLoginModule} from 'angularx-social-login';
+
+/**
+ * Social login configuration.
+ */
+const socialLoginConfiguration = new AuthServiceConfig([
+  {
+    id: GoogleLoginProvider.PROVIDER_ID,
+    provider: new GoogleLoginProvider(environment.googleClientID)
+  }
+]);
+
+export function provideSocialLoginConfiguration() {
+  return socialLoginConfiguration;
+}
 
 @NgModule({
   declarations: [
@@ -20,11 +37,21 @@ import {HTTP_INTERCEPTORS} from '@angular/common/http';
     NgbModule,
     CoreModule,
     FeaturesModule,
-    SharedModule
+    SharedModule,
+    HttpClientModule,
+    SocialLoginModule,
+    JwtModule.forRoot({
+      config: {
+        tokenGetter: () => {
+          return localStorage.getItem(environment.tokenNameInLocalStorage);
+        }
+      }
+    })
   ],
   providers: [
     Title,
-    {provide: HTTP_INTERCEPTORS, useClass: ApplicationInterceptor, multi: true}
+    {provide: HTTP_INTERCEPTORS, useClass: ApplicationInterceptor, multi: true},
+    {provide: AuthServiceConfig, useFactory: provideSocialLoginConfiguration}
   ],
   bootstrap: [AppComponent]
 })

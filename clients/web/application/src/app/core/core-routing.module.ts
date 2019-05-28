@@ -1,22 +1,18 @@
 import {NgModule} from '@angular/core';
-import {Routes, RouterModule} from '@angular/router';
+import {RouterModule, Routes} from '@angular/router';
 import {LoginComponent} from '../features/login/login.component';
 import {CoreComponent} from './core.component';
 import {DashboardComponent} from '../features/dashboard/dashboard.component';
+import {ErrorComponent} from '../features/error/error.component';
+import {LooseTouchErrorType} from './models/looseToucheError';
 
 export const routes: Routes = [
+  // Login.
   {
-    // Login.
     path: 'login',
     component: LoginComponent
   },
-  {
-    // Dashboard.
-    path: '',
-    redirectTo: '/dashboard',
-    pathMatch: 'full',
-    // canActivate: [AuthenticationGuardService]
-  },
+  // Application.
   {
     path: '',
     component: CoreComponent,
@@ -24,8 +20,7 @@ export const routes: Routes = [
       {
         path: '',
         redirectTo: '/dashboard',
-        pathMatch: 'full',
-        // canActivate: [AuthenticationGuardService]
+        pathMatch: 'full'
       },
       {
         path: 'dashboard',
@@ -33,6 +28,18 @@ export const routes: Routes = [
         // canActivate: [AuthenticationGuardService]
       }
     ]
+  },
+  // Errors (500, 401 & 404).
+  {path: 'error', component: ErrorComponent},
+  {
+    path: '**', component: ErrorComponent, data: {
+      title: 'test',
+      looseTouchError: {
+        type: LooseTouchErrorType.invalid_request_error,
+        message: 'Page not found',
+        errors: []
+      }
+    }
   }
 ];
 

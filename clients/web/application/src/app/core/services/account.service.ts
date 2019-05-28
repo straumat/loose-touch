@@ -43,13 +43,11 @@ export class AccountService {
    * Login via Google.
    */
   public googleLogin(googleIdToken: string, googleAccessToken: string): Observable<AccountDTO> {
-    // Defines parameters.
-    const body = new HttpParams();
-    body.set('googleIdToken', googleIdToken);
-    body.set('googleAccessToken', googleAccessToken);
-
-    // Make the post call.
-    return this.http.post<AccountDTO>(this.GOOGLE_LOGIN_URL, body).pipe(
+    return this.http.get<AccountDTO>(this.GOOGLE_LOGIN_URL, {
+      params: new HttpParams()
+        .set('googleIdToken', googleIdToken)
+        .set('googleAccessToken', googleAccessToken)
+    }).pipe(
       map(account => {
         this.account = account;
         localStorage.setItem(environment.tokenNameInLocalStorage, account.idToken);

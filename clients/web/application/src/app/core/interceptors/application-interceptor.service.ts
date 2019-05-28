@@ -2,9 +2,8 @@ import {Injectable} from '@angular/core';
 import {HttpErrorResponse, HttpEvent, HttpHandler, HttpInterceptor, HttpRequest} from '@angular/common/http';
 import {Observable} from 'rxjs';
 import {catchError} from 'rxjs/operators';
-import {UNAUTHORIZED} from 'http-status-codes';
+import {INTERNAL_SERVER_ERROR, UNAUTHORIZED} from 'http-status-codes';
 import {Router} from '@angular/router';
-import {state} from '@angular/animations';
 
 @Injectable()
 export class ApplicationInterceptor implements HttpInterceptor {
@@ -28,7 +27,14 @@ export class ApplicationInterceptor implements HttpInterceptor {
                 // -----------------------------------------------------------------------------------------------------
                 // 401 - UNAUTHORIZED.
                 case UNAUTHORIZED: {
-                  this.router.navigate(['/login'], {state: httpErrorResponse.error});
+                  this.router.navigate(['/login'], {queryParams: {looseTouchError: JSON.stringify(httpErrorResponse.error)}});
+                  break;
+                }
+
+                // -----------------------------------------------------------------------------------------------------
+                // 500 - INTERNAL_SERVER_ERROR.
+                case INTERNAL_SERVER_ERROR: {
+                  this.router.navigate(['/error'], {queryParams: {looseTouchError: JSON.stringify(httpErrorResponse.error)}});
                   break;
                 }
 
