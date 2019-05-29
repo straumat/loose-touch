@@ -283,40 +283,6 @@
                             </execution>
                         </executions>
                     </plugin>
-                    <!-- Documentation plugin -->
-                    <plugin>
-                        <groupId>com.github.kongchen</groupId>
-                        <artifactId>swagger-maven-plugin</artifactId>
-                        <version>${swagger-maven-plugin.version}</version>
-                        <executions>
-                            <execution>
-                                <id>swagger</id>
-                                <phase>package</phase>
-                                <goals>
-                                    <goal>generate</goal>
-                                </goals>
-                                <configuration>
-                                    <apiSources>
-                                        <apiSource>
-                                            <springmvc>true</springmvc>
-                                            <outputFormats>yaml</outputFormats>
-                                            <info>
-                                                <title>Loose touch</title>
-                                                <description>Loose touch api</description>
-                                                <version>${project.version}</version>
-                                            </info>
-                                            <locations>
-                                                <location>com.oakinvest.lt.service.v1.SystemAPI</location>
-                                            </locations>
-                                            <swaggerDirectory>${basedir}/target/swagger</swaggerDirectory>
-                                            <swaggerFileName>swagger-specifications</swaggerFileName>
-                                            <attachSwaggerArtifact>false</attachSwaggerArtifact>
-                                        </apiSource>
-                                    </apiSources>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
                     <!-- Surefire -->
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>

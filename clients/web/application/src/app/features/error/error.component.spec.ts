@@ -42,7 +42,7 @@ describe('ErrorComponent', () => {
       ],
       providers: [
         {provide: HTTP_INTERCEPTORS, useClass: ApplicationInterceptor, multi: true},
-        AccountService,
+        AccountService
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
     }).compileComponents();
@@ -62,7 +62,9 @@ describe('ErrorComponent', () => {
     expect(component).toBeTruthy();
   });
 
+  // ===================================================================================================================
   it('should display the page (without error parameter)', fakeAsync(() => {
+    // TODO Test page title.
     const compiled = fixture.debugElement.nativeElement;
     tick();
     fixture.detectChanges();
@@ -75,7 +77,6 @@ describe('ErrorComponent', () => {
     expect(compiled.querySelector('button')).not.toBeNull();
     expect(compiled.querySelector('button').textContent).toContain('Go back to dashboard');
   }));
-
 
   // ===================================================================================================================
   it('should display the page (with error parameter)', fakeAsync(() => {
@@ -135,7 +136,7 @@ describe('ErrorComponent', () => {
 
     // Raise an exception.
     // Calling the service and testing that an error occurred.
-    service.googleLogin('test1', 'test1').subscribe(data => {
+    service.googleLogin('test1', 'test1').subscribe(() => {
       fail('No error was found');
     });
 
@@ -146,7 +147,7 @@ describe('ErrorComponent', () => {
     });
     req.flush({
       type: 'authentication_error',
-      message: 'Internal server error !',
+      message: 'Internal server error',
       errors: []
     }, {status: INTERNAL_SERVER_ERROR, statusText: 'Internal server error'});
 
@@ -155,7 +156,7 @@ describe('ErrorComponent', () => {
     const compiled = fixture.debugElement.nativeElement;
     fixture.detectChanges();
     expect(router.url).toContain('/error');
-    expect(compiled.querySelector('mat-card-subtitle').textContent).toContain('Internal server error !');
+    expect(compiled.querySelector('mat-card-subtitle').textContent).toContain('Internal server error');
   }));
 
   // ===================================================================================================================

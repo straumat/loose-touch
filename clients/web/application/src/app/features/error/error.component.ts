@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {LooseTouchError} from '../../core/models/looseToucheError';
 import {filter} from 'rxjs/operators';
+import {Title} from '@angular/platform-browser';
 
 @Component({
   selector: 'app-error',
@@ -17,7 +18,8 @@ export class ErrorComponent implements OnInit {
    */
   error: LooseTouchError = undefined;
 
-  constructor(public router: Router, private route: ActivatedRoute) {
+  constructor(private titleService: Title, public router: Router, private route: ActivatedRoute) {
+    this.titleService.setTitle('An error occurred !');
   }
 
   ngOnInit() {
