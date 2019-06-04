@@ -11,33 +11,22 @@ import {Title} from '@angular/platform-browser';
 })
 export class ErrorComponent implements OnInit {
 
-  readonly looseTouchErrorParameter = 'looseTouchError';
-
   /**
-   * Error found.
+   * Error retrieved.
    */
   error: LooseTouchError = undefined;
 
-  constructor(private titleService: Title, public router: Router, private route: ActivatedRoute) {
-    this.titleService.setTitle('An error occurred !');
+  constructor(private titleService: Title,
+              public router: Router,
+              private route: ActivatedRoute) {
+    this.titleService.setTitle('An error occurred');
   }
 
   ngOnInit() {
-    // We check if somme errors were passed to the component thanks to queryParams.
-    // TODO Use extra data instead if query params.
-    this.route.queryParams.pipe(
-      filter(params => params[this.looseTouchErrorParameter] != null)
-    ).subscribe(params =>
-      this.error = JSON.parse(params[this.looseTouchErrorParameter])
-    );
-    // If not, we check that there is no message in context data.
-    if (this.error == null) {
-      this.route.data.pipe(
-        filter(value => value != null)
-      ).subscribe(value => {
-        this.error = value.looseTouchError;
-      });
-    }
+    // We retrieve any error passed throw data.
+    this.route.data.subscribe(data => {
+      this.error = data.looseTouchError;
+    });
   }
 
   goToDashboard(): void {

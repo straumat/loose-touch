@@ -6,6 +6,7 @@ import {DashboardComponent} from '../features/dashboard/dashboard.component';
 import {ErrorComponent} from '../features/error/error.component';
 import {LooseTouchErrorType} from './models/looseToucheError';
 
+// TODO : Remove export.
 export const routes: Routes = [
   // Login.
   {
@@ -29,11 +30,10 @@ export const routes: Routes = [
       }
     ]
   },
-  // Errors (500, 401 & 404).
+  // Errors 500, 401 & 404.
   {path: 'error', component: ErrorComponent},
   {
     path: '**', component: ErrorComponent, data: {
-      title: 'test',
       looseTouchError: {
         type: LooseTouchErrorType.invalid_request_error,
         message: 'Page not found',
