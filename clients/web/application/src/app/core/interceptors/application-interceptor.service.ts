@@ -21,20 +21,19 @@ export class ApplicationInterceptor implements HttpInterceptor {
             // If we get an HTTP error.
             if (error instanceof HttpErrorResponse) {
               // Switch on error.
-              const httpErrorResponse: HttpErrorResponse = error as HttpErrorResponse;
-              switch (httpErrorResponse.status) {
+              switch (error.status) {
 
                 // -----------------------------------------------------------------------------------------------------
                 // 401 - UNAUTHORIZED.
                 case UNAUTHORIZED: {
-                  this.router.navigate(['/login'], {queryParams: {looseTouchError: JSON.stringify(httpErrorResponse.error)}});
+                  this.router.navigate(['/login'], {queryParams: {looseTouchError: JSON.stringify(error.error)}});
                   break;
                 }
 
                 // -----------------------------------------------------------------------------------------------------
                 // 500 - INTERNAL_SERVER_ERROR.
                 case INTERNAL_SERVER_ERROR: {
-                  this.router.navigate(['/error'], {queryParams: {looseTouchError: JSON.stringify(httpErrorResponse.error)}});
+                  this.router.navigate(['/error'], {queryParams: {looseTouchError: JSON.stringify(error.error)}});
                   break;
                 }
 

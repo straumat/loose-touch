@@ -1,18 +1,22 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { HeaderComponent } from './header.component';
+import {HeaderComponent} from './header.component';
 import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
+import {ErrorComponent} from '../../../features/error/error.component';
+import {LooseTouchErrorType} from '../../models/looseToucheError';
+import {Title} from '@angular/platform-browser';
 
 describe('HeaderComponent', () => {
   let component: HeaderComponent;
   let fixture: ComponentFixture<HeaderComponent>;
 
+  // ===================================================================================================================
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ HeaderComponent ],
+      declarations: [HeaderComponent],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {
@@ -21,7 +25,17 @@ describe('HeaderComponent', () => {
     fixture.detectChanges();
   });
 
+  // ===================================================================================================================
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  // ===================================================================================================================
+  it('should display the header', () => {
+    const compiled = fixture.debugElement.nativeElement;
+
+    // Check page data.
+    expect(compiled.querySelector('mat-toolbar-row').textContent).toContain('Who should you contact today ?');
+  });
+
 });
