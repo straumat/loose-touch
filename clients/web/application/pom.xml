@@ -111,6 +111,16 @@
               <arguments>test &#45;&#45;watch false</arguments>
             </configuration>
           </execution>
+          <execution>
+            <id>ng e2e</id>
+            <goals>
+              <goal>yarn</goal>
+            </goals>
+            <phase>test</phase>
+            <configuration>
+              <arguments>ng e2e</arguments>
+            </configuration>
+          </execution>
         </executions>
       </plugin>
     </plugins>
