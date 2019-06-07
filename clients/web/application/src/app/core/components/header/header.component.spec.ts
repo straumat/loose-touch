@@ -33,7 +33,6 @@ describe('HeaderComponent', () => {
   // ===================================================================================================================
   it('should display the header', () => {
     const compiled = fixture.debugElement.nativeElement;
-
     // Check page data.
     expect(compiled.querySelector('mat-toolbar-row').textContent).toContain('Who should you contact today ?');
   });

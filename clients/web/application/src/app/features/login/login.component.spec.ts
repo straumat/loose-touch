@@ -1,4 +1,4 @@
-import {ComponentFixture, fakeAsync, TestBed, tick} from '@angular/core/testing';
+import {async, ComponentFixture, fakeAsync, TestBed, tick} from '@angular/core/testing';
 
 import {LoginComponent} from './login.component';
 import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
@@ -7,28 +7,30 @@ import {HttpClientTestingModule, HttpTestingController} from '@angular/common/ht
 import {JwtModule} from '@auth0/angular-jwt';
 import {environment} from '../../../environments/environment';
 import {HttpClient} from '@angular/common/http';
-import {routes} from '../../core/core-routing.module';
-import {CoreComponent} from '../../core/core.component';
 import {DashboardComponent} from '../dashboard/dashboard.component';
-import {Router} from '@angular/router';
+import {ActivatedRoute, Data, Router} from '@angular/router';
 import {LooseTouchError, LooseTouchErrorType} from '../../core/models/looseToucheError';
 import {AuthServiceConfig, SocialLoginModule} from 'angularx-social-login';
 import {provideSocialLoginConfiguration} from '../../app.module';
 import {ErrorComponent} from '../error/error.component';
+import {Title} from '@angular/platform-browser';
 
 describe('LoginComponent', () => {
 
   let component: LoginComponent;
   let fixture: ComponentFixture<LoginComponent>;
-  let httpClient: HttpClient;
-  let httpTestingController: HttpTestingController;
 
-  beforeEach(() => {
+  // ===================================================================================================================
+  beforeEach(async(async(() => {
     TestBed.configureTestingModule({
-      declarations: [CoreComponent, LoginComponent, DashboardComponent, ErrorComponent],
+      declarations: [LoginComponent, DashboardComponent, ErrorComponent],
       imports: [
         HttpClientTestingModule,
-        RouterTestingModule.withRoutes(routes),
+        [RouterTestingModule.withRoutes([
+          {path: 'login', component: LoginComponent},
+          {path: 'error', component: ErrorComponent},
+          {path: 'dashboard', component: DashboardComponent}
+        ])],
         JwtModule.forRoot({
           config: {
             tokenGetter: () => {
@@ -39,36 +41,48 @@ describe('LoginComponent', () => {
         SocialLoginModule
       ],
       providers: [
-        {provide: AuthServiceConfig, useFactory: provideSocialLoginConfiguration}
+        {provide: AuthServiceConfig, useFactory: provideSocialLoginConfiguration},
+        {
+          provide: ActivatedRoute,
+          useValue: {
+            data: {
+              subscribe: (fn: (value: Data) => void) => fn({}),
+            }
+          }
+        }
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
     });
-    // Inject the http service and test controller for each test
-    httpClient = TestBed.get(HttpClient);
-    httpTestingController = TestBed.get(HttpTestingController);
     localStorage.clear();
-  });
+  })));
 
-  beforeEach(() => {
+  // ===================================================================================================================
+  it('should create', () => {
     fixture = TestBed.createComponent(LoginComponent);
     component = fixture.componentInstance;
-    fixture.detectChanges();
-  });
-
-  it('should create', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should display the card information text', () => {
+  // ===================================================================================================================
+  it('should display the login page', () => {
+    fixture = TestBed.createComponent(LoginComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
     const compiled = fixture.debugElement.nativeElement;
+
+    // CHeck page data.
+    expect(TestBed.get(Title).getTitle()).toEqual('Loose touch connexion');
     expect(compiled.querySelector('mat-card-title').textContent).toContain('Loose touch connexion');
     expect(compiled.querySelector('mat-card-subtitle').textContent).toContain('Use your google account to sign up and sign in');
-
-    expect(component.error).toBeNull();
+    expect(component.error).toBeUndefined();
     expect(compiled.querySelector('.alert-warning')).toBeNull();
   });
 
+  // ===================================================================================================================
   it('should display the user image', (done) => {
+    fixture = TestBed.createComponent(LoginComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
     const avatarImage = window.getComputedStyle(document.getElementById('avatar')).backgroundImage;
     imageExists(avatarImage, function(exists) {
       expect(exists).toBe(true);
@@ -76,7 +90,11 @@ describe('LoginComponent', () => {
     });
   });
 
+  // ===================================================================================================================
   it('should display the google sign-in image', (done) => {
+    fixture = TestBed.createComponent(LoginComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
     const googleSignIn = window.getComputedStyle(document.getElementById('google-sign-in')).backgroundImage;
     imageExists(googleSignIn, function(exists) {
       expect(exists).toBe(true);
@@ -84,7 +102,11 @@ describe('LoginComponent', () => {
     });
   });
 
+  // ===================================================================================================================
   it('should call the google sign in method of the component', () => {
+    fixture = TestBed.createComponent(LoginComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
     spyOn(component, 'signInWithGoogle');
 
     const button = fixture.debugElement.nativeElement.querySelector('.google-sign-in');
@@ -94,21 +116,36 @@ describe('LoginComponent', () => {
     fixture.whenStable().then(() => {
       expect(component.signInWithGoogle).toHaveBeenCalled();
     });
-    expect(component.error).toBeNull();
+    expect(component.error).toBeUndefined();
   });
 
+  // ===================================================================================================================
   it('should display an error message if login fails', fakeAsync(() => {
-    const compiled = fixture.debugElement.nativeElement;
-    const router: Router = TestBed.get(Router);
-    router.initialNavigation();
-
-    // Simulate an error.
     const expectedError: LooseTouchError = {
       type: LooseTouchErrorType.authentication_error,
       message: 'Invalid Google Id token : FakeToken',
       errors: []
     };
-    router.navigate(['/login'], {queryParams: {looseTouchError: JSON.stringify(expectedError)}});
+
+    TestBed.overrideProvider(ActivatedRoute, {
+      useValue: {
+        data: {
+          subscribe: (fn: (value: Data) => void) => fn({
+            looseTouchError: expectedError
+          }),
+        }
+      }
+    });
+    TestBed.compileComponents();
+    fixture = TestBed.createComponent(LoginComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+    const compiled = fixture.debugElement.nativeElement;
+    const router: Router = TestBed.get(Router);
+    router.initialNavigation();
+
+    // Move to login with an error message
+    router.navigate(['/login']);
 
     // Check if we have an error.
     tick();
@@ -117,6 +154,7 @@ describe('LoginComponent', () => {
     expect(compiled.querySelector('.alert-warning')).not.toBeNull();
   }));
 
+  // ===================================================================================================================
   // TODO This method doesn't work yet. Don't know why. A question is asked on stackoverflow.
   // https://stackoverflow.com/questions/56079889/why-my-css-hover-background-image-is-not-changed-during-test-with-mouseover-or-m
   it('should display the google sign-in image on hover', () => {

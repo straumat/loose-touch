@@ -7,6 +7,7 @@ import {DashboardComponent} from '../dashboard/dashboard.component';
 import {Title} from '@angular/platform-browser';
 import {ActivatedRoute, Data} from '@angular/router';
 import {LooseTouchErrorType} from '../../core/models/looseToucheError';
+import {LoginComponent} from '../login/login.component';
 
 /**
  * Error component.
@@ -42,7 +43,7 @@ describe('ErrorComponent', () => {
         {path: 'dashboard', component: DashboardComponent}
       ])],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
-    }).compileComponents();
+    });
   }));
 
   // ===================================================================================================================
@@ -116,5 +117,34 @@ describe('ErrorComponent', () => {
       expect(component.goToDashboard).toHaveBeenCalled();
     });
   });
+
+  // ===================================================================================================================
+  it('should display the error image', (done) => {
+    fixture = TestBed.createComponent(ErrorComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+    const googleSignIn = window.getComputedStyle(document.getElementById('error-image')).backgroundImage;
+    imageExists(googleSignIn, function(exists) {
+      expect(exists).toBe(true);
+      done();
+    });
+  });
+
+  /**
+   * Returns true is an image exists.
+   * @param url image url
+   * @param callback method
+   * @return true if exists
+   */
+  function imageExists(url, callback) {
+    const img = new Image();
+    img.onload = function() {
+      callback(true);
+    };
+    img.onerror = function() {
+      callback(false);
+    };
+    img.src = url.replace('url("', '').replace('")', '');
+  }
 
 });

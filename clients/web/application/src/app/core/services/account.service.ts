@@ -36,7 +36,8 @@ export class AccountService {
    * @param http enable rest connection
    * @param jwtHelper enable jwt management
    */
-  constructor(private http: HttpClient, public jwtHelper: JwtHelperService) {
+  constructor(private http: HttpClient,
+              public jwtHelper: JwtHelperService) {
   }
 
   /**

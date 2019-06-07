@@ -34,7 +34,7 @@ describe('AccountService', () => {
       declarations: [CoreComponent, LoginComponent, DashboardComponent, ErrorComponent],
       imports: [
         HttpClientTestingModule,
-        RouterTestingModule.withRoutes(routes),
+        RouterTestingModule.withRoutes(routes), // TODO Use local routes.
         JwtModule.forRoot({
           config: {
             tokenGetter: () => {

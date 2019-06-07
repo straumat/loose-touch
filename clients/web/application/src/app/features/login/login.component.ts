@@ -17,7 +17,7 @@ export class LoginComponent implements OnInit {
   /**
    * If there is an authentication error.
    */
-  error: LooseTouchError = null;
+  error: LooseTouchError = undefined;
 
   constructor(private titleService: Title,
               public router: Router,
@@ -28,13 +28,10 @@ export class LoginComponent implements OnInit {
   }
 
   ngOnInit() {
-    // We check if somme errors were passed to the component.
-    // TODO Use extra data instead if query params.
-    this.route.queryParams.pipe(
-      filter(params => params['looseTouchError'] != null)
-    ).subscribe(params =>
-      this.error = JSON.parse(params['looseTouchError'])
-    );
+    // We retrieve any error passed throw data.
+    this.route.data.subscribe(data => {
+      this.error = data.looseTouchError;
+    });
 
     // Google login.
     this.socialLoginService.authState.subscribe((user) => {
@@ -46,15 +43,15 @@ export class LoginComponent implements OnInit {
         // Account service connection failed.
         this.error = {
           type: LooseTouchErrorType.authentication_error,
-          message: 'Impossible to connect to the authentication.',
+          message: 'Impossible to connect to the authentication',
           errors: []
         };
       });
-      // Google login failed.
     }, () => {
+      // Google login failed.
       this.error = {
         type: LooseTouchErrorType.authentication_error,
-        message: 'Unknown error.',
+        message: 'Unknown error',
         errors: []
       };
     });
