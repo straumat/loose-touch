@@ -9,4 +9,8 @@ export class ErrorPage {
     return browser.get('/error');
   }
 
+  getTitle() {
+    return browser.getTitle();
+  }
+
 }

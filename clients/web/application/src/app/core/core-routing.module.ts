@@ -5,6 +5,7 @@ import {CoreComponent} from './core.component';
 import {DashboardComponent} from '../features/dashboard/dashboard.component';
 import {ErrorComponent} from '../features/error/error.component';
 import {LooseTouchErrorType} from './models/looseToucheError';
+import {AuthenticationGuard} from './guards/authentication.guard';
 
 // TODO : Remove export.
 export const routes: Routes = [
@@ -26,7 +27,7 @@ export const routes: Routes = [
       {
         path: 'dashboard',
         component: DashboardComponent,
-        // canActivate: [AuthenticationGuardService]
+        canActivate: [AuthenticationGuard]
       }
     ]
   },

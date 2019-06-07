@@ -71,7 +71,7 @@ describe('AccountService', () => {
     };
 
     // Verify default data.
-    expect(service.account).toBeNull();
+    expect(service.account).toBeUndefined();
     expect(localStorage.getItem(environment.tokenNameInLocalStorage)).toBeNull();
 
     // Calling the service and testing results.
@@ -104,7 +104,7 @@ describe('AccountService', () => {
     const router: Router = TestBed.get(Router);
 
     // Verify data in the service.
-    expect(service.account).toBeNull();
+    expect(service.account).toBeUndefined();
     expect(localStorage.getItem(environment.tokenNameInLocalStorage)).toBeNull();
 
     // Calling the service and testing that an error occurred.
@@ -123,10 +123,10 @@ describe('AccountService', () => {
       'errors': []
     }, {status: 401, statusText: 'Bad Request'});
 
-    // Test for the url and the data in the service..
+    // Test for the url and the data in the service.
     tick();
-    expect(router.url).toContain('/login?looseTouchError=');
-    expect(service.account).toBeNull();
+    expect(router.url).toContain('/login');
+    expect(service.account).toBeUndefined();
     expect(localStorage.getItem(environment.tokenNameInLocalStorage)).toBeNull();
   }));
 

@@ -29,7 +29,7 @@ export class AccountService {
   /**
    * Connected account.
    */
-  account: AccountDTO = null;
+  account: AccountDTO = undefined;
 
   /**
    * Constructor.
@@ -55,6 +55,18 @@ export class AccountService {
         return account;
       })
     );
+  }
+
+  /**
+   * Returns true if the token is present and not expired and  profile is set.
+   */
+  public isConnected(): boolean {
+    // If the token is expired we remove it.
+    if (this.jwtHelper.isTokenExpired(localStorage.getItem('token'))) {
+      localStorage.removeItem('token');
+    }
+
+    return (localStorage.getItem('token') != null);
   }
 
 }

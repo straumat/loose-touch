@@ -1,16 +1,23 @@
 import {browser, by, element} from 'protractor';
+import {ErrorPage} from '../page-objects/error.po';
 
 /**
  * E2E tests for the error page.
  */
 describe('E2E tests for the error page', () => {
 
+  let page: ErrorPage;
+
+  // ===================================================================================================================
+  beforeEach(() => {
+    page = new ErrorPage();
+  });
+
   // ===================================================================================================================
   it('Accessing error page', () => {
-    browser.get('/error');
-
+    page.navigateTo();
     // Check that the page displayed is the good one and no error message.
-    expect(browser.getTitle()).toEqual('An error occurred');
+    expect(page.getTitle()).toEqual('An error occurred');
   });
 
   // ===================================================================================================================
