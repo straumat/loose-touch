@@ -5,6 +5,7 @@ import {CoreRoutingModule} from './core-routing.module';
 import {CoreComponent} from './core.component';
 import {CustomMaterialModule} from './material.module';
 import {HeaderComponent} from './components/header/header.component';
+import {AuthenticationGuard} from './guards/authentication.guard';
 
 @NgModule({
   declarations: [CoreComponent, HeaderComponent],
@@ -14,4 +15,5 @@ import {HeaderComponent} from './components/header/header.component';
     CustomMaterialModule
   ]
 })
-export class CoreModule { }
+export class CoreModule {
+}

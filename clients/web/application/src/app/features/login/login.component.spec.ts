@@ -3,10 +3,9 @@ import {async, ComponentFixture, fakeAsync, TestBed, tick} from '@angular/core/t
 import {LoginComponent} from './login.component';
 import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
 import {RouterTestingModule} from '@angular/router/testing';
-import {HttpClientTestingModule, HttpTestingController} from '@angular/common/http/testing';
+import {HttpClientTestingModule} from '@angular/common/http/testing';
 import {JwtModule} from '@auth0/angular-jwt';
 import {environment} from '../../../environments/environment';
-import {HttpClient} from '@angular/common/http';
 import {DashboardComponent} from '../dashboard/dashboard.component';
 import {ActivatedRoute, Data, Router} from '@angular/router';
 import {LooseTouchError, LooseTouchErrorType} from '../../core/models/looseToucheError';

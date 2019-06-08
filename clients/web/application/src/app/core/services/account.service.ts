@@ -60,13 +60,13 @@ export class AccountService {
   /**
    * Returns true if the token is present and not expired and  profile is set.
    */
-  public isConnected(): boolean {
+  public isTokenValid(): boolean {
     // If the token is expired we remove it.
-    if (this.jwtHelper.isTokenExpired(localStorage.getItem('token'))) {
-      localStorage.removeItem('token');
+    if (this.jwtHelper.isTokenExpired(localStorage.getItem(environment.tokenNameInLocalStorage))) {
+      localStorage.removeItem(environment.tokenNameInLocalStorage);
     }
 
-    return (localStorage.getItem('token') != null);
+    return (localStorage.getItem(environment.tokenNameInLocalStorage) != null);
   }
 
 }

@@ -12,6 +12,7 @@ import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
 import {JwtModule} from '@auth0/angular-jwt';
 import {environment} from '../environments/environment';
 import {AuthServiceConfig, GoogleLoginProvider, SocialLoginModule} from 'angularx-social-login';
+import {AuthenticationGuard} from './core/guards/authentication.guard';
 
 /**
  * Social login configuration.
@@ -51,7 +52,8 @@ export function provideSocialLoginConfiguration() {
   providers: [
     Title,
     {provide: HTTP_INTERCEPTORS, useClass: ApplicationInterceptor, multi: true},
-    {provide: AuthServiceConfig, useFactory: provideSocialLoginConfiguration}
+    {provide: AuthServiceConfig, useFactory: provideSocialLoginConfiguration},
+    AuthenticationGuard
   ],
   bootstrap: [AppComponent]
 })

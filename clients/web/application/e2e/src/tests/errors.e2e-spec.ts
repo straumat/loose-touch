@@ -6,18 +6,18 @@ import {ErrorPage} from '../page-objects/error.po';
  */
 describe('E2E tests for the error page', () => {
 
-  let page: ErrorPage;
+  let errorPage: ErrorPage;
 
   // ===================================================================================================================
   beforeEach(() => {
-    page = new ErrorPage();
+    errorPage = new ErrorPage();
   });
 
   // ===================================================================================================================
   it('Accessing error page', () => {
-    page.navigateTo();
+    errorPage.navigateTo();
     // Check that the page displayed is the good one and no error message.
-    expect(page.getTitle()).toEqual('An error occurred');
+    expect(errorPage.getTitle()).toEqual('An error occurred');
   });
 
   // ===================================================================================================================
