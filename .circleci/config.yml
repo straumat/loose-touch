@@ -25,6 +25,7 @@ jobs: # We have jobs key. Each job represents a phase in your Build-Test-Deploy 
 
       # Get the sources and dependencies.
       - checkout # check out source code to working directory.
+      - setup_remote_docker # Setup docker
       - restore_cache: # restore the saved cache after the first run or if `pom.xml` has changed.
           key: loose-touch-{{ checksum "pom.xml" }}
       - run: mvn dependency:go-offline # gets the project dependencies.
