@@ -29,6 +29,7 @@
         <maven-jar-plugin.version>3.1.2</maven-jar-plugin.version>
         <maven-dependency-plugin.version>3.1.1</maven-dependency-plugin.version>
         <maven-assembly-plugin.version>3.1.1</maven-assembly-plugin.version>
+        <dockerfile-maven-plugin.version>1.4.10</dockerfile-maven-plugin.version>
         <!-- Data -->
         <spring-data-dynamodb.version>5.1.0</spring-data-dynamodb.version>
         <!-- AWS -->
@@ -48,6 +49,8 @@
         <commons-validator.version>1.6</commons-validator.version>
         <!-- Test -->
         <junit.version>4.12</junit.version>
+        <!-- Others -->
+        <docker.image.prefix>loose-touch</docker.image.prefix>
     </properties>
     <!-- =========================================================================================================== -->
 
@@ -175,17 +178,26 @@
             </activation>
             <build>
                 <plugins>
-                    <!-- don't build a jar, we'll use the classes dir -->
+                    <!-- Also build the jar for the docker image -->
+                    <plugin>
+                        <groupId>org.springframework.boot</groupId>
+                        <artifactId>spring-boot-maven-plugin</artifactId>
+                        <configuration>
+                            <executable>true</executable>
+                            <addResources>true</addResources>
+                        </configuration>
+                    </plugin>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-jar-plugin</artifactId>
                         <version>${maven-jar-plugin.version}</version>
-                        <executions>
-                            <execution>
-                                <id>default-jar</id>
-                                <phase>none</phase>
-                            </execution>
-                        </executions>
+                        <configuration>
+                            <archive>
+                                <manifestEntries>
+                                    <Implementation-Version>${project.version}</Implementation-Version>
+                                </manifestEntries>
+                            </archive>
+                        </configuration>
                     </plugin>
                     <!-- select and copy only runtime dependencies to a temporary lib folder -->
                     <plugin>
@@ -368,6 +380,29 @@
                     <rules>
                         <dependencyConvergence/>
                     </rules>
+                </configuration>
+            </plugin>
+            <!-- Docker plugin -->
+            <plugin>
+                <groupId>com.spotify</groupId>
+                <artifactId>dockerfile-maven-plugin</artifactId>
+                <version>${dockerfile-maven-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>default</id>
+                        <goals>
+                            <goal>build</goal>
+                            <goal>push</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <googleContainerRegistryEnabled>false</googleContainerRegistryEnabled>
+                    <repository>${docker.image.prefix}/${project.artifactId}</repository>
+                    <tag>${project.version}</tag>
+                    <buildArgs>
+                        <JAR_FILE>target/${project.artifactId}.jar</JAR_FILE>
+                    </buildArgs>
                 </configuration>
             </plugin>
         </plugins>

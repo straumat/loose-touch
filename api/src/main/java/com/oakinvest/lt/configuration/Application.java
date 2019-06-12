@@ -17,6 +17,11 @@ public final class Application {
     public static final String LOCAL_DYNAMODB_PARAMETER = "--start-local-dynamodb";
 
     /**
+     * Parameter that indicates that we should create the tables.
+     */
+    public static final String DYNAMODB_TABLE_CREATION_PARAMETER = "--create-dynamodb-tables";
+
+    /**
      * Environment for local DynamoDB.
      */
     public static final String LOCAL_DYNAMODB_ENVIRONMENT = "local-dynamodb";

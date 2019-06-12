@@ -18,6 +18,8 @@
     <frontend-maven-plugin.version>1.7.6</frontend-maven-plugin.version>
     <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-clean-plugin -->
     <maven-clean-plugin.version>3.1.0</maven-clean-plugin.version>
+
+    <docker-maven-plugin.version>0.30.0</docker-maven-plugin.version>
     <!-- Web development -->
     <!-- https://nodejs.org/en/download/releases/ -->
     <node.version>v12.3.1</node.version>
@@ -55,6 +57,60 @@
           </filesets>
         </configuration>
       </plugin>
+
+      <plugin>
+        <groupId>io.fabric8</groupId>
+        <artifactId>docker-maven-plugin</artifactId>
+        <version>${docker-maven-plugin.version}</version>
+        <executions>
+          <execution>
+            <id>launch-docker-images</id>
+            <phase>test</phase>
+            <goals>
+              <goal>start</goal>
+            </goals>
+            <configuration>
+              <images>
+                <image>
+                  <name>amazon/dynamodb-local</name>
+                  <alias>DynamoDB</alias>
+                  <run>
+                    <ports>
+                      <port>8000:8000</port>
+                    </ports>
+                    <wait>
+                      <log>CorsParams:*</log>
+                      <time>20000</time>
+                    </wait>
+                  </run>
+                </image>
+                <image>
+                  <name>loose-touch/api:${project.version}</name>
+                  <alias>Loose touch api</alias>
+                  <run>
+                    <net>host</net>
+                    <ports>
+                      <port>8000:8000</port>
+                    </ports>
+                    <wait>
+                      <log>Loose touch API started</log>
+                      <time>10000</time>
+                    </wait>
+                  </run>
+                </image>
+              </images>
+            </configuration>
+          </execution>
+          <execution>
+            <id>stop-docker-images</id>
+            <phase>package</phase>
+            <goals>
+              <goal>stop</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
       <!-- Angular build -->
       <plugin>
         <groupId>com.github.eirslett</groupId>

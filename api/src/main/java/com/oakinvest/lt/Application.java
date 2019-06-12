@@ -23,6 +23,7 @@ import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandl
 
 import java.util.Arrays;
 
+import static com.oakinvest.lt.configuration.Application.DYNAMODB_TABLE_CREATION_PARAMETER;
 import static com.oakinvest.lt.configuration.Application.LOCAL_DYNAMODB_PARAMETER;
 
 /**
@@ -40,18 +41,23 @@ public class Application extends SpringBootServletInitializer {
     public static void main(final String[] args) throws Exception {
         // Start a local dynamodb server.
         if (Arrays.asList(args).contains(LOCAL_DYNAMODB_PARAMETER)) {
+            System.out.println("=====> LOCAL_DYNAMODB_PARAMETER");
 
             // Start server.
             System.setProperty("sqlite4java.library.path", "native-libs");
             final String[] localArgs = {"-sharedDb", "-inMemory"};
             DynamoDBProxyServer server = ServerRunner.createServerFromCommandLineArgs(localArgs);
             server.start();
+        }
+
+        if (Arrays.asList(args).contains(LOCAL_DYNAMODB_PARAMETER) || Arrays.asList(args).contains(DYNAMODB_TABLE_CREATION_PARAMETER)) {
+            System.out.println("=====> DYNAMODB_TABLE_CREATION_PARAMETER");
 
             // Initiate connexion.
             AmazonDynamoDB dynamoDB = AmazonDynamoDBClientBuilder.standard()
                     .withEndpointConfiguration(
                             new AwsClientBuilder
-                                    .EndpointConfiguration("http://127.0.0.1:8000/", "eu-west-3"))
+                                    .EndpointConfiguration("http://0.0.0.0:8000/", "eu-west-3"))
                     .build();
             DynamoDBMapper mapper = new DynamoDBMapper(dynamoDB);
 
