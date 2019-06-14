@@ -43,7 +43,7 @@
         <swagger.version>2.9.2</swagger.version>
         <swagger-maven-plugin.version>3.1.8</swagger-maven-plugin.version>
         <jjwt.version>0.10.5</jjwt.version>
-        <typescript-generator-maven-plugin.version>2.15.526</typescript-generator-maven-plugin.version>
+        <typescript-generator-maven-plugin.version>2.15.527</typescript-generator-maven-plugin.version>
         <!-- Util -->
         <mapstruct.version>1.3.0.Final</mapstruct.version>
         <commons-validator.version>1.6</commons-validator.version>
