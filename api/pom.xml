@@ -245,62 +245,6 @@
                             </execution>
                         </executions>
                     </plugin>
-                    <!-- Typescript generator -->
-                    <plugin>
-                        <groupId>cz.habarta.typescript-generator</groupId>
-                        <artifactId>typescript-generator-maven-plugin</artifactId>
-                        <version>${typescript-generator-maven-plugin.version}</version>
-                        <executions>
-                            <execution>
-                                <id>generate-account</id>
-                                <goals>
-                                    <goal>generate</goal>
-                                </goals>
-                                <phase>process-classes</phase>
-                                <configuration>
-                                    <jsonLibrary>jackson2</jsonLibrary>
-                                    <classes>
-                                        <class>com.oakinvest.lt.dto.v1.AccountDTO</class>
-                                    </classes>
-                                    <outputFile>target/typescript-generator/account.d.ts</outputFile>
-                                    <outputKind>module</outputKind>
-                                    <mapEnum>asEnum</mapEnum>
-                                </configuration>
-                            </execution>
-                            <execution>
-                                <id>generate-contact</id>
-                                <goals>
-                                    <goal>generate</goal>
-                                </goals>
-                                <phase>process-classes</phase>
-                                <configuration>
-                                    <jsonLibrary>jackson2</jsonLibrary>
-                                    <classes>
-                                        <class>com.oakinvest.lt.dto.v1.ContactDTO</class>
-                                    </classes>
-                                    <outputFile>target/typescript-generator/contact.d.ts</outputFile>
-                                    <outputKind>module</outputKind>
-                                    <mapEnum>asEnum</mapEnum>
-                                </configuration>
-                            </execution>
-                            <execution>
-                                <id>generate-looseTouchError</id>
-                                <goals>
-                                    <goal>generate</goal>
-                                </goals>
-                                <phase>process-classes</phase>
-                                <configuration>
-                                    <jsonLibrary>jackson2</jsonLibrary>
-                                    <classes>
-                                        <class>com.oakinvest.lt.util.error.LooseTouchError</class>
-                                    </classes>
-                                    <outputFile>target/typescript-generator/looseToucheError.d.ts</outputFile>
-                                    <outputKind>module</outputKind>
-                                    <mapEnum>asEnum</mapEnum>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
                     <!-- Surefire -->
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
@@ -418,16 +362,16 @@
                                 </configuration>
                             </execution>
                             <!-- Publish packages -->
-                            <execution>
+<!--                            <execution>
                                 <id>Publish packages</id>
                                 <goals>
                                     <goal>yarn</goal>
                                 </goals>
                                 <phase>package</phase>
                                 <configuration>
-                                    <arguments>publish --access=public --cwd target/angular-loose-touch-api</arguments>
+                                    <arguments>publish &#45;&#45;access=public &#45;&#45;cwd target/angular-loose-touch-api</arguments>
                                 </configuration>
-                            </execution>
+                            </execution>-->
                         </executions>
                     </plugin>
                 </plugins>

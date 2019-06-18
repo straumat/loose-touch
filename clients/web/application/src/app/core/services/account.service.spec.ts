@@ -6,7 +6,6 @@ import {HttpClientTestingModule, HttpTestingController} from '@angular/common/ht
 import {HTTP_INTERCEPTORS, HttpClient} from '@angular/common/http';
 import {JwtModule} from '@auth0/angular-jwt';
 import {environment} from '../../../environments/environment';
-import {AccountDTO} from '../models/account';
 import {RouterTestingModule} from '@angular/router/testing';
 import {routes} from '../core-routing.module';
 import {LoginComponent} from '../../features/login/login.component';
@@ -16,6 +15,7 @@ import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
 import {Router} from '@angular/router';
 import {ErrorComponent} from '../../features/error/error.component';
 import {ErrorInterceptor} from '../interceptors/error-interceptor.service';
+import {AccountDTO} from 'angular-loose-touch-api';
 
 describe('AccountService', () => {
 

@@ -3,9 +3,8 @@ import {Component, OnInit} from '@angular/core';
 import {Title} from '@angular/platform-browser';
 import {ActivatedRoute, Router} from '@angular/router';
 import {AccountService} from '../../core/services/account.service';
-import {LooseTouchError, LooseTouchErrorType} from '../../core/models/looseToucheError';
 import {AuthService, GoogleLoginProvider} from 'angularx-social-login';
-import {AccountAPIService} from 'angular-loose-touch-api';
+import {AccountAPIService, LooseTouchError} from 'angular-loose-touch-api';
 
 @Component({
   selector: 'app-login',
@@ -42,7 +41,7 @@ export class LoginComponent implements OnInit {
       }, () => {
         // Account service connection failed.
         this.error = {
-          type: LooseTouchErrorType.authentication_error,
+          type: LooseTouchError.TypeEnum.AuthenticationError,
           message: 'Impossible to connect to the authentication',
           errors: []
         };
@@ -50,7 +49,7 @@ export class LoginComponent implements OnInit {
     }, () => {
       // Google login failed.
       this.error = {
-        type: LooseTouchErrorType.authentication_error,
+        type: LooseTouchError.TypeEnum.AuthenticationError,
         message: 'Unknown error',
         errors: []
       };
@@ -65,7 +64,7 @@ export class LoginComponent implements OnInit {
       .catch(reason => {
         // If the user cancels the login.
         this.error = {
-          type: LooseTouchErrorType.authentication_error,
+          type: LooseTouchError.TypeEnum.AuthenticationError,
           message: reason,
           errors: []
         };

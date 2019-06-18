@@ -2,9 +2,6 @@ import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
 import {HeaderComponent} from './header.component';
 import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
-import {ErrorComponent} from '../../../features/error/error.component';
-import {LooseTouchErrorType} from '../../models/looseToucheError';
-import {Title} from '@angular/platform-browser';
 
 describe('HeaderComponent', () => {
   let component: HeaderComponent;

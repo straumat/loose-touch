@@ -4,8 +4,8 @@ import {LoginComponent} from '../features/login/login.component';
 import {CoreComponent} from './core.component';
 import {DashboardComponent} from '../features/dashboard/dashboard.component';
 import {ErrorComponent} from '../features/error/error.component';
-import {LooseTouchErrorType} from './models/looseToucheError';
 import {AuthenticationGuard} from './guards/authentication.guard';
+import {LooseTouchError} from 'angular-loose-touch-api';
 
 // TODO : Remove export.
 export const routes: Routes = [
@@ -36,7 +36,7 @@ export const routes: Routes = [
   {
     path: '**', component: ErrorComponent, data: {
       looseTouchError: {
-        type: LooseTouchErrorType.invalid_request_error,
+        type: LooseTouchError.TypeEnum.InvalidRequestError,
         message: 'Page not found',
         errors: []
       }

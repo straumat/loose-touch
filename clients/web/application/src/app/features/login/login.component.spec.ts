@@ -8,12 +8,11 @@ import {JwtModule} from '@auth0/angular-jwt';
 import {environment} from '../../../environments/environment';
 import {DashboardComponent} from '../dashboard/dashboard.component';
 import {ActivatedRoute, Data, Router} from '@angular/router';
-import {LooseTouchError, LooseTouchErrorType} from '../../core/models/looseToucheError';
 import {AuthServiceConfig, SocialLoginModule} from 'angularx-social-login';
 import {apiConfigFactory, provideSocialLoginConfiguration} from '../../app.module';
 import {ErrorComponent} from '../error/error.component';
 import {Title} from '@angular/platform-browser';
-import {AccountAPIService, ApiModule} from 'angular-loose-touch-api';
+import {AccountAPIService, ApiModule, LooseTouchError} from 'angular-loose-touch-api';
 
 describe('LoginComponent', () => {
 
@@ -123,7 +122,7 @@ describe('LoginComponent', () => {
   // ===================================================================================================================
   it('should display an error message if login fails', fakeAsync(() => {
     const expectedError: LooseTouchError = {
-      type: LooseTouchErrorType.authentication_error,
+      type: LooseTouchError.TypeEnum.AuthenticationError,
       message: 'Invalid Google Id token : FakeToken',
       errors: []
     };

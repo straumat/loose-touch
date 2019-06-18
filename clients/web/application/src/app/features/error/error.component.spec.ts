@@ -6,8 +6,8 @@ import {RouterTestingModule} from '@angular/router/testing';
 import {DashboardComponent} from '../dashboard/dashboard.component';
 import {Title} from '@angular/platform-browser';
 import {ActivatedRoute, Data} from '@angular/router';
-import {LooseTouchErrorType} from '../../core/models/looseToucheError';
 import {LoginComponent} from '../login/login.component';
+import {LooseTouchError} from 'angular-loose-touch-api';
 
 /**
  * Error component.
@@ -29,7 +29,7 @@ describe('ErrorComponent', () => {
             data: {
               subscribe: (fn: (value: Data) => void) => fn({
                 looseTouchError: {
-                  type: LooseTouchErrorType.api_error,
+                  type: LooseTouchError.TypeEnum.ApiConnectionError,
                   message: 'Unit test error message',
                   errors: []
                 }
@@ -97,7 +97,7 @@ describe('ErrorComponent', () => {
     // Check component data.
     expect(component.error).not.toBeUndefined();
     expect(component.error).toEqual({
-      type: LooseTouchErrorType.api_error,
+      type: LooseTouchError.TypeEnum.ApiConnectionError,
       message: 'Unit test error message',
       errors: []
     });

@@ -1,8 +1,8 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
-import {LooseTouchError} from '../../core/models/looseToucheError';
 import {filter} from 'rxjs/operators';
 import {Title} from '@angular/platform-browser';
+import {LooseTouchError} from 'angular-loose-touch-api';
 
 @Component({
   selector: 'app-error',
