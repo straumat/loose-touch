@@ -1,3 +1,21 @@
-<p>
-  {{accountService.account.firstName}} / {{accountService.account.lastName}}
-</p>
+<div class="profile-box">
+
+    <mat-card class="mat-elevation-z2">
+
+        <!-- Header -->
+        <mat-card-header *ngIf="this.accountService.account != null">
+            <img src="{{ this.accountService.account.pictureUrl }}" mat-card-avatar>
+            <mat-card-title>{{ this.accountService.account.firstName }} {{ this.accountService.account.lastName }}
+            </mat-card-title>
+        </mat-card-header>
+        <!-- Separator -->
+        <mat-card-content>
+            <hr>
+        </mat-card-content>
+        <!-- Action -->
+        <mat-card-actions>
+            <button id="google-sign-in" class="google-sign-in" (click)="signOut()"></button>
+        </mat-card-actions>
+    </mat-card>
+
+</div>

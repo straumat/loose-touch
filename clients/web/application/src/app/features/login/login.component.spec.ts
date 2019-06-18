@@ -12,7 +12,7 @@ import {AuthServiceConfig, SocialLoginModule} from 'angularx-social-login';
 import {apiConfigFactory, provideSocialLoginConfiguration} from '../../app.module';
 import {ErrorComponent} from '../error/error.component';
 import {Title} from '@angular/platform-browser';
-import {AccountAPIService, ApiModule, LooseTouchError} from 'angular-loose-touch-api';
+import {ApiModule, LooseTouchError} from 'angular-loose-touch-api';
 
 describe('LoginComponent', () => {
 
@@ -20,10 +20,11 @@ describe('LoginComponent', () => {
   let fixture: ComponentFixture<LoginComponent>;
 
   // ===================================================================================================================
-  beforeEach(async(async(() => {
+  beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [LoginComponent, DashboardComponent, ErrorComponent],
       imports: [
+        ApiModule.forRoot(apiConfigFactory),
         HttpClientTestingModule,
         [RouterTestingModule.withRoutes([
           {path: 'login', component: LoginComponent},
@@ -49,12 +50,11 @@ describe('LoginComponent', () => {
             }
           }
         },
-        {provide: AccountAPIService, useFactory: apiConfigFactory}
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
     });
     localStorage.clear();
-  })));
+  }));
 
   // ===================================================================================================================
   it('should create', () => {

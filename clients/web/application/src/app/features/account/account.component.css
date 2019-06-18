@@ -1,0 +1,18 @@
+.profile-box {
+  padding: 10px 10px;
+  margin: auto;
+  width: 100%;
+}
+
+.profile-image {
+  background-size: cover;
+}
+
+.mat-card {
+  padding-bottom: 35px;
+}
+
+.mat-card-actions {
+  width: 50%;
+  margin: 0 auto;
+}

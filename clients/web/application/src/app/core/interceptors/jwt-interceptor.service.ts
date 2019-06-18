@@ -18,7 +18,7 @@ export class JwtInterceptor implements HttpInterceptor {
     // add authorization header with jwt token if available
     request = request.clone({
       setHeaders: {
-        'Authorization': `Bearer ${localStorage.getItem(environment.tokenNameInLocalStorage)}`
+        Authorization: `Bearer ${localStorage.getItem(environment.tokenNameInLocalStorage)}`
       }
     });
     return next.handle(request);

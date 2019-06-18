@@ -19,7 +19,7 @@ export class AccountService {
   constructor(private http: HttpClient,
               private accountAPIService: AccountAPIService,
               public jwtHelper: JwtHelperService) {
-    if (this.account == undefined) {
+    if (this.account === undefined) {
       accountAPIService.getProfile('body').subscribe(value => {
         this.account = value;
         localStorage.setItem(environment.tokenNameInLocalStorage, this.account.idToken);
@@ -49,4 +49,8 @@ export class AccountService {
     return (localStorage.getItem(environment.tokenNameInLocalStorage) != null);
   }
 
+  signOut() {
+    this.account = undefined;
+    localStorage.removeItem(environment.tokenNameInLocalStorage);
+  }
 }

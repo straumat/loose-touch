@@ -20,8 +20,8 @@ describe('E2E tests for the login page', () => {
   let user1GoogleAccessToken: string;
   let user2GoogleToken: string;
   let user2GoogleAccessToken: string;
-  let user1LooseTouchToken: string;
-  let user2LooseTouchToken: string;
+  // let user1LooseTouchToken: string;
+  // let user2LooseTouchToken: string;
 
   beforeAll(() => {
     /* tslint:disable:no-string-literal */
@@ -40,16 +40,17 @@ describe('E2E tests for the login page', () => {
       console.log('Id token ', user1GoogleToken);
       console.log('Access token ', user1GoogleAccessToken);
 
+      const responseBody: ResponsePromise = httpForLooseTouch
+        .get('http://localhost:8080/v1/login/google?googleIdToken=' + user1GoogleToken + '&googleAccessToken=' + user1GoogleAccessToken,
+          {
+            'Content-Type': 'application/json',
+            Accept: 'application/json'
+          });
 
-      let responseBody: ResponsePromise = httpForLooseTouch.get('http://localhost:8080/v1/login/google?googleIdToken=' + user1GoogleToken + '&googleAccessToken=' + user1GoogleAccessToken, {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json'
-      });
-
-      console.log('Mon token ');
+/*      console.log('Mon token ');
       responseBody.jsonBody.then(value => {
         console.log(value.idToken);
-      });
+      });*/
 
     });
 
@@ -105,10 +106,6 @@ describe('E2E tests for the login page', () => {
     expect(browser.getTitle()).toEqual('Loose touch connexion');
     dashboardPage.navigateTo();
     expect(browser.getTitle()).toEqual('Dashboard');
-    browser.sleep(10*1000)
-    element(by.id(".alert")).getText().then(function(text) {
-      console.log("===========>" + text);
-    });
   });
 
 });

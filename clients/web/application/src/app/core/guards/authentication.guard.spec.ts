@@ -12,6 +12,8 @@ import {routes} from '../core-routing.module';
 import {AccountService} from '../services/account.service';
 import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
 import {Router} from '@angular/router';
+import {ApiModule} from 'angular-loose-touch-api';
+import {apiConfigFactory} from '../../app.module';
 
 describe('AuthenticationGuard', () => {
 
@@ -20,6 +22,7 @@ describe('AuthenticationGuard', () => {
       declarations: [CoreComponent, DashboardComponent, LoginComponent, ErrorComponent],
       imports: [
         HttpClientTestingModule,
+        ApiModule.forRoot(apiConfigFactory),
         JwtModule.forRoot({
           config: {
             tokenGetter: () => {

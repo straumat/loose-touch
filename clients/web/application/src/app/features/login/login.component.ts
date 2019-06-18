@@ -4,7 +4,7 @@ import {Title} from '@angular/platform-browser';
 import {ActivatedRoute, Router} from '@angular/router';
 import {AccountService} from '../../core/services/account.service';
 import {AuthService, GoogleLoginProvider} from 'angularx-social-login';
-import {AccountAPIService, LooseTouchError} from 'angular-loose-touch-api';
+import {LooseTouchError} from 'angular-loose-touch-api';
 
 @Component({
   selector: 'app-login',
@@ -22,7 +22,6 @@ export class LoginComponent implements OnInit {
               public router: Router,
               private route: ActivatedRoute,
               private socialLoginService: AuthService,
-              public accountAPIService: AccountAPIService,
               public accountService: AccountService) {
     this.titleService.setTitle('Loose touch connexion');
   }

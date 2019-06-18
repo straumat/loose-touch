@@ -7,6 +7,7 @@ import {AuthServiceConfig} from 'angularx-social-login';
 import {apiConfigFactory, provideSocialLoginConfiguration} from '../../app.module';
 import {ActivatedRoute, Data} from '@angular/router';
 import {AccountAPIService} from 'angular-loose-touch-api';
+import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
 
 describe('DashboardComponent', () => {
   let component: DashboardComponent;
@@ -22,6 +23,7 @@ describe('DashboardComponent', () => {
         ])]],
       providers: [
       ],
+      schemas: [CUSTOM_ELEMENTS_SCHEMA]
     })
       .compileComponents();
   }));

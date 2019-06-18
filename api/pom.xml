@@ -318,13 +318,21 @@
                             <yarnVersion>${yarn.version}</yarnVersion>
                         </configuration>
                         <executions>
-                            <!-- Install node & yarn -->
+                            <!-- Install node, yarn & npm -->
                             <execution>
                                 <id>install node and yarn</id>
                                 <goals>
                                     <goal>install-node-and-yarn</goal>
                                 </goals>
-                                <phase>package</phase>
+                                <phase>generate-resources</phase>
+                            </execution>
+                            <execution>
+                                <id>install node and npm</id>
+                                <goals>
+                                    <goal>install-node-and-npm</goal>
+                                </goals>
+                                <!-- optional: default phase is "generate-resources" -->
+                                <phase>generate-resources</phase>
                             </execution>
                             <!-- Install required libraries -->
                             <execution>
@@ -362,16 +370,16 @@
                                 </configuration>
                             </execution>
                             <!-- Publish packages -->
-<!--                            <execution>
-                                <id>Publish packages</id>
-                                <goals>
-                                    <goal>yarn</goal>
-                                </goals>
-                                <phase>package</phase>
-                                <configuration>
-                                    <arguments>publish &#45;&#45;access=public &#45;&#45;cwd target/angular-loose-touch-api</arguments>
-                                </configuration>
-                            </execution>-->
+                            <!--                            <execution>
+                                                            <id>Publish packages</id>
+                                                            <goals>
+                                                                <goal>yarn</goal>
+                                                            </goals>
+                                                            <phase>package</phase>
+                                                            <configuration>
+                                                                <arguments>publish &#45;&#45;access=public &#45;&#45;cwd target/angular-loose-touch-api</arguments>
+                                                            </configuration>
+                                                        </execution>-->
                         </executions>
                     </plugin>
                 </plugins>

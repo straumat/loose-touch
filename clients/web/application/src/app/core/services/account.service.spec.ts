@@ -15,7 +15,8 @@ import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
 import {Router} from '@angular/router';
 import {ErrorComponent} from '../../features/error/error.component';
 import {ErrorInterceptor} from '../interceptors/error-interceptor.service';
-import {AccountDTO} from 'angular-loose-touch-api';
+import {AccountAPIService, AccountDTO, ApiModule} from 'angular-loose-touch-api';
+import {apiConfigFactory} from '../../app.module';
 
 describe('AccountService', () => {
 
@@ -30,6 +31,7 @@ describe('AccountService', () => {
     TestBed.configureTestingModule({
       declarations: [CoreComponent, LoginComponent, DashboardComponent, ErrorComponent],
       imports: [
+        ApiModule.forRoot(apiConfigFactory),
         HttpClientTestingModule,
         RouterTestingModule.withRoutes(routes), // TODO Use local routes.
         JwtModule.forRoot({
@@ -40,7 +42,9 @@ describe('AccountService', () => {
           }
         })
       ],
-      providers: [{provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true}],
+      providers: [
+        {provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true},
+      ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
     });
     // Inject the http service and test controller for each test
