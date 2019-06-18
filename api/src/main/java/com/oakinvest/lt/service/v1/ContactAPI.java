@@ -42,6 +42,8 @@ import static com.oakinvest.lt.util.rest.HttpStatus.STATUS_UNAUTHORIZED_MESSAGE;
  * Contact API.
  */
 @Api(tags = "Contact API")
+@ApiOperation(value = "/v1")
+@RequestMapping(value = "/v1")
 public interface ContactAPI extends V1Service {
 
     /**

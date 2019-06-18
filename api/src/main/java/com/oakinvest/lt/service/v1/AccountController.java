@@ -71,7 +71,7 @@ public class AccountController implements AccountAPI {
      *
      * @param newGoogleTokenVerifier     google token retriever
      * @param newLooseTouchTokenProvider loose touch token provider
-     * @param newAccountRepository          account repository
+     * @param newAccountRepository       account repository
      * @param newContactRepository       contact repository
      */
     public AccountController(final GoogleTokenVerifier newGoogleTokenVerifier,

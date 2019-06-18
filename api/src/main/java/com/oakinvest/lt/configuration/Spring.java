@@ -21,6 +21,7 @@ import java.util.List;
 @EnableWebMvc
 public class Spring implements WebMvcConfigurer {
 
+
     @Override
     public final void addInterceptors(final InterceptorRegistry registry) {
         registry.addInterceptor(authenticationInterceptor())
@@ -30,7 +31,12 @@ public class Spring implements WebMvcConfigurer {
 
     @Override
     public final void addCorsMappings(final CorsRegistry registry) {
-        registry.addMapping("/**");
+        registry.addMapping("/**")
+                .allowCredentials(true)
+                .allowedMethods("PUT", "GET", "DELETE", "OPTIONS", "PATCH", "POST")
+                .allowedOrigins("*")
+                .allowedHeaders("Authorization", "Cache-Control", "Content-Type", "Accept", "X-Requested-With", "Access-Control-Allow-Origin", "Access-Control-Allow-Headers", "Origin")
+                .exposedHeaders("Authorization", "Cache-Control", "Content-Type", "Access-Control-Allow-Origin", "Access-Control-Allow-Headers", "Origin", "Access-Control-Expose-Headers");
     }
 
     /**

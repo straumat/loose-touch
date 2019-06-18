@@ -6,7 +6,7 @@ export const environment = {
   production: false,
 
   // URL.
-  apiURL: 'http://localhost:8080/v1',
+  apiURL: 'http://localhost:8080',
 
   // Authentication.
   googleClientID: '408314219149-60s8l2ltrbal82hnuj35u81opt27ghsa.apps.googleusercontent.com',

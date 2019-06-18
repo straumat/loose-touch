@@ -6,7 +6,7 @@ import {INTERNAL_SERVER_ERROR, UNAUTHORIZED} from 'http-status-codes';
 import {Router} from '@angular/router';
 
 @Injectable()
-export class ApplicationInterceptor implements HttpInterceptor {
+export class ErrorInterceptor implements HttpInterceptor {
 
   constructor(public router: Router) {
   }

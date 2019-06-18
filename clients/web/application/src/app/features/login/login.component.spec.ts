@@ -10,9 +10,10 @@ import {DashboardComponent} from '../dashboard/dashboard.component';
 import {ActivatedRoute, Data, Router} from '@angular/router';
 import {LooseTouchError, LooseTouchErrorType} from '../../core/models/looseToucheError';
 import {AuthServiceConfig, SocialLoginModule} from 'angularx-social-login';
-import {provideSocialLoginConfiguration} from '../../app.module';
+import {apiConfigFactory, provideSocialLoginConfiguration} from '../../app.module';
 import {ErrorComponent} from '../error/error.component';
 import {Title} from '@angular/platform-browser';
+import {AccountAPIService, ApiModule} from 'angular-loose-touch-api';
 
 describe('LoginComponent', () => {
 
@@ -48,7 +49,8 @@ describe('LoginComponent', () => {
               subscribe: (fn: (value: Data) => void) => fn({}),
             }
           }
-        }
+        },
+        {provide: AccountAPIService, useFactory: apiConfigFactory}
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
     });

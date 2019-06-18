@@ -33,6 +33,8 @@ import static com.oakinvest.lt.util.rest.HttpStatus.STATUS_UNAUTHORIZED_MESSAGE;
  * Account API.
  */
 @Api(tags = "Account API")
+@ApiOperation(value = "/v1")
+@RequestMapping(value = "/v1")
 public interface AccountAPI extends V1Service {
 
     /**
@@ -62,10 +64,10 @@ public interface AccountAPI extends V1Service {
             @ApiResponse(code = STATUS_REQUEST_FAILED, message = STATUS_REQUEST_FAILED_MESSAGE, response = LooseTouchError.class),
             @ApiResponse(code = STATUS_INTERNAL_SERVER_ERROR, message = STATUS_INTERNAL_SERVER_ERROR_MESSAGE, response = LooseTouchError.class)
     })
-    AccountDTO googleLogin(@ApiParam(value = "Google id token")
-                        @RequestParam(required = false) String googleIdToken,
-                           @ApiParam(value = "Google access token")
-                        @RequestParam(required = false) String googleAccessToken);
+    AccountDTO googleLogin(@ApiParam(name = "googleIdToken", value = "Google id token")
+                           @RequestParam(required = false) String googleIdToken,
+                           @ApiParam(name = "googleAccessToken", value = "Google access token")
+                           @RequestParam(required = false) String googleAccessToken);
 
     /**
      * Get the account profile and a new refreshed token.

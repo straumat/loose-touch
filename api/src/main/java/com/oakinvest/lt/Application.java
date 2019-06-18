@@ -41,8 +41,6 @@ public class Application extends SpringBootServletInitializer {
     public static void main(final String[] args) throws Exception {
         // Start a local dynamodb server.
         if (Arrays.asList(args).contains(LOCAL_DYNAMODB_PARAMETER)) {
-            System.out.println("=====> LOCAL_DYNAMODB_PARAMETER");
-
             // Start server.
             System.setProperty("sqlite4java.library.path", "native-libs");
             final String[] localArgs = {"-sharedDb", "-inMemory"};
@@ -51,8 +49,6 @@ public class Application extends SpringBootServletInitializer {
         }
 
         if (Arrays.asList(args).contains(LOCAL_DYNAMODB_PARAMETER) || Arrays.asList(args).contains(DYNAMODB_TABLE_CREATION_PARAMETER)) {
-            System.out.println("=====> DYNAMODB_TABLE_CREATION_PARAMETER");
-
             // Initiate connexion.
             AmazonDynamoDB dynamoDB = AmazonDynamoDBClientBuilder.standard()
                     .withEndpointConfiguration(

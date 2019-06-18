@@ -29,6 +29,9 @@ public class AuthenticationInterceptor extends HandlerInterceptorAdapter {
     @SuppressWarnings("RedundantThrows")
     @Override
     public final boolean preHandle(final HttpServletRequest request, final HttpServletResponse response, final Object handler) throws Exception {
+        if (request.getMethod().contains("OPTIONS")) {
+            return true;
+        }
         Optional<String> idToken = extractHeaderToken(request);
         if (idToken.isPresent()) {
             Optional<String> accountId = looseTouchTokenProvider.getAccountId(idToken.get());

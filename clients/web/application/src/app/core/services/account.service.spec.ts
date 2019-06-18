@@ -7,7 +7,6 @@ import {HTTP_INTERCEPTORS, HttpClient} from '@angular/common/http';
 import {JwtModule} from '@auth0/angular-jwt';
 import {environment} from '../../../environments/environment';
 import {AccountDTO} from '../models/account';
-import {ApplicationInterceptor} from '../interceptors/application-interceptor.service';
 import {RouterTestingModule} from '@angular/router/testing';
 import {routes} from '../core-routing.module';
 import {LoginComponent} from '../../features/login/login.component';
@@ -16,6 +15,7 @@ import {DashboardComponent} from '../../features/dashboard/dashboard.component';
 import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
 import {Router} from '@angular/router';
 import {ErrorComponent} from '../../features/error/error.component';
+import {ErrorInterceptor} from '../interceptors/error-interceptor.service';
 
 describe('AccountService', () => {
 
@@ -40,7 +40,7 @@ describe('AccountService', () => {
           }
         })
       ],
-      providers: [{provide: HTTP_INTERCEPTORS, useClass: ApplicationInterceptor, multi: true}],
+      providers: [{provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true}],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
     });
     // Inject the http service and test controller for each test

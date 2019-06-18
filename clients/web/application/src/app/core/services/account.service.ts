@@ -14,7 +14,7 @@ export class AccountService {
   /**
    * Authentication URL.
    */
-  GOOGLE_LOGIN_URL: string = environment.apiURL + '/login/google';
+  GOOGLE_LOGIN_URL: string = environment.apiURL + '/v1/login/google';
 
   /**
    * Account URL.
