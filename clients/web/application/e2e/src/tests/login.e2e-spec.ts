@@ -1,7 +1,7 @@
 import {LoginPage} from '../page-objects/login.po';
-import {browser, by, element} from 'protractor';
+import {browser} from 'protractor';
 import {DashboardPage} from '../page-objects/dashboard.po';
-import {clearStorage, setExpiredToken, setInvalidToken, setValidToken} from '../util/localStorageUtil';
+import {clearStorage, setExpiredToken, setInvalidToken, setToken} from '../util/localStorageUtil';
 import {HttpClient} from 'protractor-http-client/dist/http-client';
 import {ResponsePromise} from 'protractor-http-client/dist/promisewrappers';
 
@@ -20,7 +20,7 @@ describe('E2E tests for the login page', () => {
   let user1GoogleAccessToken: string;
   let user2GoogleToken: string;
   let user2GoogleAccessToken: string;
-  // let user1LooseTouchToken: string;
+  let user1LooseTouchToken: string;
   // let user2LooseTouchToken: string;
 
   beforeAll(() => {
@@ -37,20 +37,15 @@ describe('E2E tests for the login page', () => {
     }).then((response: Response) => {
       user1GoogleToken = response['body']['id_token'];
       user1GoogleAccessToken = response['body']['access_token'];
-      console.log('Id token ', user1GoogleToken);
-      console.log('Access token ', user1GoogleAccessToken);
-
       const responseBody: ResponsePromise = httpForLooseTouch
         .get('http://localhost:8080/v1/login/google?googleIdToken=' + user1GoogleToken + '&googleAccessToken=' + user1GoogleAccessToken,
           {
             'Content-Type': 'application/json',
             Accept: 'application/json'
           });
-
-/*      console.log('Mon token ');
       responseBody.jsonBody.then(value => {
-        console.log(value.idToken);
-      });*/
+        user1LooseTouchToken = value.idToken;
+      });
 
     });
 
@@ -101,7 +96,7 @@ describe('E2E tests for the login page', () => {
 
   // ===================================================================================================================
   it('Accessing dashboard with valid token', () => {
-    setValidToken();
+    setToken(user1LooseTouchToken);
     loginPage.navigateTo();
     expect(browser.getTitle()).toEqual('Loose touch connexion');
     dashboardPage.navigateTo();

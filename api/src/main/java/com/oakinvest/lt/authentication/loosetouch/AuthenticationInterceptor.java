@@ -29,6 +29,7 @@ public class AuthenticationInterceptor extends HandlerInterceptorAdapter {
     @SuppressWarnings("RedundantThrows")
     @Override
     public final boolean preHandle(final HttpServletRequest request, final HttpServletResponse response, final Object handler) throws Exception {
+        // TODO Make something more clean.
         if (request.getMethod().contains("OPTIONS")) {
             return true;
         }
