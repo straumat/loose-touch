@@ -112,7 +112,7 @@ describe('ErrorComponent', () => {
 
     // Check page links.
     spyOn(component, 'goToDashboard');
-    fixture.debugElement.nativeElement.querySelector('button').click();
+    document.getElementById('button-go-to-dashboard').click();
     fixture.whenStable().then(() => {
       expect(component.goToDashboard).toHaveBeenCalled();
     });

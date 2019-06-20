@@ -13,6 +13,11 @@
 }
 
 .mat-card-actions {
-  width: 50%;
+  width: 80%;
   margin: 0 auto;
+}
+
+.disconnect {
+  width: 100% !important;
+  min-width: unset !important;
 }

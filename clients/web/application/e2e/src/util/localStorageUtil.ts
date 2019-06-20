@@ -5,6 +5,10 @@ const invalidToken = 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI2OWU3MGQzYi05YTQwLTRlMmMtY
 // tslint:disable-next-line:max-line-length
 const expiredToken = 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI2OGQwY2FiOC00YzVhLTRlNDctOGZlZS04ZWNmZjEyMjIzYTciLCJpYXQiOjE1NTQzOTI2NDMsImV4cCI6MTU1NDM5MjY0M30.gyj3mErABtm8jyaoROPzCiaFW8tQ2HCkhSP0vb8BVkw';
 
+export function getToken() {
+  browser.executeScript('window.localStorage.getItem(\'token\');');
+}
+
 export function setToken(token: string) {
   browser.executeScript('window.localStorage.setItem(\'token\', \'' + token + '\');');
 }

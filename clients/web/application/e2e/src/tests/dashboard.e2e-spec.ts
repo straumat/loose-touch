@@ -1,16 +1,15 @@
 import {LoginPage} from '../page-objects/login.po';
-import {browser} from 'protractor';
+import {browser, by, element, protractor} from 'protractor';
 import {DashboardPage} from '../page-objects/dashboard.po';
-import {clearStorage, setExpiredToken, setInvalidToken, setToken} from '../util/localStorageUtil';
+import {clearStorage, getToken, setExpiredToken, setInvalidToken, setToken} from '../util/localStorageUtil';
 import {HttpClient} from 'protractor-http-client/dist/http-client';
 import {ResponsePromise} from 'protractor-http-client/dist/promisewrappers';
 
 /**
- * E2E tests for the login page.
+ * E2E tests for the dashboard page.
  */
-describe('E2E tests for the login page', () => {
+describe('E2E tests for the dashboard page', () => {
 
-  let loginPage: LoginPage;
   let dashboardPage: DashboardPage;
 
   /**
@@ -45,45 +44,31 @@ describe('E2E tests for the login page', () => {
   });
 
   beforeEach(() => {
-    loginPage = new LoginPage();
+    browser.ignoreSynchronization = true;
     dashboardPage = new DashboardPage();
-    clearStorage();
-  });
-
-  // ===================================================================================================================
-  it('Accessing dashboard without token', () => {
-    loginPage.navigateTo();
-    expect(browser.getTitle()).toEqual('Loose touch connexion');
     dashboardPage.navigateTo();
-    expect(browser.getTitle()).toEqual('Loose touch connexion');
   });
 
   // ===================================================================================================================
-  it('Accessing dashboard with invalid token', () => {
-    setInvalidToken();
-    loginPage.navigateTo();
-    expect(browser.getTitle()).toEqual('Loose touch connexion');
-    dashboardPage.navigateTo();
-    expect(browser.getTitle()).toEqual('Loose touch connexion');
-  });
-
-  // ===================================================================================================================
-  it('Accessing dashboard with expired token', () => {
-    setExpiredToken();
-    loginPage.navigateTo();
-    expect(browser.getTitle()).toEqual('Loose touch connexion');
-    dashboardPage.navigateTo();
-    expect(browser.getTitle()).toEqual('Loose touch connexion');
-  });
-
-  // ===================================================================================================================
-  it('Accessing dashboard with valid token', () => {
-    // TODO If the user has a valid token, redirect him to dashboard.
+  it('Accessing empty dashboard with valid token', () => {
     setToken(user1LooseTouchToken);
-    loginPage.navigateTo();
-    expect(browser.getTitle()).toEqual('Loose touch connexion');
     dashboardPage.navigateTo();
-    expect(browser.getTitle()).toEqual('Dashboard');
+    expect(dashboardPage.getTitle()).toEqual('Dashboard');
+    expect(dashboardPage.getAccountName()).toEqual('loose 1 touch 1');
+    expect(dashboardPage.getAccountPicture()).not.toBeNull();
   });
+
+  // ===================================================================================================================
+  it('Disconnecting', () => {
+    setToken(user1LooseTouchToken);
+    dashboardPage.navigateTo();
+    expect(dashboardPage.getTitle()).toEqual('Dashboard');
+
+    // Disconnecting.
+    dashboardPage.disconnect();
+    expect(browser.getCurrentUrl()).toContain('login');
+    expect(browser.getTitle()).toEqual('Loose touch connexion');
+  });
+
 
 });

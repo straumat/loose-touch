@@ -7,9 +7,9 @@ application:
   # Test specific.
   test:
     account1:
-      refreshToken: 1/ST2ikxLlVoH3K352DN60nUQn8KW4NBpf2er2Q7QReF7qxNrXGNr4jqeLRBlPdwyc
+      refreshToken: 1/k3ZDbF3kyC5FJACcHq-ByiIIlgZPPZ7M3hiv0PyWW4E
     account2:
-      refreshToken: 1/H50lw_FYGKr0xKJMDFC_FJ6jmEiTc8-WjEPRr8SWgLY
+      refreshToken: 1/vjZvHWG9phaxNd0DD9hMr2opLKCWSxH3eCXqExTNlB0
 
 # AWS Configuration.
 amazon:

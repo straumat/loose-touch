@@ -1,12 +1,11 @@
-<div class="profile-box">
+<div class="profile-box" *ngIf="this.accountService.account != null">
 
     <mat-card class="mat-elevation-z2">
 
         <!-- Header -->
-        <mat-card-header *ngIf="this.accountService.account != null">
-            <img src="{{ this.accountService.account.pictureUrl }}" mat-card-avatar>
-            <mat-card-title>{{ this.accountService.account.firstName }} {{ this.accountService.account.lastName }}
-            </mat-card-title>
+        <mat-card-header>
+            <img id="account-picture" src="{{ this.accountService.account.pictureUrl }}" mat-card-avatar>
+            <mat-card-title id="account-name">{{ this.accountService.account.firstName }} {{ this.accountService.account.lastName }}</mat-card-title>
         </mat-card-header>
         <!-- Separator -->
         <mat-card-content>
@@ -14,8 +13,15 @@
         </mat-card-content>
         <!-- Action -->
         <mat-card-actions>
-            <button id="google-sign-in" class="google-sign-in" (click)="signOut()"></button>
+            <button id="button-disconnect"
+                    mat-raised-button
+                    class="disconnect"
+                    color="primary"
+                    (click)="signOut()">
+                Disconnect
+            </button>
         </mat-card-actions>
+
     </mat-card>
 
 </div>

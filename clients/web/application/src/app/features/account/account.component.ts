@@ -1,8 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {AccountService} from '../../core/services/account.service';
-import {AuthService, GoogleLoginProvider} from 'angularx-social-login';
-import {LooseTouchError} from 'angular-loose-touch-api';
-import {environment} from '../../../environments/environment';
+import {AuthService} from 'angularx-social-login';
 import {Router} from '@angular/router';
 
 @Component({
@@ -22,19 +20,10 @@ export class AccountComponent implements OnInit {
   }
 
   signOut(): void {
-    this.socialLoginService.signOut(false)
-      .then(value => {
-        this.accountService.signOut();
-        this.router.navigate(['/login']);
-      })
-      .catch(reason => {
-        // TODO If we fail to disconnect
-        /*        this.error = {
-                  type: LooseTouchError.TypeEnum.AuthenticationError,
-                  message: reason,
-                  errors: []
-                };*/
-      });
+    this.accountService.signOut();
+    // TODO Add a message saying "you have been disconnected".
+    this.router.navigate(['/login']);
+    this.socialLoginService.signOut(false);
   }
 
 

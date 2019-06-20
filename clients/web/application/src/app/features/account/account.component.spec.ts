@@ -2,7 +2,7 @@ import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
 import {AccountComponent} from './account.component';
 import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
-import {ApiModule} from 'angular-loose-touch-api';
+import {AccountDTO, ApiModule} from 'angular-loose-touch-api';
 import {apiConfigFactory, provideSocialLoginConfiguration} from '../../app.module';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
 import {RouterTestingModule} from '@angular/router/testing';
@@ -57,6 +57,57 @@ describe('AccountComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('should not display user information if absent', () => {
+    const compiled = fixture.debugElement.nativeElement;
+
+    // Check component data.
+    expect(component.accountService.account).toBeUndefined();
+
+    // Check page data.
+    expect(compiled.querySelector('mat-card')).toBeNull();
+  });
+
+  it('should display user information if present', () => {
+    const account: AccountDTO = {
+      idToken: 'myToken',
+      firstName: 'Pierre',
+      lastName: 'Dupont',
+      email: 'test@test.com',
+      pictureUrl: 'picture!',
+      newAccount: false
+    };
+    component.accountService.account = account;
+    fixture.detectChanges();
+    const compiled = fixture.debugElement.nativeElement;
+
+    // Check component data.
+    expect(component.accountService.account).toBe(account);
+
+    // Check page data.
+    expect(compiled.querySelector('mat-card')).not.toBeNull();
+    expect(document.getElementById('account-name').textContent).toContain('Pierre Dupont');
+    expect(document.getElementById('account-picture').getAttribute('src')).toEqual('picture!');
+  });
+
+  it('should display have a disconnect button', () => {
+    component.accountService.account = {
+      idToken: 'myToken',
+      firstName: 'Pierre',
+      lastName: 'Dupont',
+      email: 'test@test.com',
+      pictureUrl: 'picture!',
+      newAccount: false
+    };
+    fixture.detectChanges();
+
+    // Check disconnect link.
+    spyOn(component, 'signOut');
+    document.getElementById('button-disconnect').click();
+    fixture.whenStable().then(() => {
+      expect(component.signOut).toHaveBeenCalled();
+    });
   });
 
 });

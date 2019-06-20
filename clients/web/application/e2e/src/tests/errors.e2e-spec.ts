@@ -37,7 +37,7 @@ describe('E2E tests for the error page', () => {
 
   // ===================================================================================================================
   it('Internal server error (500)', () => {
-    // TODO Implement this test.
+    // TODO Implement this test with a token pointing to an invalid user..
   });
 
 });

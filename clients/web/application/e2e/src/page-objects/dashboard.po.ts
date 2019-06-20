@@ -1,4 +1,4 @@
-import {browser} from 'protractor';
+import {browser, by, element} from 'protractor';
 
 /**
  * Dashboard page.
@@ -11,6 +11,18 @@ export class DashboardPage {
 
   getTitle() {
     return browser.getTitle();
+  }
+
+  getAccountPicture() {
+    return element(by.id('account-picture')).getAttribute('src');
+  }
+
+  getAccountName() {
+    return element(by.id('account-name')).getText();
+  }
+
+  disconnect() {
+    element(by.id('button-disconnect')).click();
   }
 
 }

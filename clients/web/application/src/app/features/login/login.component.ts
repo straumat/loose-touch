@@ -31,9 +31,13 @@ export class LoginComponent implements OnInit {
     this.route.data.subscribe(data => {
       this.error = data.looseTouchError;
     });
+  }
 
-    this.socialLoginService.authState.subscribe((user) => {
-      // Login success ==> Connecting to account service.
+  /**
+   * Sign in with google.
+   */
+  signInWithGoogle(): void {
+    this.socialLoginService.signIn(GoogleLoginProvider.PROVIDER_ID).then(user => {
       this.accountService.googleLogin(user.idToken, user.authToken).subscribe(() => {
         // Account service connection successful.
         this.router.navigate(['/dashboard']);
@@ -45,29 +49,14 @@ export class LoginComponent implements OnInit {
           errors: []
         };
       });
-    }, () => {
-      // Google login failed.
+    }).catch(reason => {
+      // If the user cancels the login.
       this.error = {
         type: LooseTouchError.TypeEnum.AuthenticationError,
-        message: 'Unknown error',
+        message: reason,
         errors: []
       };
     });
-  }
-
-  /**
-   * Sign in with google.
-   */
-  signInWithGoogle(): void {
-    this.socialLoginService.signIn(GoogleLoginProvider.PROVIDER_ID)
-      .catch(reason => {
-        // If the user cancels the login.
-        this.error = {
-          type: LooseTouchError.TypeEnum.AuthenticationError,
-          message: reason,
-          errors: []
-        };
-      });
   }
 
 }
