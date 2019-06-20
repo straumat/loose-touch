@@ -16,7 +16,8 @@ import {Router} from '@angular/router';
 import {ErrorComponent} from '../../features/error/error.component';
 import {ErrorInterceptor} from '../interceptors/error-interceptor.service';
 import {AccountAPIService, AccountDTO, ApiModule} from 'angular-loose-touch-api';
-import {apiConfigFactory} from '../../app.module';
+import {apiConfigFactory, provideSocialLoginConfiguration} from '../../app.module';
+import {AuthServiceConfig, SocialLoginModule} from 'angularx-social-login';
 
 describe('AccountService', () => {
 
@@ -33,7 +34,8 @@ describe('AccountService', () => {
       imports: [
         ApiModule.forRoot(apiConfigFactory),
         HttpClientTestingModule,
-        RouterTestingModule.withRoutes(routes), // TODO Use local routes.
+        RouterTestingModule.withRoutes(routes),
+        SocialLoginModule,
         JwtModule.forRoot({
           config: {
             tokenGetter: () => {
@@ -43,6 +45,7 @@ describe('AccountService', () => {
         })
       ],
       providers: [
+        {provide: AuthServiceConfig, useFactory: provideSocialLoginConfiguration},
         {provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true},
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]

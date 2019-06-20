@@ -13,7 +13,8 @@ import {AccountService} from '../services/account.service';
 import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
 import {Router} from '@angular/router';
 import {ApiModule} from 'angular-loose-touch-api';
-import {apiConfigFactory} from '../../app.module';
+import {apiConfigFactory, provideSocialLoginConfiguration} from '../../app.module';
+import {AuthServiceConfig, SocialLoginModule} from 'angularx-social-login';
 
 describe('AuthenticationGuard', () => {
 
@@ -30,9 +31,10 @@ describe('AuthenticationGuard', () => {
             }
           }
         }),
+        SocialLoginModule,
         RouterTestingModule.withRoutes(routes)
       ],
-      providers: [JwtHelperService, AccountService],
+      providers: [{provide: AuthServiceConfig, useFactory: provideSocialLoginConfiguration}, JwtHelperService, AccountService],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
     });
     localStorage.clear();
