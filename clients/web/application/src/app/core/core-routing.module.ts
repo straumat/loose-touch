@@ -6,6 +6,7 @@ import {DashboardComponent} from '../features/dashboard/dashboard.component';
 import {ErrorComponent} from '../features/error/error.component';
 import {AuthenticationGuard} from './guards/authentication.guard';
 import {LooseTouchError} from 'angular-loose-touch-api';
+import {ContactComponent} from '../features/contact/contact.component';
 
 // TODO : Remove export.
 export const routes: Routes = [
@@ -27,6 +28,11 @@ export const routes: Routes = [
       {
         path: 'dashboard',
         component: DashboardComponent,
+        canActivate: [AuthenticationGuard]
+      },
+      {
+        path: 'contact/new',
+        component: ContactComponent,
         canActivate: [AuthenticationGuard]
       }
     ]

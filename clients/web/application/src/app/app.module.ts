@@ -15,6 +15,8 @@ import {AuthenticationGuard} from './core/guards/authentication.guard';
 import {ApiModule, Configuration, ConfigurationParameters} from 'angular-loose-touch-api';
 import {JwtInterceptor} from './core/interceptors/jwt-interceptor.service';
 import {ErrorInterceptor} from './core/interceptors/error-interceptor.service';
+import {ReactiveFormsModule} from '@angular/forms';
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 
 /**
  * Social login configuration.
@@ -52,6 +54,8 @@ export function apiConfigFactory(): Configuration {
     CoreModule,
     FeaturesModule,
     SharedModule,
+    ReactiveFormsModule,
+    BrowserAnimationsModule,
     ApiModule.forRoot(apiConfigFactory),
     HttpClientModule,
     SocialLoginModule,

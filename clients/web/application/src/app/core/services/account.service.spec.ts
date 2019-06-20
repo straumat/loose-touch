@@ -18,6 +18,9 @@ import {ErrorInterceptor} from '../interceptors/error-interceptor.service';
 import {AccountAPIService, AccountDTO, ApiModule} from 'angular-loose-touch-api';
 import {apiConfigFactory, provideSocialLoginConfiguration} from '../../app.module';
 import {AuthServiceConfig, SocialLoginModule} from 'angularx-social-login';
+import {ContactComponent} from '../../features/contact/contact.component';
+import {ReactiveFormsModule} from '@angular/forms';
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 
 describe('AccountService', () => {
 
@@ -30,11 +33,13 @@ describe('AccountService', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [CoreComponent, LoginComponent, DashboardComponent, ErrorComponent],
+      declarations: [CoreComponent, LoginComponent, DashboardComponent, ErrorComponent, ContactComponent],
       imports: [
         ApiModule.forRoot(apiConfigFactory),
         HttpClientTestingModule,
         RouterTestingModule.withRoutes(routes),
+        ReactiveFormsModule,
+        BrowserAnimationsModule,
         SocialLoginModule,
         JwtModule.forRoot({
           config: {

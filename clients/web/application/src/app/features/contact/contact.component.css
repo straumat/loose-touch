@@ -1,0 +1,21 @@
+
+.contact-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.contact-form > * {
+  width: 100%;
+}
+
+.contact-form form {
+  margin-bottom: 20px;
+}
+
+.contact-form form > * {
+  margin: 5px 0;
+}
+
+.contact-form .mat-radio-button {
+  margin: 0 12px;
+}

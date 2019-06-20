@@ -15,14 +15,19 @@ import {Router} from '@angular/router';
 import {ApiModule} from 'angular-loose-touch-api';
 import {apiConfigFactory, provideSocialLoginConfiguration} from '../../app.module';
 import {AuthServiceConfig, SocialLoginModule} from 'angularx-social-login';
+import {ContactComponent} from '../../features/contact/contact.component';
+import {ReactiveFormsModule} from '@angular/forms';
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 
 describe('AuthenticationGuard', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [CoreComponent, DashboardComponent, LoginComponent, ErrorComponent],
+      declarations: [CoreComponent, DashboardComponent, LoginComponent, ErrorComponent, ContactComponent],
       imports: [
         HttpClientTestingModule,
+        ReactiveFormsModule,
+        BrowserAnimationsModule,
         ApiModule.forRoot(apiConfigFactory),
         JwtModule.forRoot({
           config: {

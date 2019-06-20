@@ -1,0 +1,38 @@
+<div class="contact-form">
+    <form [formGroup]="contactForm" (ngSubmit)="onSubmit()" novalidate class="contact-form">
+
+        <mat-form-field [floatLabel]="'auto'">
+            <input matInput formControlName="email" placeholder="Contact email"/>
+        </mat-form-field>
+
+        <mat-form-field [floatLabel]="'auto'">
+            <input matInput formControlName="firstName" placeholder="Contact first name"/>
+        </mat-form-field>
+
+        <mat-form-field [floatLabel]="'auto'">
+            <input matInput formControlName="lastName" placeholder="Contact last name"/>
+        </mat-form-field>
+
+        <mat-form-field [floatLabel]="'auto'">
+            <input matInput formControlName="notes" placeholder="Your notes"/>
+        </mat-form-field>
+
+        <mat-form-field [floatLabel]="'auto'">
+            <input matInput formControlName="contactRecurrenceValue" placeholder="Contact every"/>
+            <mat-select formControlName="contactRecurrenceType">
+                <mat-option value="option" *ngFor="let contactRecurrenceType of contactRecurrenceTypes"
+                            [value]="contactRecurrenceType">
+                    {{contactRecurrenceType}}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+
+        <button id="button-save"
+                mat-raised-button
+                color="primary"
+                type="submit">
+            Save
+        </button>
+
+    </form>
+</div>
