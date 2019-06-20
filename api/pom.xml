@@ -336,6 +336,17 @@
                             </execution>
                             <!-- Install required libraries -->
                             <execution>
+                                <id>Install npm via yarn</id>
+                                <goals>
+                                    <goal>yarn</goal>
+                                </goals>
+                                <phase>package</phase>
+                                <configuration>
+                                    <arguments>global add npm
+                                    </arguments>
+                                </configuration>
+                            </execution>
+                            <execution>
                                 <id>Install required libraries</id>
                                 <goals>
                                     <goal>yarn</goal>
