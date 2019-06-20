@@ -44,7 +44,6 @@ describe('E2E tests for the dashboard page', () => {
   });
 
   beforeEach(() => {
-    browser.ignoreSynchronization = true;
     dashboardPage = new DashboardPage();
     dashboardPage.navigateTo();
   });

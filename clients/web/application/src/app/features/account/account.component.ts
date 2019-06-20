@@ -11,7 +11,6 @@ import {Router} from '@angular/router';
 export class AccountComponent implements OnInit {
 
   constructor(public router: Router,
-              private socialLoginService: AuthService,
               public accountService: AccountService) {
   }
 
@@ -23,7 +22,6 @@ export class AccountComponent implements OnInit {
     this.accountService.signOut();
     // TODO Add a message saying "you have been disconnected".
     this.router.navigate(['/login']);
-    this.socialLoginService.signOut(false);
   }
 
 

@@ -5,6 +5,7 @@ import {JwtHelperService} from '@auth0/angular-jwt';
 import {Observable} from 'rxjs';
 import {map} from 'rxjs/operators';
 import {AccountAPIService, AccountDTO} from 'angular-loose-touch-api';
+import {AuthService} from 'angularx-social-login';
 
 @Injectable({
   providedIn: 'root'
@@ -17,6 +18,7 @@ export class AccountService {
   account: AccountDTO = undefined;
 
   constructor(private http: HttpClient,
+              private socialLoginService: AuthService,
               private accountAPIService: AccountAPIService,
               public jwtHelper: JwtHelperService) {
     if (this.account === undefined) {
@@ -50,6 +52,7 @@ export class AccountService {
   }
 
   signOut() {
+    this.socialLoginService.signOut(false);
     this.account = undefined;
     localStorage.removeItem(environment.tokenNameInLocalStorage);
   }
