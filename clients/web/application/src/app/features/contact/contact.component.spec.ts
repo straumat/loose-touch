@@ -11,6 +11,7 @@ import {JwtModule} from '@auth0/angular-jwt';
 import {SocialLoginModule} from 'angularx-social-login';
 import {RouterTestingModule} from '@angular/router/testing';
 import {routes} from '../../core/core-routing.module';
+import {CustomMaterialModule} from '../../core/material.module';
 
 describe('ContactComponent', () => {
   let component: ContactComponent;
@@ -20,6 +21,7 @@ describe('ContactComponent', () => {
     TestBed.configureTestingModule({
       declarations: [ContactComponent],
       imports: [
+        CustomMaterialModule,
         ReactiveFormsModule,
         BrowserAnimationsModule,
       ],

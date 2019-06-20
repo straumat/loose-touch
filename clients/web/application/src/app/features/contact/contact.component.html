@@ -19,10 +19,13 @@
 
         <mat-form-field [floatLabel]="'auto'">
             <input matInput formControlName="contactRecurrenceValue" placeholder="Contact every"/>
+        </mat-form-field>
+
+        <mat-form-field [floatLabel]="'auto'">
             <mat-select formControlName="contactRecurrenceType">
-                <mat-option value="option" *ngFor="let contactRecurrenceType of contactRecurrenceTypes"
-                            [value]="contactRecurrenceType">
-                    {{contactRecurrenceType}}
+                <mat-option *ngFor="let contactRecurrenceTypeValue of contactRecurrenceTypes"
+                            [value]="contactRecurrenceTypeValue.value">
+                    {{contactRecurrenceTypeValue.viewValue}}
                 </mat-option>
             </mat-select>
         </mat-form-field>

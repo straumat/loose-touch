@@ -3,6 +3,11 @@ import {FormBuilder, FormControl, FormGroup} from '@angular/forms';
 import {ContactDTO} from 'angular-loose-touch-api';
 import {Title} from '@angular/platform-browser';
 
+class ContactRecurrenceType {
+  value: string;
+  viewValue: string;
+}
+
 @Component({
   selector: 'app-contact',
   templateUrl: './contact.component.html',
@@ -10,7 +15,11 @@ import {Title} from '@angular/platform-browser';
 })
 export class ContactComponent implements OnInit {
 
-  contactRecurrenceTypes = ['Day', 'Month', 'Year'];
+  contactRecurrenceTypes: ContactRecurrenceType[] = [
+    {value: 'DAY', viewValue: 'Day'},
+    {value: 'MONTH', viewValue: 'Month'},
+    {value: 'YEAR', viewValue: 'Year'}
+  ];
 
   contactForm: FormGroup;
 
@@ -26,25 +35,6 @@ export class ContactComponent implements OnInit {
   onSubmit() {
     // Make sure to create a deep copy of the form-model
     const result: ContactDTO = Object.assign({}, this.contactForm.value);
-    switch (result.contactRecurrenceType) {
-      case 'Day': {
-        result.contactRecurrenceType = 'DAY';
-        break;
-      }
-      case 'Month': {
-        result.contactRecurrenceType = 'MONTH';
-        break;
-      }
-      case 'Year': {
-        result.contactRecurrenceType = 'YEAR';
-        break;
-      }
-      default: {
-        result.contactRecurrenceType = 'MONTH';
-        break;
-      }
-    }
-
     // Do useful stuff with the gathered data
     console.log(result);
   }
@@ -56,7 +46,7 @@ export class ContactComponent implements OnInit {
       lastName: '',
       notes: '',
       contactRecurrenceValue: 3,
-      contactRecurrenceType: 'Month',
+      contactRecurrenceType: 'MONTH',
     });
   }
 
