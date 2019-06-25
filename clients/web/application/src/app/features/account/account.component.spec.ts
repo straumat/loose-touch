@@ -2,7 +2,6 @@ import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
 import {AccountComponent} from './account.component';
 import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
-import {AccountDTO, ApiModule} from 'angular-loose-touch-api';
 import {apiConfigFactory, provideSocialLoginConfiguration} from '../../app.module';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
 import {RouterTestingModule} from '@angular/router/testing';
@@ -10,6 +9,7 @@ import {AuthServiceConfig, SocialLoginModule} from 'angularx-social-login';
 import {ActivatedRoute, Data} from '@angular/router';
 import {JwtModule} from '@auth0/angular-jwt';
 import {environment} from '../../../environments/environment';
+import {AccountDTO, ApiModule} from 'angular-loose-touch-api';
 
 describe('AccountComponent', () => {
   let component: AccountComponent;

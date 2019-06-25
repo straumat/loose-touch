@@ -1,26 +1,46 @@
 <div class="contact-form">
-    <form [formGroup]="contactForm" (ngSubmit)="onSubmit()" novalidate class="contact-form">
+    <form [formGroup]="contactForm" (ngSubmit)="onSubmit()" class="contact-form">
 
+        <!-- Email -->
         <mat-form-field [floatLabel]="'auto'">
-            <input matInput formControlName="email" placeholder="Contact email"/>
+            <input id="input-email" matInput formControlName="email" placeholder="Contact email"/>
+            <mat-error *ngFor="let validation of contactValidationMessages.email">
+                <mat-error class="error-message"
+                           *ngIf="contactForm.get('email').hasError(validation.type)
+                                    && (contactForm.get('email').dirty || contactForm.get('email').touched)">
+                    {{validation.message}}
+                </mat-error>
+            </mat-error>
         </mat-form-field>
 
+        <!-- First name -->
         <mat-form-field [floatLabel]="'auto'">
             <input matInput formControlName="firstName" placeholder="Contact first name"/>
         </mat-form-field>
 
+        <!-- Last name -->
         <mat-form-field [floatLabel]="'auto'">
             <input matInput formControlName="lastName" placeholder="Contact last name"/>
         </mat-form-field>
 
+        <!-- Notes -->
         <mat-form-field [floatLabel]="'auto'">
             <input matInput formControlName="notes" placeholder="Your notes"/>
         </mat-form-field>
 
+        <!-- Contact recurrence value -->
         <mat-form-field [floatLabel]="'auto'">
-            <input matInput formControlName="contactRecurrenceValue" placeholder="Contact every"/>
+            <input id="input-contact-recurrence-value" matInput formControlName="contactRecurrenceValue" placeholder="Contact every"/>
+            <mat-error *ngFor="let validation of contactValidationMessages.contactRecurrenceValue">
+                <mat-error class="error-message"
+                           *ngIf="contactForm.get('contactRecurrenceValue').hasError(validation.type)
+                                && (contactForm.get('contactRecurrenceValue').dirty || contactForm.get('contactRecurrenceValue').touched)">
+                    {{validation.message}}
+                </mat-error>
+            </mat-error>
         </mat-form-field>
 
+        <!-- Contact recurrence type -->
         <mat-form-field [floatLabel]="'auto'">
             <mat-select formControlName="contactRecurrenceType">
                 <mat-option *ngFor="let contactRecurrenceTypeValue of contactRecurrenceTypes"
@@ -30,10 +50,12 @@
             </mat-select>
         </mat-form-field>
 
+        <!-- Submit button -->
         <button id="button-save"
                 mat-raised-button
                 color="primary"
-                type="submit">
+                type="submit"
+                [disabled]="!contactForm.valid">
             Save
         </button>
 

@@ -31,7 +31,7 @@ export const routes: Routes = [
         canActivate: [AuthenticationGuard]
       },
       {
-        path: 'contact/new',
+        path: 'contacts/new',
         component: ContactComponent,
         canActivate: [AuthenticationGuard]
       }

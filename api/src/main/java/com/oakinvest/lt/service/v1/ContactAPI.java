@@ -44,6 +44,9 @@ import static com.oakinvest.lt.util.rest.HttpStatus.STATUS_UNAUTHORIZED_MESSAGE;
 @Api(tags = "Contact API")
 @ApiOperation(value = "/v1")
 @RequestMapping(value = "/v1")
+// TODO Fix generation with swagger codegen.
+// @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+// @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
 public interface ContactAPI extends V1Service {
 
     /**

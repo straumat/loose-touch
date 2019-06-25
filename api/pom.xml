@@ -259,6 +259,9 @@
                         <artifactId>swagger-maven-plugin</artifactId>
                         <version>${swagger-maven-plugin.version}</version>
                         <configuration>
+                            <typesToSkip>
+                                <typeToSkip>com.oakinvest.lt.authentication.loosetouch.AuthenticatedAccount</typeToSkip>
+                            </typesToSkip>
                             <apiSources>
                                 <apiSource>
                                     <info>
@@ -273,9 +276,6 @@
                                     <locations>com.oakinvest.lt.service.v1</locations>
                                 </apiSource>
                             </apiSources>
-                            <typesToSkip>
-                                <typeToSkip>com.oakinvest.lt.authentication.loosetouch.AuthenticatedAccount</typeToSkip>
-                            </typesToSkip>
                         </configuration>
                         <executions>
                             <execution>
@@ -299,9 +299,10 @@
                                 <configuration>
                                     <inputSpec>target/swagger.json</inputSpec>
                                     <language>typescript-angular</language>
+                                    <templateDirectory>generators/typescript-angular</templateDirectory>
                                     <output>target/angular-loose-touch-api</output>
                                     <configOptions>
-                                        <ngVersion>7.2.0</ngVersion>
+                                        <ngVersion>7.2.14</ngVersion>
                                         <npmName>angular-loose-touch-api</npmName>
                                     </configOptions>
                                 </configuration>
@@ -327,6 +328,7 @@
                                 <phase>generate-resources</phase>
                             </execution>
                             <execution>
+                                <!-- optional: you don't really need execution ids, but it looks nice in your build log. -->
                                 <id>install node and npm</id>
                                 <goals>
                                     <goal>install-node-and-npm</goal>
@@ -334,52 +336,40 @@
                                 <!-- optional: default phase is "generate-resources" -->
                                 <phase>generate-resources</phase>
                             </execution>
-                            <!-- Install required libraries -->
                             <execution>
                                 <id>Install npm via yarn</id>
                                 <goals>
                                     <goal>yarn</goal>
                                 </goals>
-                                <phase>package</phase>
                                 <configuration>
-                                    <arguments>global add npm
-                                    </arguments>
+                                    <arguments>global add npm</arguments>
                                 </configuration>
+                                <phase>generate-resources</phase>
                             </execution>
-                            <execution>
-                                <id>Install required libraries</id>
-                                <goals>
-                                    <goal>yarn</goal>
-                                </goals>
-                                <phase>package</phase>
-                                <configuration>
-                                    <arguments>add typescript@3.1.6 rxjs@6.0.0 rxjs-compat zone.js@0.8.26 --cwd
-                                        target/angular-loose-touch-api
-                                    </arguments>
-                                </configuration>
-                            </execution>
+                            <!-- TODO Fix this. -->
+                            <!-- https://github.com/angular/angular-cli/issues/13095 -->
                             <!-- Install packages -->
-                            <execution>
+<!--                            <execution>
                                 <id>yarn install</id>
                                 <goals>
                                     <goal>yarn</goal>
                                 </goals>
-                                <phase>package</phase>
                                 <configuration>
-                                    <arguments>install --cwd target/angular-loose-touch-api</arguments>
+                                    <arguments>install &#45;&#45;cwd target/angular-loose-touch-api &#45;&#45;scripts-prepend-node-path</arguments>
                                 </configuration>
+                                <phase>compile</phase>
                             </execution>
-                            <!-- Build packages -->
+                            &lt;!&ndash; Build packages &ndash;&gt;
                             <execution>
                                 <id>yarn build</id>
                                 <goals>
                                     <goal>yarn</goal>
                                 </goals>
-                                <phase>package</phase>
                                 <configuration>
-                                    <arguments>--cwd target/angular-loose-touch-api build</arguments>
+                                    <arguments>build &#45;&#45;cwd target/angular-loose-touch-api</arguments>
                                 </configuration>
-                            </execution>
+                                <phase>compile</phase>
+                            </execution>-->
                             <!-- Publish packages -->
                             <!--                            <execution>
                                                             <id>Publish packages</id>
@@ -506,6 +496,14 @@
             <id>dynamodb-local-oregon</id>
             <name>DynamoDB Local Release Repository</name>
             <url>https://s3.eu-central-1.amazonaws.com/dynamodb-local-frankfurt/release</url>
+            <snapshots>
+                <enabled>true</enabled>
+                <updatePolicy>never</updatePolicy>
+            </snapshots>
+            <releases>
+                <enabled>true</enabled>
+                <updatePolicy>never</updatePolicy>
+            </releases>
         </repository>
     </repositories>
     <!-- =========================================================================================================== -->
