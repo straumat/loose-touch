@@ -25,7 +25,7 @@ public class DeleteContactTest extends APITest {
     @Override
     public void authenticationTest() throws Exception {
         // No token provided.
-        getMvc().perform(delete(CONTACT_URL + "/" + CONTACT_1.getEmail() + "/")
+        getMockMvc().perform(delete(CONTACT_URL + "/" + CONTACT_1.getEmail() + "/")
                 .contentType(APPLICATION_JSON_UTF8))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("type").value(invalid_request_error.toString()))
@@ -33,7 +33,7 @@ public class DeleteContactTest extends APITest {
                 .andExpect(jsonPath("errors", hasSize(0)));
 
         // Dummy bearer.
-        getMvc().perform(delete(CONTACT_URL + "/" + CONTACT_1.getEmail() + "/")
+        getMockMvc().perform(delete(CONTACT_URL + "/" + CONTACT_1.getEmail() + "/")
                 .contentType(APPLICATION_JSON_UTF8)
                 .header("Authorization", "Bearer invalidToken"))
                 .andExpect(status().isUnauthorized())
@@ -45,7 +45,7 @@ public class DeleteContactTest extends APITest {
     @Override
     public void validDataTest() throws Exception {
         // Trying to delete a non existing contact.
-        getMvc().perform(delete(CONTACT_URL + "/" + CONTACT_1.getEmail() + "/")
+        getMockMvc().perform(delete(CONTACT_URL + "/" + CONTACT_1.getEmail() + "/")
                 .contentType(APPLICATION_JSON_UTF8)
                 .header("Authorization", "Bearer " + getLooseToucheToken(GOOGLE_ACCOUNT_1)))
                 .andExpect(status().isNotFound());
@@ -59,31 +59,31 @@ public class DeleteContactTest extends APITest {
 
         // Test data.
         // Account 1 / contact 1.
-        getMvc().perform(post(CONTACT_URL)
+        getMockMvc().perform(post(CONTACT_URL)
                 .contentType(APPLICATION_JSON_UTF8)
                 .header("Authorization", "Bearer " + looseToucheTokenForAccount1)
                 .content(getMapper().writeValueAsString(CONTACT_1.toDTO())))
                 .andExpect(status().isCreated());
         // Account 1 / contact 2.
-        getMvc().perform(post(CONTACT_URL)
+        getMockMvc().perform(post(CONTACT_URL)
                 .contentType(APPLICATION_JSON_UTF8)
                 .header("Authorization", "Bearer " + looseToucheTokenForAccount1)
                 .content(getMapper().writeValueAsString(CONTACT_2.toDTO())))
                 .andExpect(status().isCreated());
         // Account 1 / contact 3.
-        getMvc().perform(post(CONTACT_URL)
+        getMockMvc().perform(post(CONTACT_URL)
                 .contentType(APPLICATION_JSON_UTF8)
                 .header("Authorization", "Bearer " + looseToucheTokenForAccount1)
                 .content(getMapper().writeValueAsString(CONTACT_3.toDTO())))
                 .andExpect(status().isCreated());
         // Account 2 / Contact 1.
-        getMvc().perform(post(CONTACT_URL)
+        getMockMvc().perform(post(CONTACT_URL)
                 .contentType(APPLICATION_JSON_UTF8)
                 .header("Authorization", "Bearer " + looseToucheTokenForAccount2)
                 .content(getMapper().writeValueAsString(CONTACT_1.toDTO())))
                 .andExpect(status().isCreated());
         // Account 2 / Contact 2.
-        getMvc().perform(post(CONTACT_URL)
+        getMockMvc().perform(post(CONTACT_URL)
                 .contentType(APPLICATION_JSON_UTF8)
                 .header("Authorization", "Bearer " + looseToucheTokenForAccount2)
                 .content(getMapper().writeValueAsString(CONTACT_2.toDTO())))
@@ -92,12 +92,12 @@ public class DeleteContactTest extends APITest {
         assertEquals(5, contactsCount());
 
         // Delete Account 1 / Contact 1.
-        getMvc().perform(delete(CONTACT_URL + "/" + CONTACT_1.getEmail() + "/")
+        getMockMvc().perform(delete(CONTACT_URL + "/" + CONTACT_1.getEmail() + "/")
                 .contentType(APPLICATION_JSON_UTF8)
                 .header("Authorization", "Bearer " + looseToucheTokenForAccount1))
                 .andExpect(status().isOk());
         // Delete Account 1 / Contact 1 again.
-        getMvc().perform(delete(CONTACT_URL + "/" + CONTACT_1.getEmail() + "/")
+        getMockMvc().perform(delete(CONTACT_URL + "/" + CONTACT_1.getEmail() + "/")
                 .contentType(APPLICATION_JSON_UTF8)
                 .header("Authorization", "Bearer " + looseToucheTokenForAccount1))
                 .andExpect(status().isNotFound());

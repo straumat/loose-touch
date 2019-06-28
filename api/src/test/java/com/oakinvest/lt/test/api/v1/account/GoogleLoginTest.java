@@ -14,7 +14,6 @@ import java.util.concurrent.TimeUnit;
 import static com.oakinvest.lt.test.util.data.TestAccounts.GOOGLE_ACCOUNT_1;
 import static com.oakinvest.lt.test.util.data.TestAccounts.GOOGLE_ACCOUNT_2;
 import static com.oakinvest.lt.util.error.LooseTouchErrorType.authentication_error;
-import static com.oakinvest.lt.util.error.LooseTouchErrorType.invalid_request_error;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -34,7 +33,7 @@ public class GoogleLoginTest extends APITest {
     @Override
     public void authenticationTest() throws Exception {
         // No google token provided.
-        final MvcResult mvcResult = getMvc().perform(get(GOOGLE_LOGIN_URL)
+        final MvcResult mvcResult = getMockMvc().perform(get(GOOGLE_LOGIN_URL)
                 .contentType(APPLICATION_JSON_UTF8))
                 .andReturn();
         assertNotEquals("Login not allowed", HttpStatus.FORBIDDEN, mvcResult.getResponse().getStatus());
@@ -43,7 +42,7 @@ public class GoogleLoginTest extends APITest {
     @Override
     public void validDataTest() throws Exception {
         // No google token provided.
-        getMvc().perform(get(GOOGLE_LOGIN_URL)
+        getMockMvc().perform(get(GOOGLE_LOGIN_URL)
                 .contentType(APPLICATION_JSON_UTF8))
                 .andExpect(status().isUnauthorized())
                 .andExpect(jsonPath("type").value(authentication_error.toString()))
@@ -51,7 +50,7 @@ public class GoogleLoginTest extends APITest {
                 .andExpect(jsonPath("errors", hasSize(0)));
 
         // Dummy string.
-        getMvc().perform(get(GOOGLE_LOGIN_URL)
+        getMockMvc().perform(get(GOOGLE_LOGIN_URL)
                 .contentType(APPLICATION_JSON_UTF8)
                 .param("googleIdToken", "toto"))
                 .andExpect(status().isUnauthorized())
@@ -61,7 +60,7 @@ public class GoogleLoginTest extends APITest {
 
         // Invalid google token provided (expired).
         String user1InvalidToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c";
-        getMvc().perform(get(GOOGLE_LOGIN_URL)
+        getMockMvc().perform(get(GOOGLE_LOGIN_URL)
                 .contentType(APPLICATION_JSON_UTF8)
                 .param("googleIdToken", user1InvalidToken))
                 .andExpect(status().isUnauthorized())
@@ -82,7 +81,7 @@ public class GoogleLoginTest extends APITest {
             assertFalse("Account 1 already exists", getAccountRepository().findAccountByGoogleUsername(GOOGLE_ACCOUNT_1.getEmail()).isPresent());
 
             // First login.
-            MvcResult result = getMvc().perform(get(GOOGLE_LOGIN_URL)
+            MvcResult result = getMockMvc().perform(get(GOOGLE_LOGIN_URL)
                     .param("googleIdToken", user1GoogleToken.get().getIdToken())
                     .param("googleAccessToken", user1GoogleToken.get().getAccessToken()))
                     .andExpect(jsonPath("idToken").isNotEmpty())
@@ -107,7 +106,7 @@ public class GoogleLoginTest extends APITest {
             Thread.sleep(TimeUnit.SECONDS.toMillis(1));
 
             // Second login.
-            result = getMvc().perform(get(GOOGLE_LOGIN_URL)
+            result = getMockMvc().perform(get(GOOGLE_LOGIN_URL)
                     .contentType(APPLICATION_JSON_UTF8)
                     .param("googleIdToken", user1GoogleToken.get().getIdToken()))
                     .andExpect(status().isOk())
@@ -141,7 +140,7 @@ public class GoogleLoginTest extends APITest {
             assertFalse("Account 2 already exists", getAccountRepository().findAccountByGoogleUsername(GOOGLE_ACCOUNT_2.getEmail()).isPresent());
 
             // First login.
-            MvcResult result = getMvc().perform(get(GOOGLE_LOGIN_URL)
+            MvcResult result = getMockMvc().perform(get(GOOGLE_LOGIN_URL)
                     .contentType(APPLICATION_JSON_UTF8)
                     .param("googleIdToken", user2GoogleToken.get().getIdToken())
                     .param("googleAccessToken", user2GoogleToken.get().getAccessToken()))
@@ -165,7 +164,7 @@ public class GoogleLoginTest extends APITest {
             Thread.sleep(TimeUnit.SECONDS.toMillis(1));
 
             // Second login.
-            result = getMvc().perform(get(GOOGLE_LOGIN_URL)
+            result = getMockMvc().perform(get(GOOGLE_LOGIN_URL)
                     .contentType(APPLICATION_JSON_UTF8)
                     .param("googleIdToken", user2GoogleToken.get().getIdToken()))
                     .andExpect(status().isOk())

@@ -243,7 +243,7 @@ public abstract class APITest {
      *
      * @return mvc
      */
-    public final MockMvc getMvc() {
+    public final MockMvc getMockMvc() {
         return mvc;
     }
 

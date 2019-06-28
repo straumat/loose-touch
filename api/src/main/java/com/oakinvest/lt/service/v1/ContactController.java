@@ -156,7 +156,7 @@ public class ContactController implements ContactAPI {
     }
 
     @Override
-    public final void delete(final AuthenticatedAccount authenticatedAccount, final String email) {
+    public final void deleteContact(final AuthenticatedAccount authenticatedAccount, final String email) {
         Optional<Contact> contact = contactRepository.findContactByEmail(authenticatedAccount.getAccountId(), email);
         if (contact.isPresent()) {
             contactRepository.delete(contact.get());

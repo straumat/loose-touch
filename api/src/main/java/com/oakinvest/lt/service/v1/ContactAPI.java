@@ -152,8 +152,8 @@ public interface ContactAPI extends V1Service {
             @ApiResponse(code = STATUS_REQUEST_FAILED, message = STATUS_REQUEST_FAILED_MESSAGE, response = LooseTouchError.class),
             @ApiResponse(code = STATUS_INTERNAL_SERVER_ERROR, message = STATUS_INTERNAL_SERVER_ERROR_MESSAGE, response = LooseTouchError.class)
     })
-    void delete(AuthenticatedAccount authenticatedAccount,
-                @PathVariable("email") String email);
+    void deleteContact(AuthenticatedAccount authenticatedAccount,
+                       @PathVariable("email") String email);
 
     /**
      * Indicates that the contact has been contacted.

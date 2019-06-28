@@ -31,7 +31,7 @@ public class ContactedTest extends APITest {
     @Override
     public void authenticationTest() throws Exception {
         // No token provided.
-        getMvc().perform(get(CONTACT_URL + "/" + CONTACT_1.getEmail() + "/contacted")
+        getMockMvc().perform(get(CONTACT_URL + "/" + CONTACT_1.getEmail() + "/contacted")
                 .contentType(APPLICATION_JSON_UTF8))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("type").value(invalid_request_error.toString()))
@@ -39,7 +39,7 @@ public class ContactedTest extends APITest {
                 .andExpect(jsonPath("errors", hasSize(0)));
 
         // Dummy bearer.
-        getMvc().perform(get(CONTACT_URL + "/" + CONTACT_1.getEmail() + "/contacted")
+        getMockMvc().perform(get(CONTACT_URL + "/" + CONTACT_1.getEmail() + "/contacted")
                 .contentType(APPLICATION_JSON_UTF8)
                 .header("Authorization", "Bearer invalidToken"))
                 .andExpect(status().isUnauthorized())
@@ -63,55 +63,55 @@ public class ContactedTest extends APITest {
         // =============================================================================================================
         // Test data.
         // Creates Account 1 / contact 1.
-        getMvc().perform(post(CONTACT_URL)
+        getMockMvc().perform(post(CONTACT_URL)
                 .contentType(APPLICATION_JSON_UTF8)
                 .header("Authorization", "Bearer " + looseToucheTokenForAccount1)
                 .content(getMapper().writeValueAsString(CONTACT_1.toDTO())))
                 .andExpect(status().isCreated());
         // Creates Account 1 / contact 2.
-        getMvc().perform(post(CONTACT_URL)
+        getMockMvc().perform(post(CONTACT_URL)
                 .contentType(APPLICATION_JSON_UTF8)
                 .header("Authorization", "Bearer " + looseToucheTokenForAccount1)
                 .content(getMapper().writeValueAsString(CONTACT_2.toDTO())))
                 .andExpect(status().isCreated());
         // Creates Account 1 / contact 3.
-        getMvc().perform(post(CONTACT_URL)
+        getMockMvc().perform(post(CONTACT_URL)
                 .contentType(APPLICATION_JSON_UTF8)
                 .header("Authorization", "Bearer " + looseToucheTokenForAccount1)
                 .content(getMapper().writeValueAsString(CONTACT_3.toDTO())))
                 .andExpect(status().isCreated());
         // Creates Account 1 / contact 4.
-        getMvc().perform(post(CONTACT_URL)
+        getMockMvc().perform(post(CONTACT_URL)
                 .contentType(APPLICATION_JSON_UTF8)
                 .header("Authorization", "Bearer " + looseToucheTokenForAccount1)
                 .content(getMapper().writeValueAsString(CONTACT_4.toDTO())))
                 .andExpect(status().isCreated());
         // Creates Account 1 / contact 5.
-        getMvc().perform(post(CONTACT_URL)
+        getMockMvc().perform(post(CONTACT_URL)
                 .contentType(APPLICATION_JSON_UTF8)
                 .header("Authorization", "Bearer " + looseToucheTokenForAccount1)
                 .content(getMapper().writeValueAsString(CONTACT_5.toDTO())))
                 .andExpect(status().isCreated());
         // Creates Account 1 / contact 6.
-        getMvc().perform(post(CONTACT_URL)
+        getMockMvc().perform(post(CONTACT_URL)
                 .contentType(APPLICATION_JSON_UTF8)
                 .header("Authorization", "Bearer " + looseToucheTokenForAccount1)
                 .content(getMapper().writeValueAsString(CONTACT_6.toDTO())))
                 .andExpect(status().isCreated());
         // Creates Account 2 / contact 1.
-        getMvc().perform(post(CONTACT_URL)
+        getMockMvc().perform(post(CONTACT_URL)
                 .contentType(APPLICATION_JSON_UTF8)
                 .header("Authorization", "Bearer " + looseToucheTokenForAccount2)
                 .content(getMapper().writeValueAsString(CONTACT_1.toDTO())))
                 .andExpect(status().isCreated());
         // Creates Account 2 / contact 2.
-        getMvc().perform(post(CONTACT_URL)
+        getMockMvc().perform(post(CONTACT_URL)
                 .contentType(APPLICATION_JSON_UTF8)
                 .header("Authorization", "Bearer " + looseToucheTokenForAccount2)
                 .content(getMapper().writeValueAsString(CONTACT_2.toDTO())))
                 .andExpect(status().isCreated());
         // Creates Account 2 / contact 3.
-        getMvc().perform(post(CONTACT_URL)
+        getMockMvc().perform(post(CONTACT_URL)
                 .contentType(APPLICATION_JSON_UTF8)
                 .header("Authorization", "Bearer " + looseToucheTokenForAccount2)
                 .content(getMapper().writeValueAsString(CONTACT_3.toDTO())))
@@ -124,12 +124,12 @@ public class ContactedTest extends APITest {
         // account 1 / contact 1 contacted.
         contactDueDate = calculateNextContactDueDate(CONTACT_1.getContactRecurrenceType(),
                 CONTACT_1.getContactRecurrenceValue());
-        getMvc().perform(get(CONTACT_URL + "/" + CONTACT_1.getEmail() + "/contacted")
+        getMockMvc().perform(get(CONTACT_URL + "/" + CONTACT_1.getEmail() + "/contacted")
                 .contentType(APPLICATION_JSON_UTF8)
                 .header("Authorization", "Bearer " + looseToucheTokenForAccount1))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("contactDueDate").value(contactDueDate));
-        getMvc().perform(get(CONTACT_URL + "/" + CONTACT_1.getEmail() + "/")
+        getMockMvc().perform(get(CONTACT_URL + "/" + CONTACT_1.getEmail() + "/")
                 .contentType(APPLICATION_JSON_UTF8)
                 .header("Authorization", "Bearer " + looseToucheTokenForAccount1))
                 .andExpect(status().isOk())
@@ -143,7 +143,7 @@ public class ContactedTest extends APITest {
                 .andExpect(jsonPath("contactDueDate").value(contactDueDate));
 
         // Check that account 2 / contact 1 did not change.
-        getMvc().perform(get(CONTACT_URL + "/" + CONTACT_1.getEmail() + "/")
+        getMockMvc().perform(get(CONTACT_URL + "/" + CONTACT_1.getEmail() + "/")
                 .contentType(APPLICATION_JSON_UTF8)
                 .header("Authorization", "Bearer " + looseToucheTokenForAccount2))
                 .andExpect(status().isOk())
@@ -159,7 +159,7 @@ public class ContactedTest extends APITest {
         // account 1 / contact 2 contacted.
         contactDueDate = calculateNextContactDueDate(CONTACT_2.getContactRecurrenceType(),
                 CONTACT_2.getContactRecurrenceValue());
-        getMvc().perform(get(CONTACT_URL + "/" + CONTACT_2.getEmail() + "/contacted")
+        getMockMvc().perform(get(CONTACT_URL + "/" + CONTACT_2.getEmail() + "/contacted")
                 .contentType(APPLICATION_JSON_UTF8)
                 .header("Authorization", "Bearer " + looseToucheTokenForAccount1))
                 .andExpect(status().isOk())

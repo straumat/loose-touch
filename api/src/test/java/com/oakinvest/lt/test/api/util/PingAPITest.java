@@ -37,7 +37,7 @@ public class PingAPITest extends APITest {
 
     @Override
     public void businessLogicTest() throws Exception {
-        getMvc().perform(get("/ping"))
+        getMockMvc().perform(get("/ping"))
                 .andExpect(status().isOk())
                 .andExpect(content().string(containsString("pong at")));
     }

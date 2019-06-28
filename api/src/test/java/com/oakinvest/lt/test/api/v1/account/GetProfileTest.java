@@ -27,7 +27,7 @@ public class GetProfileTest extends APITest {
     @Override
     public void authenticationTest() throws Exception {
         // No google token provided.
-        getMvc().perform(get(ACCOUNT_PROFILE_URL)
+        getMockMvc().perform(get(ACCOUNT_PROFILE_URL)
                 .contentType(APPLICATION_JSON_UTF8))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("type").value(invalid_request_error.toString()))
@@ -35,7 +35,7 @@ public class GetProfileTest extends APITest {
                 .andExpect(jsonPath("errors", hasSize(0)));
 
         // Dummy bearer.
-        getMvc().perform(get(ACCOUNT_PROFILE_URL)
+        getMockMvc().perform(get(ACCOUNT_PROFILE_URL)
                 .contentType(APPLICATION_JSON_UTF8)
                 .header("Authorization", "Bearer invalidToken"))
                 .andExpect(status().isUnauthorized())
@@ -53,7 +53,7 @@ public class GetProfileTest extends APITest {
     @Override
     public void businessLogicTest() throws Exception {
         // Getting account 1 profile.
-        MvcResult result1 = getMvc().perform(get(ACCOUNT_PROFILE_URL)
+        MvcResult result1 = getMockMvc().perform(get(ACCOUNT_PROFILE_URL)
                 .contentType(APPLICATION_JSON_UTF8)
                 .header("Authorization", "Bearer " + getLooseToucheToken(GOOGLE_ACCOUNT_1)))
                 .andExpect(status().isOk())
@@ -71,7 +71,7 @@ public class GetProfileTest extends APITest {
         assertTrue("Invalid account", getAccountRepository().getAccount(getLooseTouchTokenProvider().getAccountId(looseTouchAccount1Token).get()).isPresent());
 
         // Getting account 2 profile.
-        MvcResult result2 = getMvc().perform(get(ACCOUNT_PROFILE_URL)
+        MvcResult result2 = getMockMvc().perform(get(ACCOUNT_PROFILE_URL)
                 .contentType(APPLICATION_JSON_UTF8)
                 .header("Authorization", "Bearer " + getLooseToucheToken(GOOGLE_ACCOUNT_2)))
                 .andExpect(status().isOk())
@@ -91,7 +91,7 @@ public class GetProfileTest extends APITest {
         Thread.sleep(TimeUnit.SECONDS.toMillis(1));
 
         // Getting again the profile (with same google token).
-        result2 = getMvc().perform(get(ACCOUNT_PROFILE_URL)
+        result2 = getMockMvc().perform(get(ACCOUNT_PROFILE_URL)
                 .contentType(APPLICATION_JSON_UTF8)
                 .header("Authorization", "Bearer " + getLooseToucheToken(GOOGLE_ACCOUNT_2)))
                 .andExpect(status().isOk())
