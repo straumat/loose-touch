@@ -4,16 +4,19 @@ import {DashboardPage} from '../page-objects/dashboard.po';
 import {clearStorage, getToken, setExpiredToken, setInvalidToken, setToken} from '../util/localStorageUtil';
 import {HttpClient} from 'protractor-http-client/dist/http-client';
 import {ResponsePromise} from 'protractor-http-client/dist/promisewrappers';
+import {ContactFormPage} from '../page-objects/contact-form.po';
+import {tick} from '@angular/core/testing';
 
 /**
- * E2E tests for the dashboard page.
+ * E2E tests for managing contacts.
  */
-describe('E2E tests for the dashboard page', () => {
+describe('E2E tests for managing contacts', () => {
 
   let dashboardPage: DashboardPage;
+  let contactFormPage: ContactFormPage;
 
   /**
-   * Authentication.
+   * Authentication (managing contacts).
    */
   let user1LooseTouchToken: string;
 
@@ -45,28 +48,34 @@ describe('E2E tests for the dashboard page', () => {
 
   beforeEach(() => {
     dashboardPage = new DashboardPage();
+    contactFormPage = new ContactFormPage();
     dashboardPage.navigateTo();
   });
 
   // ===================================================================================================================
-  it('Accessing empty dashboard with valid token', () => {
+  it('Accessing new contact form from dashboard with a valid token', () => {
     setToken(user1LooseTouchToken);
     dashboardPage.navigateTo();
-    expect(dashboardPage.getTitle()).toEqual('Dashboard');
-    expect(dashboardPage.getAccountName()).toEqual('loose 1 touch 1');
-    expect(dashboardPage.getAccountPicture()).not.toBeNull();
+    dashboardPage.addContact();
+
+    expect(browser.getTitle()).toEqual('Add a new contact');
   });
 
   // ===================================================================================================================
-  it('Disconnecting', () => {
+  it('Adding a new contact', () => {
     setToken(user1LooseTouchToken);
-    dashboardPage.navigateTo();
-    expect(dashboardPage.getTitle()).toEqual('Dashboard');
+    contactFormPage.navigateTo();
 
-    // Disconnecting.
-    dashboardPage.disconnect();
-    expect(browser.getCurrentUrl()).toContain('login');
-    expect(browser.getTitle()).toEqual('Loose touch connexion');
+    // When we arrive, the submit button must not be enabled.
+    expect(contactFormPage.getTitle()).toEqual('Add a new contact');
+    expect(contactFormPage.isSubmitButtonActive()).toBe(false);
+
+    // When we fill the email, the button must be enabled.
+    contactFormPage.setEmail('test@test.fr');
+    expect(contactFormPage.isSubmitButtonActive()).toBe(true);
+
+    contactFormPage.submit();
+    expect(browser.getTitle()).toEqual('Dashboard');
   });
 
 });

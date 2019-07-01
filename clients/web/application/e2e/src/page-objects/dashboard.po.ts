@@ -21,6 +21,10 @@ export class DashboardPage {
     return element(by.id('account-name')).getText();
   }
 
+  addContact() {
+    element(by.id('button-add-new-contact')).click();
+  }
+
   disconnect() {
     element(by.id('button-disconnect')).click();
   }
