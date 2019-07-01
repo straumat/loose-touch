@@ -33,8 +33,8 @@
         <!-- Data -->
         <spring-data-dynamodb.version>5.1.0</spring-data-dynamodb.version>
         <!-- AWS -->
-        <aws-serverless-java-container-spring.version>1.3.1</aws-serverless-java-container-spring.version>
-        <aws-java-sdk-dynamodb.version>1.11.578</aws-java-sdk-dynamodb.version>
+        <aws-serverless-java-container-spring.version>1.3.2</aws-serverless-java-container-spring.version>
+        <aws-java-sdk-dynamodb.version>1.11.584</aws-java-sdk-dynamodb.version>
         <DynamoDBLocal.version>[1.11,2.0)</DynamoDBLocal.version>
         <sqlite4java.version>1.0.392</sqlite4java.version>
         <!-- Google -->
@@ -52,7 +52,7 @@
         <!-- Others -->
         <docker.image.prefix>loose-touch</docker.image.prefix>
         <swagger-maven-plugin.version>3.1.3</swagger-maven-plugin.version>
-        <swagger-codegen-maven-plugin.version>3.0.8</swagger-codegen-maven-plugin.version>
+        <swagger-codegen-maven-plugin.version>3.0.9</swagger-codegen-maven-plugin.version>
         <frontend-maven-plugin.version>1.7.6</frontend-maven-plugin.version>
         <node.version>v12.3.1</node.version>
         <yarn.version>v1.16.0</yarn.version>
