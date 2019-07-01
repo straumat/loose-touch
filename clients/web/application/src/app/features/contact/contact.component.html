@@ -30,7 +30,8 @@
 
         <!-- Contact recurrence value -->
         <mat-form-field [floatLabel]="'auto'">
-            <input id="input-contact-recurrence-value" matInput formControlName="contactRecurrenceValue" placeholder="Contact every"/>
+            <input id="input-contact-recurrence-value" matInput formControlName="contactRecurrenceValue"
+                   placeholder="Contact every"/>
             <mat-error *ngFor="let validation of contactValidationMessages.contactRecurrenceValue">
                 <mat-error class="error-message"
                            *ngIf="contactForm.get('contactRecurrenceValue').hasError(validation.type)
@@ -57,6 +58,13 @@
                 type="submit"
                 [disabled]="!contactForm.valid">
             Save
+        </button>
+
+        <!-- Cancel button -->
+        <button id="button-cancel"
+                mat-raised-button
+                (click)="cancel()">
+        Cancel
         </button>
 
     </form>

@@ -259,9 +259,6 @@
                         <artifactId>swagger-maven-plugin</artifactId>
                         <version>${swagger-maven-plugin.version}</version>
                         <configuration>
-                            <typesToSkip>
-                                <typeToSkip>com.oakinvest.lt.authentication.loosetouch.AuthenticatedAccount</typeToSkip>
-                            </typesToSkip>
                             <apiSources>
                                 <apiSource>
                                     <info>
@@ -276,6 +273,9 @@
                                     <locations>com.oakinvest.lt.service.v1</locations>
                                 </apiSource>
                             </apiSources>
+                            <typesToSkip>
+                                <typeToSkip>com.oakinvest.lt.authentication.loosetouch.AuthenticatedAccount</typeToSkip>
+                            </typesToSkip>
                         </configuration>
                         <executions>
                             <execution>
@@ -349,27 +349,27 @@
                             <!-- TODO Fix this. -->
                             <!-- https://github.com/angular/angular-cli/issues/13095 -->
                             <!-- Install packages -->
-<!--                            <execution>
-                                <id>yarn install</id>
-                                <goals>
-                                    <goal>yarn</goal>
-                                </goals>
-                                <configuration>
-                                    <arguments>install &#45;&#45;cwd target/angular-loose-touch-api &#45;&#45;scripts-prepend-node-path</arguments>
-                                </configuration>
-                                <phase>compile</phase>
-                            </execution>
-                            &lt;!&ndash; Build packages &ndash;&gt;
-                            <execution>
-                                <id>yarn build</id>
-                                <goals>
-                                    <goal>yarn</goal>
-                                </goals>
-                                <configuration>
-                                    <arguments>build &#45;&#45;cwd target/angular-loose-touch-api</arguments>
-                                </configuration>
-                                <phase>compile</phase>
-                            </execution>-->
+                            <!--                            <execution>
+                                                            <id>yarn install</id>
+                                                            <goals>
+                                                                <goal>yarn</goal>
+                                                            </goals>
+                                                            <configuration>
+                                                                <arguments>install &#45;&#45;cwd target/angular-loose-touch-api &#45;&#45;scripts-prepend-node-path</arguments>
+                                                            </configuration>
+                                                            <phase>compile</phase>
+                                                        </execution>
+                                                        &lt;!&ndash; Build packages &ndash;&gt;
+                                                        <execution>
+                                                            <id>yarn build</id>
+                                                            <goals>
+                                                                <goal>yarn</goal>
+                                                            </goals>
+                                                            <configuration>
+                                                                <arguments>build &#45;&#45;cwd target/angular-loose-touch-api</arguments>
+                                                            </configuration>
+                                                            <phase>compile</phase>
+                                                        </execution>-->
                             <!-- Publish packages -->
                             <!--                            <execution>
                                                             <id>Publish packages</id>

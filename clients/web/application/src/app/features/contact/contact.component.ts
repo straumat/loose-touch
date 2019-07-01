@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {Title} from '@angular/platform-browser';
 import {ContactAPIService, ContactDTO} from 'angular-loose-touch-api';
+import {Router} from '@angular/router';
 
 class ContactRecurrenceType {
   value: string;
@@ -46,6 +47,7 @@ export class ContactComponent implements OnInit {
   contactForm: FormGroup;
 
   constructor(private titleService: Title,
+              public router: Router,
               private formBuilder: FormBuilder,
               private contactAPIService: ContactAPIService) {
     this.titleService.setTitle('Add a new contact');
@@ -63,11 +65,18 @@ export class ContactComponent implements OnInit {
     const contactDTO: ContactDTO = Object.assign({}, this.contactForm.value);
     // Send the data to the server.
     this.contactAPIService.createContact(contactDTO).subscribe(result => {
-        console.log('Success !');
+        this.router.navigate(['/dashboard']);
       },
       error => {
-        console.log('Error', error);
+        // TODO Treat server errors.
       });
+  }
+
+  /**
+   * Cancel form.
+   */
+  cancel() {
+    this.router.navigate(['/dashboard']);
   }
 
   /**

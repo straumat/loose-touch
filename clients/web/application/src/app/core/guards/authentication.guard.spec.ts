@@ -100,6 +100,7 @@ describe('AuthenticationGuard', () => {
       .then(() => {
         expect(router.url).toBe('/dashboard');
       });
+    // TODO Test new routes.
   });
 
 });

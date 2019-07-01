@@ -633,7 +633,7 @@ ajv@^5.0.0:
     fast-json-stable-stringify "^2.0.0"
     json-schema-traverse "^0.3.0"
 
-ajv@^6.1.0, ajv@^6.5.5:
+ajv@^6.1.0, ajv@^6.10.0, ajv@^6.5.5:
   version "6.10.0"
   resolved "https://registry.yarnpkg.com/ajv/-/ajv-6.10.0.tgz#90d0d54439da587cd7e843bfb7045f50bd22bdf1"
   integrity sha512-nffhOpkymDECQyR0mnsUtoCE8RlX38G0rYP+wgLWFyZuUyuuojSSvi/+euOiQBIn63whYwYVIIH1TvE3tu4OEg==
@@ -648,12 +648,12 @@ amdefine@>=0.0.4:
   resolved "https://registry.yarnpkg.com/amdefine/-/amdefine-1.0.1.tgz#4a5282ac164729e93619bcfd3ad151f817ce91f5"
   integrity sha1-SlKCrBZHKek2Gbz9OtFR+BfOkfU=
 
-angular-loose-touch-api@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/angular-loose-touch-api/-/angular-loose-touch-api-1.0.0.tgz#f92207e22b9497b722aabf63fd0ff1dc9708d62b"
-  integrity sha512-nIR8B69sopvXZLeBsqXIwwQKR2J5z+UhnzVucZclbG+KJvAcbj3XK/D1Ytg6j2rAkPCA+Y7WXTCNEpyLdTHI8g==
+angular-loose-touch-api@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/angular-loose-touch-api/-/angular-loose-touch-api-1.0.2.tgz#9f67de22f2878ee9672f01f5f3d32aa4b80b532f"
+  integrity sha512-+7RP0s6blgScpxyA2JG/ACnR1mDtKNRWBue88AhPDGVCaYJsmGTVMZ0Atmh1Gr1iSD033N2w1APXX6Omvx2OYg==
   dependencies:
-    rxjs-compat "^6.5.2"
+    ajv "^6.10.0"
 
 angularx-social-login@^1.2.6:
   version "1.2.6"

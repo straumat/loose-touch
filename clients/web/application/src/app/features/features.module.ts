@@ -7,13 +7,15 @@ import {ErrorComponent} from './error/error.component';
 import {AccountComponent} from './account/account.component';
 import {ContactComponent} from './contact/contact.component';
 import {ReactiveFormsModule} from '@angular/forms';
+import {RouterModule} from '@angular/router';
 
 @NgModule({
   declarations: [DashboardComponent, LoginComponent, ErrorComponent, AccountComponent, ContactComponent],
   imports: [
     CommonModule,
     CustomMaterialModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    RouterModule
   ]
 })
 export class FeaturesModule {

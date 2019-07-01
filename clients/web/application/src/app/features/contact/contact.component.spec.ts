@@ -1,13 +1,16 @@
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import {async, ComponentFixture, fakeAsync, TestBed, tick} from '@angular/core/testing';
 
 import {ContactComponent} from './contact.component';
 import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
 import {ReactiveFormsModule} from '@angular/forms';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {CustomMaterialModule} from '../../core/material.module';
-import {ApiModule, ContactAPIService} from 'angular-loose-touch-api';
+import {ApiModule} from 'angular-loose-touch-api';
 import {apiConfigFactory} from '../../app.module';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
+import {RouterTestingModule} from '@angular/router/testing';
+import {DashboardComponent} from '../dashboard/dashboard.component';
+import {Router} from '@angular/router';
 
 describe('ContactComponent', () => {
   let component: ContactComponent;
@@ -15,13 +18,16 @@ describe('ContactComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ContactComponent],
+      declarations: [ContactComponent, DashboardComponent],
       imports: [
         ApiModule.forRoot(apiConfigFactory),
         HttpClientTestingModule,
         CustomMaterialModule,
         ReactiveFormsModule,
         BrowserAnimationsModule,
+        [RouterTestingModule.withRoutes([
+          {path: 'dashboard', component: DashboardComponent}
+        ])],
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
     })
@@ -34,10 +40,12 @@ describe('ContactComponent', () => {
     fixture.detectChanges();
   });
 
+  // ===================================================================================================================
   it('should create', () => {
     expect(component).toBeTruthy();
   });
 
+  // ===================================================================================================================
   it('should manage form validation on client side', () => {
     // Form fields.
     fixture.detectChanges();
@@ -99,6 +107,7 @@ describe('ContactComponent', () => {
     expect(contactRecurrenceValue.hasError('max')).toBeTruthy();
   });
 
+  // ===================================================================================================================
   it('should make a rest call with good data', () => {
     // Form fields.
     fixture.detectChanges();
@@ -120,8 +129,23 @@ describe('ContactComponent', () => {
     // Check that the form is ok.
     component.contactForm.updateValueAndValidity();
     expect(component.contactForm.valid).toBeTruthy();
-
-    //
   });
+
+  // ===================================================================================================================
+  it('should call the cancel method', () => {
+    spyOn(component, 'cancel');
+    document.getElementById('button-cancel').click();
+    fixture.whenStable().then(() => {
+      expect(component.cancel).toHaveBeenCalled();
+    });
+  });
+
+  // ===================================================================================================================
+  it('cancel method should bring us back to dashboard', fakeAsync(() => {
+    const router: Router = TestBed.get(Router);
+    document.getElementById('button-cancel').click();
+    tick();
+    expect(router.url).toBe('/dashboard');
+  }));
 
 });

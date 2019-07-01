@@ -194,7 +194,7 @@ public interface ContactAPI extends V1Service {
             responseContainer = "List")
     @ApiImplicitParams({})
     @ApiResponses(value = {
-            @ApiResponse(code = STATUS_OK, message = STATUS_OK_MESSAGE, response = ContactDTO.class),
+            @ApiResponse(code = STATUS_OK, message = STATUS_OK_MESSAGE),
             @ApiResponse(code = STATUS_BAD_REQUEST, message = STATUS_BAD_REQUEST_MESSAGE, response = LooseTouchError.class),
             @ApiResponse(code = STATUS_UNAUTHORIZED, message = STATUS_UNAUTHORIZED_MESSAGE, response = LooseTouchError.class),
             @ApiResponse(code = STATUS_NOT_FOUND, message = STATUS_NOT_FOUND_MESSAGE, response = LooseTouchError.class),
