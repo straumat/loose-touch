@@ -52,7 +52,7 @@
         <!-- Others -->
         <docker.image.prefix>loose-touch</docker.image.prefix>
         <swagger-maven-plugin.version>3.1.3</swagger-maven-plugin.version>
-        <swagger-codegen-maven-plugin.version>3.0.9</swagger-codegen-maven-plugin.version>
+        <swagger-codegen-maven-plugin.version>3.0.10</swagger-codegen-maven-plugin.version>
         <frontend-maven-plugin.version>1.7.6</frontend-maven-plugin.version>
         <node.version>v12.3.1</node.version>
         <yarn.version>v1.16.0</yarn.version>
