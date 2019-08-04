@@ -29,7 +29,7 @@
         <maven-jar-plugin.version>3.1.2</maven-jar-plugin.version>
         <maven-dependency-plugin.version>3.1.1</maven-dependency-plugin.version>
         <maven-assembly-plugin.version>3.1.1</maven-assembly-plugin.version>
-        <dockerfile-maven-plugin.version>1.4.10</dockerfile-maven-plugin.version>
+        <dockerfile-maven-plugin.version>1.4.12</dockerfile-maven-plugin.version>
         <!-- Data -->
         <spring-data-dynamodb.version>5.1.0</spring-data-dynamodb.version>
         <!-- AWS -->
