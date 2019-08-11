@@ -19,7 +19,7 @@
     <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-clean-plugin -->
     <maven-clean-plugin.version>3.1.0</maven-clean-plugin.version>
 
-    <docker-maven-plugin.version>0.30.0</docker-maven-plugin.version>
+    <docker-maven-plugin.version>0.31.0</docker-maven-plugin.version>
     <!-- Web development -->
     <!-- https://nodejs.org/en/download/releases/ -->
     <node.version>v12.3.1</node.version>
